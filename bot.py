@@ -14,9 +14,8 @@ async def main():
 async def load_extensions():
     for filename in os.listdir('./cogs'):
         if filename.endswith('.py'):
-            print(f'Loading{filename}')
             await bot.load_extension(f'cogs.{filename[:-3]}')
-            print(f'Loaded{filename}')
+            print(f'Loaded {filename} Cog')
 
 # Run Main Script
 if __name__ == '__main__':
