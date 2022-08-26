@@ -1,24 +1,28 @@
 import config
 import discord
+from discord.ext import commands
+import os
+import asyncio
 
-intents = discord.Intents.default()
-intents.message_content = True
-client = discord.Client(intents=intents)
+# Main Function
+async def main():
+    async with bot:
+        await load_extensions()
+        await bot.start(config.botToken)
 
-def main():
-    client.run(config.botToken)
+# Load Cogs
+async def load_extensions():
+    for filename in os.listdir('./cogs'):
+        if filename.endswith('.py'):
+            print(f'Loading{filename}')
+            await bot.load_extension(f'cogs.{filename[:-3]}')
+            print(f'Loaded{filename}')
 
-@client.event
-async def on_ready():
-    print(f'Logged in as {client.user}')
-
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return 
-
-    if message.author.id == 125114599249936384:
-        await message.channel.send("says the furniture stealer")
-
+# Run Main Script
 if __name__ == '__main__':
-    main()
+    # Run main script
+    intents = discord.Intents.default()
+    intents.members = True
+    intents.message_content = True
+    bot = commands.Bot(command_prefix='?', intents=intents)
+    asyncio.run(main())
