@@ -1,14 +1,31 @@
 import config
 import discord
 from discord.ext import commands
+from discord import app_commands
 import os
 import asyncio
 
-# Main Function
-async def main():
-    async with bot:
+class MyBot(commands.Bot):
+
+    def __init__(self):
+        myIntents = discord.Intents.default()
+        myIntents.members = True
+        myIntents.message_content = True
+        super().__init__(
+            command_prefix = "!",
+            intents = myIntents,
+            application_id = config.clientID
+        )
+
+    # Setup Hook
+    async def setup_hook(self):
         await load_extensions()
-        await bot.start(config.botToken)
+        await bot.tree.sync(guild = config.elliotGuild)
+        await bot.tree.sync(guild = config.testGuild)
+
+    # On Ready
+    async def on_ready(self):
+        print(f'Logged in as {self.user}')
 
 # Load Cogs
 async def load_extensions():
@@ -19,9 +36,5 @@ async def load_extensions():
 
 # Run Main Script
 if __name__ == '__main__':
-    # Run main script
-    intents = discord.Intents.default()
-    intents.members = True
-    intents.message_content = True
-    bot = commands.Bot(command_prefix='?', intents=intents)
-    asyncio.run(main())
+    bot = MyBot()
+    bot.run(config.botToken)
