@@ -4,6 +4,7 @@ from discord.ext import commands
 from discord import app_commands
 import os
 import asyncio
+import sqlite3
 
 class MyBot(commands.Bot):
 
@@ -33,6 +34,12 @@ async def load_extensions():
         if filename.endswith('.py'):
             await bot.load_extension(f'cogs.{filename[:-3]}')
             print(f'Loaded {filename} Cog')
+
+# Init Sqlite DB
+def initDatabase():
+    connection = sqlite3.connect("bot.db")
+    cursor = connection.cursor()
+
 
 # Run Main Script
 if __name__ == '__main__':
