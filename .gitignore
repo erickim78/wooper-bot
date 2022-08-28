@@ -133,3 +133,6 @@ config.py
 
 # Log files
 discord.log
+
+# Database files
+*.db
