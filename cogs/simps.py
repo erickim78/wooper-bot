@@ -5,9 +5,9 @@ import config
 import main
 from discord import app_commands
 
-class Reactions(commands.Cog):
+class Simps(commands.Cog):
     def __init__(self, bot):
-        print("Reactions INIT")
+        print("Simps INIT")
         self.bot = bot
         self.connection = main.connection
         self.cursor = main.connection.cursor()
@@ -69,4 +69,4 @@ class Reactions(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(Reactions(bot), guilds=config.guildList)
+    await bot.add_cog(Simps(bot), guilds=config.guildList)
