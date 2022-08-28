@@ -4,9 +4,9 @@ from discord.ext import commands
 import config
 import main
 
-class Initial(commands.Cog):
+class Listeners(commands.Cog):
     def __init__(self, bot):
-        print("INITIAL INIT")
+        print("Listeners INIT")
         self.bot = bot
         self.connection = main.connection
         self.cursor = main.connection.cursor()
@@ -32,4 +32,4 @@ class Initial(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(Initial(bot), guilds=config.guildList)
+    await bot.add_cog(Listeners(bot), guilds=config.guildList)
