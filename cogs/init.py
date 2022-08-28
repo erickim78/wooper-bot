@@ -8,10 +8,16 @@ class Initial(commands.Cog):
         print("INITIAL INIT")
         self.bot = bot
     
-    # @commands.Cog.listener()
-    # async def on_message(self, message):
-    #     if message.author.id == 125114599249936384:
-    #         await message.channel.send("says the furniture stealer")
+    @commands.Cog.listener()
+    async def on_reaction_add(reaction, user):
+        simp = user.id
+        simped = reaction.message.author.id
+        main.cursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE type='table' AND name = '{simped}' ''')
+        
+        if cursor.fetchone()[0] == 1:
+            print()
+        else: 
+            cursor.execute(f'CREATE TABLE {simped} (id TEXT, count TEXT, PRIMARYT KEY (id))')
 
 async def setup(bot):
     await bot.add_cog(Initial(bot), guilds=config.guildList)
