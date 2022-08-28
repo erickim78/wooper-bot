@@ -24,10 +24,5 @@ class Games(commands.Cog):
         embed.add_field(name=responses[rand], value='\u200b', inline=False)
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.command(name="simps", description='Simp Leaderboard')
-    async def simps(self, interaction: discord.Interaction, user: str) -> None:
-        return
-        
-    
 async def setup(bot):
     await bot.add_cog(Games(bot), guilds=config.guildList)

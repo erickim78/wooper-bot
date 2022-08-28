@@ -3,10 +3,11 @@ import discord
 from discord.ext import commands
 import config
 import main
+from discord import app_commands
 
-class Listeners(commands.Cog):
+class Reactions(commands.Cog):
     def __init__(self, bot):
-        print("Listeners INIT")
+        print("Reactions INIT")
         self.bot = bot
         self.connection = main.connection
         self.cursor = main.connection.cursor()
@@ -29,7 +30,11 @@ class Listeners(commands.Cog):
 
         self.cursor.execute(f'INSERT INTO \'{str(simped)}\' (id, count) VALUES ({str(simp)}, {1}) ON CONFLICT (id) DO UPDATE SET count = count + 1')
         self.connection.commit()
+    
+    @app_commands.command(name="simps", description='Simp Leaderboard')
+    async def simps(self, interaction: discord.Interaction, user: str) -> None:
+        return
 
 
 async def setup(bot):
-    await bot.add_cog(Listeners(bot), guilds=config.guildList)
+    await bot.add_cog(Reactions(bot), guilds=config.guildList)
