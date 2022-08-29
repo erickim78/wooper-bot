@@ -1,9 +1,14 @@
+# Dependencies
+import random
+
+# File Imports
+import config
+
+# Discord
 import discord
 from discord.ext import commands
 from discord import app_commands
 
-import random
-import config
 
 class Games(commands.Cog):
     def __init__(self, bot):
