@@ -132,9 +132,9 @@ class Simps(commands.Cog):
                 currentUser = self.bot.get_user(int(simpList[i][0]))
                 currentTime = simpList[i][1]
                 if i > 0:
-                    result += f'{i+1}) {currentUser.mention}, **{round((float(currentTime)/referenceTime)*100)}% Attendance** \n*Time Together: {round(currentTime//3600)} hrs, {round((currentTime-3600*(currentTime//3600))//60)} mins*\n\n'
+                    result += f'{i+1}) {currentUser.mention}, **{round((float(currentTime)/referenceTime)*100,2)}% Attendance** \n*Time Together: {round(currentTime//3600)} hrs, {round((currentTime-3600*(currentTime//3600))//60)} mins*\n\n'
                 else:
-                    result += f'**{i+1}) {currentUser.mention},  {round((float(currentTime)/referenceTime)*100)}% Attendance** \n*Time Together: {round(currentTime//3600)} hrs, {round((currentTime-3600*(currentTime//3600))//60)} mins* \n\n\n'
+                    result += f'**{i+1}) {currentUser.mention},  {round((float(currentTime)/referenceTime)*100,2)}% Attendance** \n*Time Together: {round(currentTime//3600)} hrs, {round((currentTime-3600*(currentTime//3600))//60)} mins* \n\n\n'
                     embed.set_image(url=currentUser.avatar.url)
 
             embed.add_field(name='\u200b', value=result, inline=True)
