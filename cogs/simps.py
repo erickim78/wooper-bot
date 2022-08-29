@@ -86,15 +86,17 @@ class Simps(commands.Cog):
                 self.updateTimes()
                 self.connectedUsers[member.id] = time.time()
         else:
-            if before.afk == True:
+            if before.afk == True and after.afk == False:
                 print("afk to reg")
                 self.updateTimes()
                 self.connectedUsers[member.id] = time.time()
-            else:
+            elif before.afk == False and after.afk == True:
                 print("reg to afk")
                 self.updateTimes()
                 del self.connectedUsers[member.id]
-        print("On voice status update: ", self.connectedUsers)
+            else:
+                print("Non-Connection related voice state change")
+        print("\nOn voice status update: ", self.connectedUsers)
         return
 
     @app_commands.command(name="simps", description='Simp Leaderboard')
