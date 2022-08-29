@@ -110,7 +110,7 @@ class Simps(commands.Cog):
         
         # Build Simps String
         if self.cursor.fetchone()[0] == 1:
-            self.cursor.execute(f'SELECT * FROM \'{str(user.id)}\' ORDER BY count DESC')
+            self.cursor.execute(f'SELECT * FROM \'{str(user.id)}\' ORDER BY count DESC, reactions DESC')
             simpList = self.cursor.fetchall()
 
             referenceTime = 0
