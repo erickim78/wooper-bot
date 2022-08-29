@@ -76,12 +76,16 @@ class Simps(commands.Cog):
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
         if after.channel == None:
-            self.updateTimes()
-            del self.connectedUsers[member.id]
+            if before.channel.afk != True:
+                self.updateTimes()
+                del self.connectedUsers[member.id]
         elif before.channel == None and after.channel != None:
+            if after.channel.afk != True:
+                self.updateTimes()
+                self.connectedUsers[member.id] = time.time()
+        else:
             self.updateTimes()
             self.connectedUsers[member.id] = time.time()
-        
         print("On voice status update: ", self.connectedUsers)
         return
 
@@ -118,7 +122,7 @@ class Simps(commands.Cog):
                 currentUser = self.bot.get_user(int(simpList[i][0]))
                 currentTime = simpList[i][1]
                 if i > 0:
-                    result += f'{i+1}) {currentUser.mention}, {round((float(currentTime)/referenceTime)*100)}% Attendance \n*Time Together: {round(currentTime//3600)} hrs, {round((currentTime-3600*(currentTime//3600))//60)} mins*\n\n'
+                    result += f'{i+1}) {currentUser.mention}, **{round((float(currentTime)/referenceTime)*100)}% Attendance** \n*Time Together: {round(currentTime//3600)} hrs, {round((currentTime-3600*(currentTime//3600))//60)} mins*\n\n'
                 else:
                     result += f'**{i+1}) {currentUser.mention},  {round((float(currentTime)/referenceTime)*100)}% Attendance** \n*Time Together: {round(currentTime//3600)} hrs, {round((currentTime-3600*(currentTime//3600))//60)} mins* \n\n\n'
                     embed.set_image(url=currentUser.avatar.url)
