@@ -76,16 +76,24 @@ class Simps(commands.Cog):
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
         if after.channel == None:
-            if before.channel.afk != True:
+            if before.afk != True:
+                print("disconnect")
                 self.updateTimes()
                 del self.connectedUsers[member.id]
         elif before.channel == None and after.channel != None:
-            if after.channel.afk != True:
+            if after.afk != True:
+                print("connect")
                 self.updateTimes()
                 self.connectedUsers[member.id] = time.time()
         else:
-            self.updateTimes()
-            self.connectedUsers[member.id] = time.time()
+            if before.afk == True:
+                print("afk to reg")
+                self.updateTimes()
+                self.connectedUsers[member.id] = time.time()
+            else:
+                print("reg to afk")
+                self.updateTimes()
+                del self.connectedUsers[member.id]
         print("On voice status update: ", self.connectedUsers)
         return
 
