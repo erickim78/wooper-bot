@@ -19,7 +19,7 @@ from discord import app_commands
 
 class Simps(commands.Cog):
     def __init__(self, bot):
-        print("Simps INIT")
+        print(f'simps.cog init')
         self.bot = bot
 
         # Simps DB
