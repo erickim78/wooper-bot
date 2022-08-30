@@ -173,7 +173,6 @@ class Simps(commands.Cog):
     
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
-        print("\nOn voice status update: ", self.connectedUsers)
         if after.channel == None:
             if before.afk != True:
                 print(f'User {self.connectedUsers} disconnected.')
