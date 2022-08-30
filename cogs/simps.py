@@ -58,9 +58,12 @@ class Simps(commands.Cog):
         disconnectTime = time.time()
         for memberId in self.connectedUsers:
             self.checkTable(memberId)
+            currMember = self.bot.get_user(memberId)
             for key2 in self.connectedUsers:
+                currSimp = self.bot.get_user(key2)
                 timeDifference = disconnectTime - self.connectedUsers[key2]
                 self.cursor.execute(f'INSERT INTO \'{str(memberId)}\' (id, count, reactions) VALUES ({str(key2)}, {timeDifference}, {0}) ON CONFLICT (id) DO UPDATE SET count = count + {timeDifference}')
+                print(f'Adding {timeDifference} of time to {currMember.name}, from {currSimp.name}')
         self.connection.commit()
 
         for memberId in self.connectedUsers:
@@ -170,6 +173,7 @@ class Simps(commands.Cog):
     
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
+        print("\nOn voice status update: ", self.connectedUsers)
         if after.channel == None:
             if before.afk != True:
                 print("disconnect")
@@ -187,7 +191,6 @@ class Simps(commands.Cog):
                 self.handleDisconnect(member.id)
             else:
                 print("Non-Connection related voice state change")
-        print("\nOn voice status update: ", self.connectedUsers)
         return
 
     @app_commands.command(name="simps", description='Simp Leaderboard')
