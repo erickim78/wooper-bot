@@ -176,21 +176,21 @@ class Simps(commands.Cog):
         print("\nOn voice status update: ", self.connectedUsers)
         if after.channel == None:
             if before.afk != True:
-                print("disconnect")
+                print(f'User {self.connectedUsers} disconnected.')
                 self.handleDisconnect(member.id)
         elif before.channel == None and after.channel != None:
             if after.afk != True:
-                print("connect")
+                print(f'User {self.connectedUsers} connected.')
                 self.handleConnect(member.id)
         else:
             if before.afk == True and after.afk == False:
-                print("afk to reg")
+                print(f'User {self.connectedUsers} returned from afk.')
                 self.handleConnect(member.id)
             elif before.afk == False and after.afk == True:
-                print("reg to afk")
+                print(f'User {self.connectedUsers} went afk.')
                 self.handleDisconnect(member.id)
             else:
-                print("Non-Connection related voice state change")
+                print(f'User {self.connectedUsers} made a non-connection related voice status update.')
         return
 
     @app_commands.command(name="simps", description='Simp Leaderboard')
