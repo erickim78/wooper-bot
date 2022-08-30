@@ -50,6 +50,7 @@ class Games(commands.Cog):
             self.boxes[memberId] = 1
         else:
             self.boxes[memberId] += 1
+        print(f'User {self.bot.get_user(memberId)} has received an oz box. Total boxes: {self.boxes[memberId]}.')
 
     
     # Initialize currently connected users
