@@ -1,10 +1,15 @@
+# Dependencies
+import os
+import sqlite3
+
+# File Imports
 import config
+
+# Discord
 import discord
 from discord.ext import commands
 from discord import app_commands
-import os
-import asyncio
-import sqlite3
+
 
 class MyBot(commands.Bot):
 
@@ -35,11 +40,9 @@ async def load_extensions():
             await bot.load_extension(f'cogs.{filename[:-3]}')
             print(f'Loaded {filename} Cog')
 
-# Init Sqlite DB
-def initDatabase():
-    connection = sqlite3.connect("bot.db")
-    cursor = connection.cursor()
 
+# Init Database
+connection = sqlite3.connect("bot.db")
 
 # Run Main Script
 if __name__ == '__main__':
