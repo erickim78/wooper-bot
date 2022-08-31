@@ -98,7 +98,9 @@ class Simps(commands.Cog):
         return
 
     @app_commands.command(name="simps", description='Simp Leaderboard')
-    async def simps(self, interaction: discord.Interaction, user: discord.User) -> None:
+    async def simps(self, interaction: discord.Interaction, user: discord.User = None) -> None:
+        if user is None:
+            user = interaction.user
         self.cursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE type='table' AND name = '{user.id}' ''')
 
         # Build Embed Common Fields

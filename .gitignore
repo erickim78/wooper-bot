@@ -136,3 +136,6 @@ discord.log
 
 # Database files
 *.db
+
+# venv
+bot-env
