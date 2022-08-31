@@ -61,15 +61,13 @@ class Simps(commands.Cog):
     
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
-        print("On Reaction Add")
-
         channel = self.bot.get_channel(payload.channel_id)
         message = await channel.fetch_message(payload.message_id)
         simp = payload.user_id
         simped = message.author.id
+        print(f'User {self.bot.get_user(simp).name} reacted with {payload.emoji.name} to user {self.bot.get_user(simped).name}.')
 
         self.checkTable(simped)
-
         self.cursor.execute(f'INSERT INTO \'{str(simped)}\' (id, count, reactions) VALUES ({str(simp)}, {0}, {1}) ON CONFLICT (id) DO UPDATE SET reactions = reactions + 1')
         self.connection.commit()
     
