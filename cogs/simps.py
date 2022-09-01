@@ -205,17 +205,18 @@ class Simps(commands.Cog):
                     break
             del simpList[delIndex]
 
-            embed.add_field(name=f'{user.name}', value='\u200b \n\n\n\n', inline=False)
+            embed.add_field(name=f'Stats for **{user.name}**', value='\u200b \n\n\n\n', inline=False)
+            embed.add_field(name='Biggest Simp', value=self.bot.get_user(int(simpList[0][0])).mention, inline=False)
             embed.add_field(name='Total Time Online', value='\u200b', inline=False)
             embed.add_field(name='Last 3 Days', value=f'{round(referenceTime//3600,2)} Hours', inline=False)
-            embed.add_field(name='Last 7 Days', value=f'{round(referenceTime//3600,2)} Hours', inline=False)
-            embed.add_field(name='Last 30 Days', value=f'{round(referenceTime//3600,2)} Hours', inline=False)
-            embed.add_field(name='All Time', value=f'{round(referenceTime//3600,2)} Hours', inline=False)
-            embed.add_field(name='Average Online Per Day', value=self.bot.get_user(int(simpList[0][0])).mention, inline=False)
+            embed.add_field(name='Last 7 Days', value=f'{round(referenceTime//3600,2)} Hours', inline=True)
+            embed.add_field(name='Last 30 Days', value=f'{round(referenceTime//3600,2)} Hours', inline=True)
+            embed.add_field(name='All Time', value=f'{round(referenceTime//3600,2)} Hours\n', inline=False)
+            embed.add_field(name='Average Online Per Day', value='\u200b', inline=False)
             embed.add_field(name='Last 3 Days', value=f'{round(referenceTime//3600,2)} Hours', inline=False)
-            embed.add_field(name='Last 7 Days', value=f'{round(referenceTime//3600,2)} Hours', inline=False)
-            embed.add_field(name='Last 30 Days', value=f'{round(referenceTime//3600,2)} Hours', inline=False)
-            embed.add_field(name='All Time', value=f'{round(referenceTime//3600,2)} Hours', inline=False)
+            embed.add_field(name='Last 7 Days', value=f'{round(referenceTime//3600,2)} Hours', inline=True)
+            embed.add_field(name='Last 30 Days', value=f'{round(referenceTime//3600,2)} Hours', inline=True)
+            embed.add_field(name='All Time', value=f'{round(referenceTime//3600,2)} Hours', inline=True)
         else:
             # todo embed for no stats users
             return
