@@ -149,8 +149,8 @@ class Simps(commands.Cog):
 
         return
 
-    @app_commands.command(name="stats", description='Simp Leaderboard')
-    async def simps(self, interaction: discord.Interaction, user: discord.User = None) -> None:
+    @app_commands.command(name="stats", description='Server Stats')
+    async def stats(self, interaction: discord.Interaction, user: discord.User = None) -> None:
         if user is None:
             user = interaction.user
 
@@ -171,13 +171,15 @@ class Simps(commands.Cog):
                     delIndex = x
                     referenceTime = float(simpList[x][1])
                     break
-
+            embed.add_field(name=f'{user.name}', value='\u200b', inline=False)
             if userName[-1] == 's':
                 embed.add_field(name=f'{user.name}\' simps', value=f'*Total Online Time: {round(referenceTime//3600)} hrs, {round((referenceTime-3600*(referenceTime//3600))//60)} mins*', inline=False)
             else:
                 embed.add_field(name=f'{user.name}\'s simps', value=f'*Total Online Time: {round(referenceTime//3600)} hrs, {round((referenceTime-3600*(referenceTime//3600))//60)} mins*', inline=False)   
             del simpList[delIndex]
-            
+            embed.add_field(name='Biggest Simp', value=self.bot.get_user(int(simpList[0][0])).mention, inline=False)
+            embed.add_field(name='Average Time Per Day', value='\u200b', inline=False)
+            embed.add_field(name='Average Time Per Day', value='\u200b', inline=False)
         else:
             return
 
