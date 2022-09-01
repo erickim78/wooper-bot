@@ -104,7 +104,7 @@ class Simps(commands.Cog):
                 print("connect")
                 self.updateTimes()
                 self.connectedUsers[member.id] = time.time()
-                self.timeTracker[userId] = time.time()
+                self.timeTracker[member.id] = time.time()
         else:
             if before.afk == True and after.afk == False:
                 print("afk to reg")
