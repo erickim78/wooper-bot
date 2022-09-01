@@ -101,14 +101,14 @@ class Simps(commands.Cog):
     async def simps(self, interaction: discord.Interaction, user: discord.User = None) -> None:
         if user is None:
             user = interaction.user
-        self.cursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE type='table' AND name = '{user.id}' ''')
 
         # Build Embed Common Fields
         embed = discord.Embed(color=0xf1d3ed)
         embed.set_thumbnail(url=user.avatar.url) 
         userName = user.name
-        
+
         # Build Simps String
+        self.cursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE type='table' AND name = '{user.id}' ''')
         if self.cursor.fetchone()[0] == 1:
             self.cursor.execute(f'SELECT * FROM \'{str(user.id)}\' ORDER BY count DESC, reactions DESC')
             simpList = self.cursor.fetchall()
@@ -149,6 +149,37 @@ class Simps(commands.Cog):
 
         return
 
+    @app_commands.command(name="stats", description='Simp Leaderboard')
+    async def simps(self, interaction: discord.Interaction, user: discord.User = None) -> None:
+        if user is None:
+            user = interaction.user
+
+        # Build Embed Common Fields
+        embed = discord.Embed(color=0xf1d3ed)
+        embed.set_thumbnail(url=user.avatar.url) 
+        userName = user.name
+
+        self.cursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE type='table' AND name = '{user.id}' ''')
+        if self.cursor.fetchone()[0] == 1:
+            self.cursor.execute(f'SELECT * FROM \'{str(user.id)}\' ORDER BY count DESC, reactions DESC')
+            simpList = self.cursor.fetchall()
+
+            referenceTime = 0
+            delIndex = 0
+            for x in range(len(simpList)):
+                if int(simpList[x][0]) == user.id:
+                    delIndex = x
+                    referenceTime = float(simpList[x][1])
+                    break
+
+            if userName[-1] == 's':
+                embed.add_field(name=f'{user.name}\' simps', value=f'*Total Online Time: {round(referenceTime//3600)} hrs, {round((referenceTime-3600*(referenceTime//3600))//60)} mins*', inline=False)
+            else:
+                embed.add_field(name=f'{user.name}\'s simps', value=f'*Total Online Time: {round(referenceTime//3600)} hrs, {round((referenceTime-3600*(referenceTime//3600))//60)} mins*', inline=False)   
+            del simpList[delIndex]
+            
+        else:
+            return
 
 async def setup(bot):
     await bot.add_cog(Simps(bot), guilds=config.guildList)
