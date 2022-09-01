@@ -30,7 +30,7 @@ class Simps(commands.Cog):
         self.connectedUsers = {}
         self.timeTracker = {}
 
-    def updateConnectedUsers(self):
+    def initConnectedUsers(self):
         updateTime = time.time()
         for guild in self.bot.guilds:
             currentChannels = guild.voice_channels
@@ -66,6 +66,7 @@ class Simps(commands.Cog):
             self.timeSequenceCursor.execute(f''' CREATE TABLE '{tableName}' (d date, count DECIMAL(38,4), PRIMARY KEY (d))''')
 
     def addTime(self, userId, timeToAdd):
+        self.checkTimeTable(userId)
         self.timeSequenceCursor.execute(f'INSERT INTO \'{str(userId)}\' (d, count) VALUES ({datetime.date.today()}, {timeToAdd}) ON CONFLICT (d) DO UPDATE SET count = count + {timeToAdd}')
         return
 
@@ -90,7 +91,7 @@ class Simps(commands.Cog):
     # On Ready
     @commands.Cog.listener()
     async def on_ready(self):
-        self.updateConnectedUsers()
+        self.initConnectedUsers()
         print("Initially connected users: ", self.connectedUsers)
     
     @commands.Cog.listener()
