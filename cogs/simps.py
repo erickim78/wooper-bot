@@ -218,6 +218,7 @@ class Simps(commands.Cog):
             embed.add_field(name='All Time', value=f'{round(referenceTime//3600,2)} Hours', inline=False)
         else:
             # todo embed for no stats users
+            return
         await interaction.response.send_message(embed=embed)
 
 async def setup(bot):
