@@ -68,6 +68,7 @@ class Simps(commands.Cog):
     def addTime(self, userId, timeToAdd):
         self.checkTimeTable(userId)
         self.timeSequenceCursor.execute(f'INSERT INTO \'{str(userId)}\' (d, count) VALUES ({datetime.date.today()}, {timeToAdd}) ON CONFLICT (d) DO UPDATE SET count = count + {timeToAdd}')
+        self.timeSequenceConn.commit()
         return
 
     def handleConnect(self, userId):
