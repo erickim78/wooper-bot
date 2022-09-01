@@ -1,6 +1,7 @@
 # Dependencies
 from sqlite3 import Cursor
 import time
+import datetime
 
 # File Imports
 import config
@@ -16,11 +17,18 @@ class Simps(commands.Cog):
     def __init__(self, bot):
         print("Simps INIT")
         self.bot = bot
+
+        # Simps DB
         self.connection = main.connection
         self.cursor = main.connection.cursor()
+
+        # Time Data
+        self.timeSequenceConn = main.timeSequenceConn
+        self.timeSequenceCursor = main.timeSequenceConn.cursor()
         
         # Init Connected User List
         self.connectedUsers = {}
+        self.timeTracker = {}
 
     def updateConnectedUsers(self):
         updateTime = time.time()
@@ -48,10 +56,17 @@ class Simps(commands.Cog):
 
     def checkTable(self, tableName):
         self.cursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE type='table' AND name = '{tableName}' ''')
-        if self.cursor.fetchone()[0] == 1:
-            return
-        else: 
+        if self.cursor.fetchone()[0] != 1:
             self.cursor.execute(f'''CREATE TABLE '{tableName}' (id TEXT, count DECIMAL (38,4), reactions TEXT, PRIMARY KEY (id))''')
+
+    def checkTimeTable(self, tableName):
+        self.timeSequenceCursor.execute(f''' SELECT count(name) FROM sqlite_master WHERE type='table' AND name = '{tableName}' ''')
+        if self.timeSequenceCursor.fetchone()[0] != 1:
+            self.timeSequenceCursor.execute(f''' CREATE TABLE '{tableName}' (d date, count DECIMAL(38,4), PRIMARY KEY (d))''')
+
+    def addTime(self, userId, timeToAdd):
+        self.timeSequenceCursor.execute(f'INSERT INTO \'{str(userId)}\' (d, count) VALUES ({datetime.date.today()}, {timeToAdd}) ON CONFLICT (d) DO UPDATE SET count = count + {timeToAdd}')
+        return
 
     # On Ready
     @commands.Cog.listener()
@@ -78,11 +93,18 @@ class Simps(commands.Cog):
                 print("disconnect")
                 self.updateTimes()
                 del self.connectedUsers[member.id]
+
+                checkTimeTable(member.id)
+                if self.timeTracker[member.id] is not None: # Should never be None but just in case of double access conflict
+                    timeConnected = time.time() - self.timeTracker[member.id]
+                    self.addTime(member.id, timeConnected)
+                    del self.timeTracker[member.id]
         elif before.channel == None and after.channel != None:
             if after.afk != True:
                 print("connect")
                 self.updateTimes()
                 self.connectedUsers[member.id] = time.time()
+                self.timeTracker[userId] = time.time()
         else:
             if before.afk == True and after.afk == False:
                 print("afk to reg")
