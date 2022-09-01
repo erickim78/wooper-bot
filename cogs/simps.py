@@ -41,6 +41,7 @@ class Simps(commands.Cog):
                     members = channel.members
                     for currentMember in members:
                         self.connectedUsers[currentMember.id] = updateTime
+                        self.timeTracker[currentMember.id] = updateTime
     
     def updateTimes(self):
         disconnectTime = time.time()
@@ -68,6 +69,24 @@ class Simps(commands.Cog):
         self.timeSequenceCursor.execute(f'INSERT INTO \'{str(userId)}\' (d, count) VALUES ({datetime.date.today()}, {timeToAdd}) ON CONFLICT (d) DO UPDATE SET count = count + {timeToAdd}')
         return
 
+    def handleConnect(self, userId):
+        self.updateTimes()
+        self.connectedUsers[userId] = time.time()
+        self.timeTracker[userId] = time.time()
+        return
+        
+    def handleDisconnect(self, userId):
+        self.updateTimes()
+        del self.connectedUsers[userId]
+        self.updateTimeOnDisconnect(userId)
+        return
+
+    def updateTimeOnDisconnect(self, userId):
+        if self.timeTracker[userId] is not None: # Should never be None but just in case of double access conflict
+            timeConnected = time.time() - self.timeTracker[userId]
+            self.addTime(userId, timeConnected)
+            del self.timeTracker[userId]
+
     # On Ready
     @commands.Cog.listener()
     async def on_ready(self):
@@ -91,29 +110,18 @@ class Simps(commands.Cog):
         if after.channel == None:
             if before.afk != True:
                 print("disconnect")
-                self.updateTimes()
-                del self.connectedUsers[member.id]
-
-                checkTimeTable(member.id)
-                if self.timeTracker[member.id] is not None: # Should never be None but just in case of double access conflict
-                    timeConnected = time.time() - self.timeTracker[member.id]
-                    self.addTime(member.id, timeConnected)
-                    del self.timeTracker[member.id]
+                self.handleDisconnect(member.id)
         elif before.channel == None and after.channel != None:
             if after.afk != True:
                 print("connect")
-                self.updateTimes()
-                self.connectedUsers[member.id] = time.time()
-                self.timeTracker[member.id] = time.time()
+                self.handleConnect(member.id)
         else:
             if before.afk == True and after.afk == False:
                 print("afk to reg")
-                self.updateTimes()
-                self.connectedUsers[member.id] = time.time()
+                self.handleConnect(member.id)
             elif before.afk == False and after.afk == True:
                 print("reg to afk")
-                self.updateTimes()
-                del self.connectedUsers[member.id]
+                self.handleDisconnect(member.id)
             else:
                 print("Non-Connection related voice state change")
         print("\nOn voice status update: ", self.connectedUsers)
