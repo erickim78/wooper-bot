@@ -203,17 +203,22 @@ class Simps(commands.Cog):
                     delIndex = x
                     referenceTime = float(simpList[x][1])
                     break
-            embed.add_field(name=f'{user.name}', value='\u200b', inline=False)
-            if userName[-1] == 's':
-                embed.add_field(name=f'{user.name}\' simps', value=f'*Total Online Time: {round(referenceTime//3600)} hrs, {round((referenceTime-3600*(referenceTime//3600))//60)} mins*', inline=False)
-            else:
-                embed.add_field(name=f'{user.name}\'s simps', value=f'*Total Online Time: {round(referenceTime//3600)} hrs, {round((referenceTime-3600*(referenceTime//3600))//60)} mins*', inline=False)   
             del simpList[delIndex]
-            embed.add_field(name='Biggest Simp', value=self.bot.get_user(int(simpList[0][0])).mention, inline=False)
-            embed.add_field(name='Average Time Per Day', value='\u200b', inline=False)
-            embed.add_field(name='Average Time Per Day', value='\u200b', inline=False)
+
+            embed.add_field(name=f'{user.name}', value='\u200b \n\n\n\n', inline=False)
+            embed.add_field(name='Total Time Online', value='\u200b', inline=False)
+            embed.add_field(name='Last 3 Days', value=f'{round(referenceTime//3600,2)} Hours', inline=False)
+            embed.add_field(name='Last 7 Days', value=f'{round(referenceTime//3600,2)} Hours', inline=False)
+            embed.add_field(name='Last 30 Days', value=f'{round(referenceTime//3600,2)} Hours', inline=False)
+            embed.add_field(name='All Time', value=f'{round(referenceTime//3600,2)} Hours', inline=False)
+            embed.add_field(name='Average Online Per Day', value=self.bot.get_user(int(simpList[0][0])).mention, inline=False)
+            embed.add_field(name='Last 3 Days', value=f'{round(referenceTime//3600,2)} Hours', inline=False)
+            embed.add_field(name='Last 7 Days', value=f'{round(referenceTime//3600,2)} Hours', inline=False)
+            embed.add_field(name='Last 30 Days', value=f'{round(referenceTime//3600,2)} Hours', inline=False)
+            embed.add_field(name='All Time', value=f'{round(referenceTime//3600,2)} Hours', inline=False)
         else:
-            return
+            # todo embed for no stats users
+        await interaction.response.send_message(embed=embed)
 
 async def setup(bot):
     await bot.add_cog(Simps(bot), guilds=config.guildList)
