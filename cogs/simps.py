@@ -210,18 +210,21 @@ class Simps(commands.Cog):
 
             today = datetime.date.today()
             self.timeSequenceCursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE type='table' AND name = '{user.id}' ''')
-            self.timeSequenceCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE d BETWEEN {today} and {today-timedelta(days=3)}')
+            self.timeSequenceCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE d BETWEEN \'{str(today)}\' and \'{str(today-timedelta(days=3))}\'')
             currentSample = self.timeSequenceCursor.fetchall()
+            print(currentSample)
             sum3days = [sum(i) for i in zip(*currentSample)][1]
             avg3days = round(sum3days/3,2)
 
             self.timeSequenceCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE d BETWEEN {today} and {today-timedelta(days=7)}')
             currentSample = self.timeSequenceCursor.fetchall()
+            print(currentSample)
             sum7days = [sum(i) for i in zip(*currentSample)][1]
             avg7days = round(sum3days/7,2)
 
             self.timeSequenceCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE d BETWEEN {today} and {today-timedelta(days=30)}')
             currentSample = self.timeSequenceCursor.fetchall()
+            print(currentSample)
             sum30days = [sum(i) for i in zip(*currentSample)][1]
             avg30days = round(sum3days/30)
 
