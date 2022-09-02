@@ -207,6 +207,24 @@ class Simps(commands.Cog):
                     reactions += int(simpList[x][2])
             del simpList[delIndex]
 
+            today = datetime.date.today()
+            self.timeSequenceCursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE type='table' AND name = '{user.id}' ''')
+            self.timeSequenceCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE d BETWEEN {today} and {today-timedelta(days=3)}')
+            currentSample = self.timeSequenceCursor.fetchall()
+            sum3days = [sum(i) for i in zip(*currentSample)][1]
+            avg3days = round(sum3days/3,2)
+
+            self.timeSequenceCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE d BETWEEN {today} and {today-timedelta(days=7)}')
+            currentSample = self.timeSequenceCursor.fetchall()
+            sum7days = [sum(i) for i in zip(*currentSample)][1]
+            avg7days = round(sum3days/7,2)
+
+            self.timeSequenceCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE d BETWEEN {today} and {today-timedelta(days=30)}')
+            currentSample = self.timeSequenceCursor.fetchall()
+            sum30days = [sum(i) for i in zip(*currentSample)][1]
+            avg30days = round(sum3days/30)
+
+            # Build Embed
             embed.add_field(name=f'Stats for **{user.name}**', value='\u200b', inline=False)
             embed.add_field(name='Biggest Simp', value=f'{self.bot.get_user(int(simpList[0][0])).mention}', inline=True)
             embed.add_field(name='Reactions Farmed', value=f'{reactions}', inline=True)
@@ -214,16 +232,16 @@ class Simps(commands.Cog):
             embed.add_field(name='Swears Per Message', value=f'placeholder', inline=True)
             embed.add_field(name='\u200b', value='\u200b', inline=False)
             embed.add_field(name='Total Time On', value='\u200b', inline=False)
-            embed.add_field(name='Last 3 Days', value=f'{round(referenceTime/3600,2)} hrs', inline=True)
-            embed.add_field(name='Last 7 Days', value=f'{round(referenceTime/3600,2)} hrs', inline=True)
-            embed.add_field(name='Last 30 Days', value=f'{round(referenceTime/3600,2)} hrs', inline=True)
+            embed.add_field(name='Last 3 Days', value=f'{sum3days} hrs', inline=True)
+            embed.add_field(name='Last 7 Days', value=f'{sum7days} hrs', inline=True)
+            embed.add_field(name='Last 30 Days', value=f'{sum30days} hrs', inline=True)
             embed.add_field(name='All Time', value=f'{round(referenceTime/3600,2)} hrs', inline=True)
             embed.add_field(name='\u200b', value='\u200b', inline=False)
             embed.add_field(name='Time On Per Day', value='\u200b', inline=False)
-            embed.add_field(name='Last 3 Days', value=f'{round(referenceTime/3600,2)} hrs', inline=True)
-            embed.add_field(name='Last 7 Days', value=f'{round(referenceTime/3600,2)} hrs', inline=True)
-            embed.add_field(name='Last 30 Days', value=f'{round(referenceTime/3600,2)} hrs', inline=True)
-            embed.add_field(name='All Time', value=f'{round(referenceTime/3600,2)} hrs', inline=True)
+            embed.add_field(name='Last 3 Days', value=f'{avg3days} hrs', inline=True)
+            embed.add_field(name='Last 7 Days', value=f'{avg7days} hrs', inline=True)
+            embed.add_field(name='Last 30 Days', value=f'{avg30days} hrs', inline=True)
+            # embed.add_field(name='All Time', value=f'{round(referenceTime/3600,2)} hrs', inline=True)
         else:
             # todo embed for no stats users
             return
