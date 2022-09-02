@@ -209,9 +209,8 @@ class Simps(commands.Cog):
             del simpList[delIndex]
 
             today = datetime.date.today()
-            todayObj = datetime.date(today.year, today.month, today.day)
             self.timeSequenceCursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE type='table' AND name = '{user.id}' ''')
-            self.timeSequenceCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE d BETWEEN {today} and {today-timedelta(days=3)}')
+            self.timeSequenceCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE d BETWEEN {today.strftime('%Y-%m-%d')} and {(today-timedelta(days=3)).strftime('%Y-%m-%d')}')
             currentSample = self.timeSequenceCursor.fetchall()
             print(currentSample)
             sum3days = [sum(i) for i in zip(*currentSample)][1]
