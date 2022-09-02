@@ -140,7 +140,8 @@ class Simps(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         self.initConnectedUsers()
-        schedule.every().day.at("22:17").do(self.updateTimes)
+        print("Scheduling Auto Update")
+        schedule.every().day.at("22:23").do(self.updateTimes)
         self.stop_run_continuously = self.run_continuously()
         print("Initially connected users: ", self.connectedUsers)
 
