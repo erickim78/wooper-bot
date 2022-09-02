@@ -198,25 +198,30 @@ class Simps(commands.Cog):
 
             referenceTime = 0
             delIndex = 0
+            reactions = 0
             for x in range(len(simpList)):
                 if int(simpList[x][0]) == user.id:
                     delIndex = x
                     referenceTime = float(simpList[x][1])
-                    break
+                else:
+                    reactions += int(simpList[x][2])
             del simpList[delIndex]
 
-            embed.add_field(name=f'Stats for **{user.name}**', value='\u200b \n\n\n\n', inline=False)
-            embed.add_field(name='Biggest Simp', value=f'{self.bot.get_user(int(simpList[0][0])).mention} \n\n\n\n', inline=False)
-            embed.add_field(name='Total Time Online', value='\u200b', inline=False)
-            embed.add_field(name='Last 3 Days', value=f'{round(referenceTime//3600,2)} Hours', inline=True)
-            embed.add_field(name='Last 7 Days', value=f'{round(referenceTime//3600,2)} Hours', inline=True)
-            embed.add_field(name='Last 30 Days', value=f'{round(referenceTime//3600,2)} Hours', inline=True)
-            embed.add_field(name='All Time', value=f'{round(referenceTime//3600,2)} Hours \n\n\n\n', inline=False)
-            embed.add_field(name='Average Online Per Day', value='\u200b', inline=False)
-            embed.add_field(name='Last 3 Days', value=f'{round(referenceTime//3600,2)} Hours', inline=True)
-            embed.add_field(name='Last 7 Days', value=f'{round(referenceTime//3600,2)} Hours', inline=True)
-            embed.add_field(name='Last 30 Days', value=f'{round(referenceTime//3600,2)} Hours', inline=True)
-            embed.add_field(name='All Time', value=f'{round(referenceTime//3600,2)} Hours', inline=True)
+            embed.add_field(name=f'Stats for **{user.name}**', value='\u200b', inline=False)
+            embed.add_field(name='Biggest Simp', value=f'{self.bot.get_user(int(simpList[0][0])).mention}', inline=True)
+            embed.add_field(name='Reactions Farmed', value=f'{reactions}', inline=True)
+            embed.add_field(name='Profanities Spewed', value=f'placeholder', inline=False)
+            embed.add_field(name='Average Swears per Message', value=f'placeholder', inline=True)
+            embed.add_field(name='Time Online', value='Total', inline=False)
+            embed.add_field(name='Last 3 Days', value=f'{round(referenceTime/3600,2)} hrs', inline=True)
+            embed.add_field(name='Last 7 Days', value=f'{round(referenceTime/3600,2)} hrs', inline=True)
+            embed.add_field(name='Last 30 Days', value=f'{round(referenceTime/3600,2)} hrs', inline=True)
+            embed.add_field(name='All Time', value=f'{round(referenceTime/3600,2)} hrs', inline=False)
+            embed.add_field(name='Time Online', value='per Day Average', inline=False)
+            embed.add_field(name='Last 3 Days', value=f'{round(referenceTime/3600,2)} hrs', inline=True)
+            embed.add_field(name='Last 7 Days', value=f'{round(referenceTime/3600,2)} hrs', inline=True)
+            embed.add_field(name='Last 30 Days', value=f'{round(referenceTime/3600,2)} hrs', inline=True)
+            embed.add_field(name='All Time', value=f'{round(referenceTime/3600,2)} hrs', inline=True)
         else:
             # todo embed for no stats users
             return
