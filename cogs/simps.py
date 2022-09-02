@@ -254,12 +254,21 @@ class Simps(commands.Cog):
             avg30days = round(sum3days/30,2)
             sum30days = round(sum30days,2)
 
+            totalSwears = 0
+            self.messageCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE key = 0')
+            currentSample = self.messageCursor.fetchone()[0]
+            totalSwears += currentSample[2]
+            if currentSample[1] == 0:
+                avgSwears = "-"
+            else:
+                avgSwears +=  round(currentSample[2]/currentSample[1],2)
+
             # Build Embed
             embed.add_field(name=f'Stats for **{user.name}**', value='\u200b', inline=False)
             embed.add_field(name='Biggest Simp', value=f'{self.bot.get_user(int(simpList[0][0])).mention}', inline=True)
             embed.add_field(name='Reactions Farmed', value=f'{reactions}', inline=True)
-            embed.add_field(name='Profanities Used', value=f'placeholder', inline=True)
-            embed.add_field(name='Swears Per Message', value=f'placeholder', inline=True)
+            embed.add_field(name='Profanities Used', value=f'totalSwears', inline=True)
+            embed.add_field(name='Swears Per Message', value=f'avgSwears', inline=True)
             #embed.add_field(name='\u200b', value='\u200b', inline=False)
             embed.add_field(name='\u200b', value='**Total Time On**', inline=False)
             embed.add_field(name='Last 3 Days', value=f'{sum3days} hrs', inline=True)
