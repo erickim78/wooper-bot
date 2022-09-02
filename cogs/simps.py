@@ -115,7 +115,7 @@ class Simps(commands.Cog):
                 self.updateTimeWithoutDisconnect(user)
             return
         print("SCHEDULED UPDATE")
-        schedule.every().day.at('22:04')
+        schedule.every().day.at('22:06').do(update)
 
     # On Ready
     @commands.Cog.listener()
