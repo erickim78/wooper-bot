@@ -74,7 +74,7 @@ class Simps(commands.Cog):
     def checkMessageTable(self, tableName):
         self.messageCursor.execute(f''' SELECT count(name) FROM sqlite_master WHERE type='table' AND name = '{tableName}' ''')
         if self.messageCursor.fetchone()[0] != 1:
-            self.messageCursor.execute(f''' CREATE TABLE '{tableName}' (key INTEGER, messages INTEGER, swears INTEGER, PRIMARY KEY(key))''')
+            self.messageCursor.execute(f''' CREATE TABLE '{tableName}' (key INT, messages INT, swears INT, PRIMARY KEY (key))''')
 
     def addTime(self, userId, timeToAdd):
         self.checkTimeTable(userId)
@@ -110,7 +110,7 @@ class Simps(commands.Cog):
     async def on_message(self, message):
         currentId = message.author.id
         swearCount = predict([message.content])
-        print(swearCount)
+        print(swearCount[0])
         self.checkMessageTable(currentId)
         self.messageCursor.execute(f'INSERT INTO \'{str(currentId)}\' (key, messages, swears) VALUES ({0}, {1}, {swearCount[0]}) ON CONFLICT (key) DO UPDATE SET messages = messages + 1, swears = swears + {swearCount}')
         self.messageConn.commit()
