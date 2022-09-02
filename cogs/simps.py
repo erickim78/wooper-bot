@@ -270,6 +270,14 @@ class Simps(commands.Cog):
 
             self.checkTimeTable(user.id)
             self.timeSequenceCursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE type='table' AND name = '{user.id}' ''')
+            self.timeSequenceCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE d = date(\'now\')')
+            currentSample = self.timeSequenceCursor.fetchall()
+            todays = 0
+            for item in currentSample:
+                todays += float(item[1])
+            todays = round(sum3days/3600,2)
+
+            self.timeSequenceCursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE type='table' AND name = '{user.id}' ''')
             self.timeSequenceCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE d BETWEEN date(\'now\', \'-3 day\') and date(\'now\', \'-1 day\')')
             currentSample = self.timeSequenceCursor.fetchall()
             sum3days = 0
@@ -311,6 +319,7 @@ class Simps(commands.Cog):
             embed.add_field(name='Swears Per Message', value=f'{avgSwears}', inline=True)
             #embed.add_field(name='\u200b', value='\u200b', inline=False)
             embed.add_field(name='\u200b', value='**Total Time On**', inline=False)
+            embed.add_field(name='Today', value=f'{todays} hrs', inline=True)
             embed.add_field(name='Last 3 Days', value=f'{sum3days} hrs', inline=True)
             embed.add_field(name='Last 7 Days', value=f'{sum7days} hrs', inline=True)
             embed.add_field(name='Last 30 Days', value=f'{sum30days} hrs', inline=True)
