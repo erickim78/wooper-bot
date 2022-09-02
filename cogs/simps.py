@@ -4,7 +4,6 @@ import time
 import datetime
 from datetime import timedelta
 from profanity_check import predict, predict_prob
-import joblib
 
 # File Imports
 import config
