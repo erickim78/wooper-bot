@@ -315,11 +315,11 @@ class Simps(commands.Cog):
             # Build Embed
             embed.add_field(name=f'Stats for **{user.name}**', value='\u200b', inline=False)
             embed.add_field(name='Biggest Simp', value=f'{self.bot.get_user(int(simpList[0][0])).mention}', inline=True)
-            embed.add_field(name='Messages Sent', value=f'{messagesSent}', inline=True)
             embed.add_field(name='Reactions Farmed', value=f'{reactions}', inline=True)
             embed.add_field(name='Profanities Used', value=f'{totalSwears}', inline=True)
+            embed.add_field(name='Messages Sent', value=f'{messagesSent}', inline=True)
             embed.add_field(name='Reactions Per Message', value=f'{round(reactions/messagesSent,2)}', inline=True)
-            embed.add_field(name='Profanites Per Message', value=f'{avgSwears}', inline=True)
+            embed.add_field(name='Profanities Per Message', value=f'{avgSwears}', inline=True)
             #embed.add_field(name='\u200b', value='\u200b', inline=False)
             embed.add_field(name='\u200b', value='**Total Time On**', inline=False)
             embed.add_field(name='Today', value=f'{todays} hrs', inline=True)
