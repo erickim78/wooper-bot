@@ -44,6 +44,7 @@ async def load_extensions():
 # Init Database
 connection = sqlite3.connect("bot.db")
 timeSequenceConn = sqlite3.connect("timeSequence.db", detect_types=sqlite3.PARSE_DECLTYPES|sqlite3.PARSE_COLNAMES)
+messageAnalysis = sqlite3.connect("messageAnalysis.db")
 
 # Run Main Script
 if __name__ == '__main__':

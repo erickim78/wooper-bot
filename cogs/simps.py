@@ -3,6 +3,7 @@ from sqlite3 import Cursor
 import time
 import datetime
 from datetime import timedelta
+from profanity_check import predict, predict_prob
 
 # File Imports
 import config
@@ -26,6 +27,10 @@ class Simps(commands.Cog):
         # Time Data
         self.timeSequenceConn = main.timeSequenceConn
         self.timeSequenceCursor = main.timeSequenceConn.cursor()
+
+        # Message Analysis
+        self.messageConn = main.messageAnalysis
+        self.messageCursor = main.messageAnalysis.cursor()
         
         # Init Connected User List
         self.connectedUsers = {}
@@ -66,6 +71,11 @@ class Simps(commands.Cog):
         if self.timeSequenceCursor.fetchone()[0] != 1:
             self.timeSequenceCursor.execute(f''' CREATE TABLE '{tableName}' (d date, count DECIMAL(38,4), PRIMARY KEY (d))''')
 
+    def checkMessageTable(self, tableName):
+        self.timeSequenceCursor.execute(f''' SELECT count(name) FROM sqlite_master WHERE type='table' AND name = '{tableName}' ''')
+        if self.timeSequenceCursor.fetchone()[0] != 1:
+            self.timeSequenceCursor.execute(f''' CREATE TABLE '{tableName}' ( key INTEGER, messages INTEGER, swears INTEGER, PRIMARY KEY(key))''')
+
     def addTime(self, userId, timeToAdd):
         self.checkTimeTable(userId)
         self.timeSequenceCursor.execute(f'INSERT INTO \'{str(userId)}\' (d, count) VALUES (date(\'now\'), {timeToAdd}) ON CONFLICT (d) DO UPDATE SET count = count + {timeToAdd}')
@@ -95,7 +105,15 @@ class Simps(commands.Cog):
     async def on_ready(self):
         self.initConnectedUsers()
         print("Initially connected users: ", self.connectedUsers)
-    
+
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        currentId = message.author.id
+        swearCount = predict([message.content])
+        self.checkMessageTable(currentId)
+        self.messageCursor.execute(f'INSERT INTO \'{str(currentId)}\' (key, messages, swears) VALUES ({0}, {1}, {swearCount}) ON CONFLICT (id) DO UPDATE SET messages = messages + 1, swears = swears + {swearCount}')
+        self.messageConn.commit()
+
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
         channel = self.bot.get_channel(payload.channel_id)
