@@ -258,16 +258,16 @@ class Simps(commands.Cog):
             avgSwears = 0
             self.checkMessageTable(user.id)
             self.messageCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE key = 0')
-            if self.messageCursor.fetchone()[0] == 1:
+            if self.messageCursor.fetchone()[0] != 1:
+                totalSwears = "-"
+                avgSwears = "-"
+            else:
                 currentSample = self.messageCursor.fetchall()[0]
                 totalSwears += currentSample[2]
                 if currentSample[1] == 0:
                     avgSwears = "-"
                 else:
                     avgSwears +=  round(currentSample[2]/currentSample[1],2)
-            else:
-                totalSwears = "-"
-                avgSwears = "-"
 
             # Build Embed
             embed.add_field(name=f'Stats for **{user.name}**', value='\u200b', inline=False)
