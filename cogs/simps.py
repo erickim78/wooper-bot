@@ -274,7 +274,7 @@ class Simps(commands.Cog):
             todays = 0
             for item in currentSample:
                 todays += float(item[1])
-            todays = round(sum3days/3600,2)
+            todays = round(todays/3600,2)
 
             self.timeSequenceCursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE type='table' AND name = '{user.id}' ''')
             self.timeSequenceCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE d BETWEEN date(\'now\', \'-2 day\') and date(\'now\')')
@@ -336,8 +336,6 @@ class Simps(commands.Cog):
         else:
             embed.add_field(name=f'Stats for **{user.name}**', value='\u200b', inline=False)
             embed.add_field(name='\u200b', value=f'No stats for {user.mention}', inline=False)
-            await interaction.response.send_message(embed=embed)
-            return
         await interaction.response.send_message(embed=embed)
 
 async def setup(bot):
