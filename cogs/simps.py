@@ -260,6 +260,7 @@ class Simps(commands.Cog):
             self.checkMessageTable(user.id)
             self.messageCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE k = 0')
             currentSample = self.messageCursor.fetchall()
+            print(currentSample)
             for item in currentSample:
                 totalSwears = int(currentSample[2])
                 avgSwears = round(totalSwears/currentSample[1],2)
