@@ -70,16 +70,22 @@ class Simps(commands.Cog):
         self.cursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE type='table' AND name = '{tableName}' ''')
         if self.cursor.fetchone()[0] != 1:
             self.cursor.execute(f'''CREATE TABLE '{tableName}' (id TEXT, count DECIMAL (38,4), reactions TEXT, PRIMARY KEY (id))''')
+            return False
+        return True
 
     def checkTimeTable(self, tableName):
         self.timeSequenceCursor.execute(f''' SELECT count(name) FROM sqlite_master WHERE type='table' AND name = '{tableName}' ''')
         if self.timeSequenceCursor.fetchone()[0] != 1:
             self.timeSequenceCursor.execute(f''' CREATE TABLE '{tableName}' (d date, count DECIMAL(38,4), PRIMARY KEY (d))''')
+            return False
+        return True
 
     def checkMessageTable(self, tableName):
         self.messageCursor.execute(f''' SELECT count(name) FROM sqlite_master WHERE type='table' AND name = '{tableName}' ''')
         if self.messageCursor.fetchone()[0] != 1:
             self.messageCursor.execute(f''' CREATE TABLE '{tableName}' (k INT, messages INT, swears INT, PRIMARY KEY (k))''')
+            return False
+        return True
 
     def addTime(self, userId, timeToAdd):
         self.checkTimeTable(userId)
@@ -126,17 +132,18 @@ class Simps(commands.Cog):
         continuous_thread.start()
         return cease_continuous_run
 
-    def updateTimes(self):
+    def autoUpdateTimes(self):
         print("AUTOMATIC DAILY UPDATE REPORT:")
         for user in self.timeTracker:
             self.updateTimeWithoutDisconnect(user)
+        print("============================================================")
 
     # On Ready
     @commands.Cog.listener()
     async def on_ready(self):
         self.initConnectedUsers()
         print("Scheduling Auto Update")
-        schedule.every().day.at("05:37").do(self.updateTimes)
+        schedule.every().day.at("23:59").do(self.autoUpdateTimes)
         self.stop_run_continuously = self.run_continuously()
         print("Initially connected users: ", self.connectedUsers)
 
@@ -261,7 +268,7 @@ class Simps(commands.Cog):
                     reactions += int(simpList[x][2])
             del simpList[delIndex]
 
-            today = datetime.date.today()
+            self.checkTimeTable(user.id)
             self.timeSequenceCursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE type='table' AND name = '{user.id}' ''')
             self.timeSequenceCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE d BETWEEN date(\'now\', \'-3 day\') and date(\'now\', \'-1 day\')')
             currentSample = self.timeSequenceCursor.fetchall()
