@@ -278,7 +278,7 @@ class Simps(commands.Cog):
             todays = round(sum3days/3600,2)
 
             self.timeSequenceCursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE type='table' AND name = '{user.id}' ''')
-            self.timeSequenceCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE d BETWEEN date(\'now\', \'-3 day\') and date(\'now\', \'-1 day\')')
+            self.timeSequenceCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE d BETWEEN date(\'now\', \'-2 day\') and date(\'now\')')
             currentSample = self.timeSequenceCursor.fetchall()
             sum3days = 0
             for item in currentSample:
@@ -286,7 +286,7 @@ class Simps(commands.Cog):
             avg3days = round(sum3days/10800,2)
             sum3days = round(sum3days/10800,2)
 
-            self.timeSequenceCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE d BETWEEN date(\'now\', \'-7 day\') and date(\'now\', \'-1 day\')')
+            self.timeSequenceCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE d BETWEEN date(\'now\', \'-6 day\') and date(\'now\', \'-1 day\')')
             currentSample = self.timeSequenceCursor.fetchall()
             sum7days = 0
             for item in currentSample:
@@ -294,7 +294,7 @@ class Simps(commands.Cog):
             avg7days = round(sum3days/25200,2)
             sum7days = round(sum7days/10800,2)
 
-            self.timeSequenceCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE d BETWEEN date(\'now\', \'-30 day\') and date(\'now\', \'-1 day\')')
+            self.timeSequenceCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE d BETWEEN date(\'now\', \'-29 day\') and date(\'now\', \'-1 day\')')
             currentSample = self.timeSequenceCursor.fetchall()
             sum30days = 0
             for item in currentSample:
@@ -304,19 +304,23 @@ class Simps(commands.Cog):
 
             totalSwears = "-"
             avgSwears = "-"
+            messagesSent = 0
             self.checkMessageTable(user.id)
             self.messageCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE k = 0')
             currentSample = self.messageCursor.fetchall()
             for item in currentSample:
+                messagesSent = int(currentSample[0][1])
                 totalSwears = int(currentSample[0][2])
-                avgSwears = round(totalSwears/currentSample[0][1],2)
+                avgSwears = round(totalSwears/messagesSent,2)
 
             # Build Embed
             embed.add_field(name=f'Stats for **{user.name}**', value='\u200b', inline=False)
             embed.add_field(name='Biggest Simp', value=f'{self.bot.get_user(int(simpList[0][0])).mention}', inline=True)
+            embed.add_field(name='Messages Sent', value=f'{messagesSent}', inline=True)
             embed.add_field(name='Reactions Farmed', value=f'{reactions}', inline=True)
             embed.add_field(name='Profanities Used', value=f'{totalSwears}', inline=True)
-            embed.add_field(name='Swears Per Message', value=f'{avgSwears}', inline=True)
+            embed.add_field(name='Reactions Per Message', value=f'{round(reactions/messagesSent,2)}', inline=True)
+            embed.add_field(name='Profanites Per Message', value=f'{avgSwears}', inline=True)
             #embed.add_field(name='\u200b', value='\u200b', inline=False)
             embed.add_field(name='\u200b', value='**Total Time On**', inline=False)
             embed.add_field(name='Today', value=f'{todays} hrs', inline=True)
@@ -325,7 +329,7 @@ class Simps(commands.Cog):
             embed.add_field(name='Last 30 Days', value=f'{sum30days} hrs', inline=True)
             embed.add_field(name='All Time', value=f'{round(referenceTime/3600,2)} hrs', inline=True)
             #embed.add_field(name='\u200b', value='\u200b', inline=False)
-            embed.add_field(name='\u200b', value='**Time On Per Day**', inline=False)
+            embed.add_field(name='\u200b', value='**Average Time Per Day**', inline=False)
             embed.add_field(name='Last 3 Days', value=f'{avg3days} hrs', inline=True)
             embed.add_field(name='Last 7 Days', value=f'{avg7days} hrs', inline=True)
             embed.add_field(name='Last 30 Days', value=f'{avg30days} hrs', inline=True)
