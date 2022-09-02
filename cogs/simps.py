@@ -109,21 +109,6 @@ class Simps(commands.Cog):
             timeConnected = currentTime - self.timeTracker[userId]
             self.addTime(userId, timeConnected)
             self.timeTracker[userId] = currentTime
-
-    def initDayScheduler(self):
-        def update():
-            print("AUTOMATIC DAILY UPDATE REPORT:")
-            for user in self.timeTracker:
-                self.updateTimeWithoutDisconnect(user)
-            return
-        print("SCHEDULED UPDATE")
-        
-
-    def updateTimes(self):
-        print("AUTOMATIC DAILY UPDATE REPORT:")
-        for user in self.timeTracker:
-            self.updateTimeWithoutDisconnect(user)
-        return
     
     def run_continuously(self, interval = 5):
         cease_continuous_run = threading.Event()
@@ -136,12 +121,17 @@ class Simps(commands.Cog):
         continuous_thread.start()
         return cease_continuous_run
 
+    def updateTimes(self):
+        print("AUTOMATIC DAILY UPDATE REPORT:")
+        for user in self.timeTracker:
+            self.updateTimeWithoutDisconnect(user)
+
     # On Ready
     @commands.Cog.listener()
     async def on_ready(self):
         self.initConnectedUsers()
         print("Scheduling Auto Update")
-        schedule.every().day.at("22:23").do(self.updateTimes)
+        schedule.every().day.at("05:30").do(self.updateTimes)
         self.stop_run_continuously = self.run_continuously()
         print("Initially connected users: ", self.connectedUsers)
 
