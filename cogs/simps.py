@@ -4,6 +4,7 @@ import time
 import datetime
 from datetime import timedelta
 from profanity_check import predict
+import schedule
 
 # File Imports
 import config
@@ -100,10 +101,27 @@ class Simps(commands.Cog):
             self.addTime(userId, timeConnected)
             del self.timeTracker[userId]
 
+    def updateTimeWithoutDisconnect(self, userId):
+        if self.timeTracker[userId] is not None:
+            currentTime = time.time()
+            timeConnected = currentTime - self.timeTracker[userId]
+            self.addTime(userId, timeConnected)
+            self.timeTracker[userId] = currentTime
+
+    def initDayScheduler(self):
+        def update():
+            print("UPDATING ALL DAYS")
+            for user in self.timeTracker:
+                self.updateTimeWithoutDisconnect(user)
+            return
+        print("SCHEDULED UPDATE")
+        schedule.every().day.at('22:04')
+
     # On Ready
     @commands.Cog.listener()
     async def on_ready(self):
         self.initConnectedUsers()
+        self.initDayScheduler()
         print("Initially connected users: ", self.connectedUsers)
 
     @commands.Cog.listener()
