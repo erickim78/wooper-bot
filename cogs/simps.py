@@ -3,7 +3,7 @@ from sqlite3 import Cursor
 import time
 import datetime
 from datetime import timedelta
-from profanity_check import predict, predict_prob
+from profanity_check import predict
 
 # File Imports
 import config
@@ -110,8 +110,9 @@ class Simps(commands.Cog):
     async def on_message(self, message):
         currentId = message.author.id
         swearCount = predict([message.content])
+        print(swearCount)
         self.checkMessageTable(currentId)
-        self.messageCursor.execute(f'INSERT INTO \'{str(currentId)}\' (key, messages, swears) VALUES ({0}, {1}, {swearCount}) ON CONFLICT (key) DO UPDATE SET messages = messages + 1, swears = swears + {swearCount}')
+        self.messageCursor.execute(f'INSERT INTO \'{str(currentId)}\' (key, messages, swears) VALUES ({0}, {1}, {swearCount[0]}) ON CONFLICT (key) DO UPDATE SET messages = messages + 1, swears = swears + {swearCount}')
         self.messageConn.commit()
 
     @commands.Cog.listener()
