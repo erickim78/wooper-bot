@@ -258,7 +258,7 @@ class Simps(commands.Cog):
             totalSwears = 0
             avgSwears = 0
             self.checkMessageTable(user.id)
-            self.messageCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE key = 0')
+            self.messageCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE k = 0')
             if self.messageCursor.fetchone()[0] != 1:
                 totalSwears = "-"
                 avgSwears = "-"
