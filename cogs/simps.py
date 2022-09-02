@@ -239,7 +239,6 @@ class Simps(commands.Cog):
 
             self.timeSequenceCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE d BETWEEN date(\'now\', \'-7 day\') and date(\'now\', \'-1 day\')')
             currentSample = self.timeSequenceCursor.fetchall()
-            print(currentSample)
             sum7days = 0
             for item in currentSample:
                 sum7days += float(item[1])
@@ -248,7 +247,6 @@ class Simps(commands.Cog):
 
             self.timeSequenceCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE d BETWEEN date(\'now\', \'-30 day\') and date(\'now\', \'-1 day\')')
             currentSample = self.timeSequenceCursor.fetchall()
-            print(currentSample)
             sum30days = 0
             for item in currentSample:
                 sum30days += float(item[1])
@@ -260,10 +258,9 @@ class Simps(commands.Cog):
             self.checkMessageTable(user.id)
             self.messageCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE k = 0')
             currentSample = self.messageCursor.fetchall()
-            print(currentSample)
             for item in currentSample:
-                totalSwears = int(currentSample[2])
-                avgSwears = round(totalSwears/currentSample[1],2)
+                totalSwears = int(currentSample[0][2])
+                avgSwears = round(totalSwears/currentSample[0][1],2)
 
             # Build Embed
             embed.add_field(name=f'Stats for **{user.name}**', value='\u200b', inline=False)
