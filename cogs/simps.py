@@ -210,7 +210,8 @@ class Simps(commands.Cog):
 
             today = datetime.date.today()
             self.timeSequenceCursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE type='table' AND name = '{user.id}' ''')
-            self.timeSequenceCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE d BETWEEN \'{str(today)}\' and \'{str(today-timedelta(days=3))}\'')
+            self.timeSequenceCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE d BETWEEN \'2022-09-02\' and \'2022-08-31\'')
+            # self.timeSequenceCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE d BETWEEN \'{str(today)}\' and \'{str(today-timedelta(days=3))}\'')
             currentSample = self.timeSequenceCursor.fetchall()
             print(currentSample)
             sum3days = [sum(i) for i in zip(*currentSample)][1]
