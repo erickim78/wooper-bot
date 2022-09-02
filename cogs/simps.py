@@ -38,6 +38,9 @@ class Simps(commands.Cog):
         self.connectedUsers = {}
         self.timeTracker = {}
 
+        # Lock
+        self.timeLock = threading.Lock()
+
     def initConnectedUsers(self):
         updateTime = time.time()
         for guild in self.bot.guilds:
@@ -99,16 +102,18 @@ class Simps(commands.Cog):
 
     def updateTimeOnDisconnect(self, userId):
         if self.timeTracker[userId] is not None: # Should never be None but just in case of double access conflict
-            timeConnected = time.time() - self.timeTracker[userId]
-            self.addTime(userId, timeConnected)
-            del self.timeTracker[userId]
+            with self.timeLock:
+                timeConnected = time.time() - self.timeTracker[userId]
+                self.addTime(userId, timeConnected)
+                del self.timeTracker[userId]
 
     def updateTimeWithoutDisconnect(self, userId):
         if self.timeTracker[userId] is not None:
             currentTime = time.time()
-            timeConnected = currentTime - self.timeTracker[userId]
-            self.addTime(userId, timeConnected)
-            self.timeTracker[userId] = currentTime
+            with self.timeLock:
+                timeConnected = currentTime - self.timeTracker[userId]
+                self.addTime(userId, timeConnected)
+                self.timeTracker[userId] = currentTime
     
     def run_continuously(self, interval = 5):
         cease_continuous_run = threading.Event()
@@ -131,7 +136,7 @@ class Simps(commands.Cog):
     async def on_ready(self):
         self.initConnectedUsers()
         print("Scheduling Auto Update")
-        schedule.every().day.at("05:30").do(self.updateTimes)
+        schedule.every().day.at("05:37").do(self.updateTimes)
         self.stop_run_continuously = self.run_continuously()
         print("Initially connected users: ", self.connectedUsers)
 
