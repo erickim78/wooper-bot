@@ -112,7 +112,7 @@ class Simps(commands.Cog):
         swearCount = predict([message.content])
         print(swearCount[0])
         self.checkMessageTable(currentId)
-        self.messageCursor.execute(f'INSERT INTO \'{str(currentId)}\' (k, messages, swears) VALUES ({0}, {1}, {swearCount[0]}) ON CONFLICT (k) DO UPDATE SET messages = messages + 1, swears = swears + {swearCount}')
+        self.messageCursor.execute(f'INSERT INTO \'{str(currentId)}\' (k, messages, swears) VALUES ({0}, {1}, {swearCount[0]}) ON CONFLICT (k) DO UPDATE SET messages = messages + 1, swears = swears + {swearCount[0]}')
         self.messageConn.commit()
 
     @commands.Cog.listener()
