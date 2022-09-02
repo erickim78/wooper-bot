@@ -5,6 +5,7 @@ import datetime
 from datetime import timedelta
 from profanity_check import predict
 import schedule
+import threading
 
 # File Imports
 import config
@@ -81,6 +82,7 @@ class Simps(commands.Cog):
         self.checkTimeTable(userId)
         self.timeSequenceCursor.execute(f'INSERT INTO \'{str(userId)}\' (d, count) VALUES (date(\'now\'), {timeToAdd}) ON CONFLICT (d) DO UPDATE SET count = count + {timeToAdd}')
         self.timeSequenceConn.commit()
+        print(f'In Time Sequencing Database, added {round(timeToAdd/3600,2)} hours to user {self.bot.get_user(userId).name}')
         return
 
     def handleConnect(self, userId):
@@ -110,18 +112,36 @@ class Simps(commands.Cog):
 
     def initDayScheduler(self):
         def update():
-            print("UPDATING ALL DAYS")
+            print("AUTOMATIC DAILY UPDATE REPORT:")
             for user in self.timeTracker:
                 self.updateTimeWithoutDisconnect(user)
             return
         print("SCHEDULED UPDATE")
-        schedule.every().day.at('22:06').do(update)
+        
+
+    def updateTimes(self):
+        print("AUTOMATIC DAILY UPDATE REPORT:")
+        for user in self.timeTracker:
+            self.updateTimeWithoutDisconnect(user)
+        return
+    
+    def run_continuously(self, interval = 5):
+        cease_continuous_run = threading.Event()
+        class ScheduleThread(threading.Thread):
+            def run(cls):
+                while not cease_continuous_run.is_set():
+                    schedule.run_pending()
+                    time.sleep(interval)
+        continuous_thread = ScheduleThread()
+        continuous_thread.start()
+        return cease_continuous_run
 
     # On Ready
     @commands.Cog.listener()
     async def on_ready(self):
         self.initConnectedUsers()
-        self.initDayScheduler()
+        schedule.every().day.at("22:17").do(self.updateTimes)
+        self.stop_run_continuously = self.run_continuously()
         print("Initially connected users: ", self.connectedUsers)
 
     @commands.Cog.listener()
