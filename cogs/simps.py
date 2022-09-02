@@ -235,7 +235,7 @@ class Simps(commands.Cog):
             for item in currentSample:
                 sum3days += float(item[1])
             avg3days = round(sum3days/10800,2)
-            sum3days = round(sum3days,2)
+            sum3days = round(sum3days/10800,2)
 
             self.timeSequenceCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE d BETWEEN date(\'now\', \'-7 day\') and date(\'now\', \'-1 day\')')
             currentSample = self.timeSequenceCursor.fetchall()
@@ -244,7 +244,7 @@ class Simps(commands.Cog):
             for item in currentSample:
                 sum7days += float(item[1])
             avg7days = round(sum3days/25200,2)
-            sum7days = round(sum7days,2)
+            sum7days = round(sum7days/10800,2)
 
             self.timeSequenceCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE d BETWEEN date(\'now\', \'-30 day\') and date(\'now\', \'-1 day\')')
             currentSample = self.timeSequenceCursor.fetchall()
@@ -253,22 +253,16 @@ class Simps(commands.Cog):
             for item in currentSample:
                 sum30days += float(item[1])
             avg30days = round(sum3days/108000,2)
-            sum30days = round(sum30days,2)
+            sum30days = round(sum30days/10800,2)
 
-            totalSwears = 0
-            avgSwears = 0
+            totalSwears = "-"
+            avgSwears = "-"
             self.checkMessageTable(user.id)
             self.messageCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE k = 0')
-            if self.messageCursor.fetchone()[0] != 1:
-                totalSwears = "-"
-                avgSwears = "-"
-            else:
-                currentSample = self.messageCursor.fetchall()[0]
-                totalSwears += currentSample[2]
-                if currentSample[1] == 0:
-                    avgSwears = "-"
-                else:
-                    avgSwears +=  round(currentSample[2]/currentSample[1],2)
+            currentSample = self.messageCursor.fetchall()
+            for item in currentSample:
+                totalSwears = int(currentSample[2])
+                avgSwears = round(totalSwears/currentSample[1],2)
 
             # Build Embed
             embed.add_field(name=f'Stats for **{user.name}**', value='\u200b', inline=False)
