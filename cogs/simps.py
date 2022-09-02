@@ -255,13 +255,19 @@ class Simps(commands.Cog):
             sum30days = round(sum30days,2)
 
             totalSwears = 0
+            avgSwears = 0
+            self.checkMessageTable(user.id)
             self.messageCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE key = 0')
-            currentSample = self.messageCursor.fetchone()[0]
-            totalSwears += currentSample[2]
-            if currentSample[1] == 0:
-                avgSwears = "-"
+            if self.messageCursor.fetchone()[0] == 1:
+                currentSample = self.messageCursor.fetchall()[0]
+                totalSwears += currentSample[2]
+                if currentSample[1] == 0:
+                    avgSwears = "-"
+                else:
+                    avgSwears +=  round(currentSample[2]/currentSample[1],2)
             else:
-                avgSwears +=  round(currentSample[2]/currentSample[1],2)
+                totalSwears = "-"
+                avgSwears = "-"
 
             # Build Embed
             embed.add_field(name=f'Stats for **{user.name}**', value='\u200b', inline=False)
