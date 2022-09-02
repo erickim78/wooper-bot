@@ -231,16 +231,16 @@ class Simps(commands.Cog):
                     embed.set_image(url=currentUser.avatar.url)
 
             embed.add_field(name='\u200b', value=result, inline=True)
-            await interaction.response.send_message(embed=embed)
+            embed.set_footer(text=f'Tracking since September 2, 2022')
         else:
             if userName[-1] == 's':
                 embed.add_field(name=f'{user.name}\' simps', value='\u200b', inline=False)
             else:
                 embed.add_field(name=f'{user.name}\'s simps', value='\u200b', inline=False)
             embed.add_field(name='\u200b', value=f'{user.mention} has no simps', inline=False)
-            await interaction.response.send_message(embed=embed)
+            embed.set_footer(text=f'Tracking since September 2, 2022')
 
-        return
+        await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name="stats", description='Server Stats')
     async def stats(self, interaction: discord.Interaction, user: discord.User = None) -> None:
@@ -333,6 +333,7 @@ class Simps(commands.Cog):
             embed.add_field(name='Last 7 Days', value=f'{avg7days} hrs', inline=True)
             embed.add_field(name='Last 30 Days', value=f'{avg30days} hrs', inline=True)
             # embed.add_field(name='All Time', value=f'{round(referenceTime/3600,2)} hrs', inline=True)
+            embed.set_footer(text=f'Tracking since September 2, 2022')
         else:
             embed.add_field(name=f'Stats for **{user.name}**', value='\u200b', inline=False)
             embed.add_field(name='\u200b', value=f'No stats for {user.mention}', inline=False)
