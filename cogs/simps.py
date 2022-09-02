@@ -249,8 +249,7 @@ class Simps(commands.Cog):
 
         # Build Embed Common Fields
         embed = discord.Embed(color=0xf1d3ed)
-        embed.set_thumbnail(url=user.avatar.url) 
-        userName = user.name
+        embed.set_thumbnail(url=user.avatar.url)
 
         self.cursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE type='table' AND name = '{user.id}' ''')
         if self.cursor.fetchone()[0] == 1:
@@ -335,7 +334,9 @@ class Simps(commands.Cog):
             embed.add_field(name='Last 30 Days', value=f'{avg30days} hrs', inline=True)
             # embed.add_field(name='All Time', value=f'{round(referenceTime/3600,2)} hrs', inline=True)
         else:
-            # todo embed for no stats users
+            embed.add_field(name=f'Stats for **{user.name}**', value='\u200b', inline=False)
+            embed.add_field(name='\u200b', value=f'No stats for {user.mention}', inline=False)
+            await interaction.response.send_message(embed=embed)
             return
         await interaction.response.send_message(embed=embed)
 
