@@ -131,7 +131,7 @@ class Games(commands.Cog):
         embed=discord.Embed(title="Tower of Oz", description=f'Welcome {user.mention}', color=0xf1d3ed)
         embed.set_thumbnail(url=imgURL)
         timmeString = "-"
-        if self.usersRunning[user.id] is None:
+        if user.id not in self.usersRunning or self.usersRunning[user.id] is None:
             timeString = "Not Running"
         else:
             now = time.time()
