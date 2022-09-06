@@ -124,7 +124,7 @@ class Games(commands.Cog):
         embed.add_field(name=responses[rand], value='\u200b', inline=False)
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.command(name='Oz Stats', description='View your oz stats')
+    @app_commands.command(name='ozstats', description='View your oz stats')
     async def ozstats(self, interaction: discord.Interaction) -> None:
         user = interaction.user
 
