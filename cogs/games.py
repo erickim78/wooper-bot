@@ -141,8 +141,8 @@ class Games(commands.Cog):
     @app_commands.command(name='ozbox', description='Open a Tower of Oz Ring Box (if you have one)')
     async def ozbox(self, interaction: discord.Interaction) -> None:
         currentUser = interaction.user
-        imgURL = "https://i.imgur.com/dxPvMN8.gif"
-        embed=discord.Embed(title="Tower of Oz", description=f'Welcome {currentUser.mention}', color=0xf1d3ed)
+        imgURL = "https://i.imgur.com/lu5MIE1.png"
+        embed=discord.Embed(title="Tower of Oz", description=f'Box Opening for {currentUser.mention}', color=0xf1d3ed)
         embed.set_thumbnail(url=imgURL)
         if currentUser.id not in self.boxes:
             embed.add_field(name="You have no Oz Boxes.", value='\u200b', inline=True)
@@ -158,8 +158,9 @@ class Games(commands.Cog):
             else:
                 level = numpy.random.choice(data.ringLevels, p=data.ringLevelOdds)
                 embed.add_field(name=reward, value=level, inline=False)
-            embed.add_field(name="Boxes Left", value=self.boxes[currentUser.id], inline=True)
-            embed.add_field(name="Runs Left", value=self.runsRemaining[currentUser.id], inline=True)
+            embed.add_field(name='\u200b', value='**Boxes Left**', inline=True)
+            embed.add_field(name=self.boxes[currentUser.id], value='**Runs Left', inline=True)
+            embed.add_field(name=self.runsRemaining[currentUser.id], value='\u200b', inline=True)
         await interaction.response.send_message(embed=embed)
 
 async def setup(bot):
