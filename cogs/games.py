@@ -159,7 +159,7 @@ class Games(commands.Cog):
                 level = numpy.random.choice(data.ringLevels, p=data.ringLevelOdds)
                 embed.add_field(name=reward, value=level, inline=False)
             embed.add_field(name='\u200b', value='**Boxes Left**', inline=True)
-            embed.add_field(name=self.boxes[currentUser.id], value='**Runs Left', inline=True)
+            embed.add_field(name=self.boxes[currentUser.id], value='**Runs Left**', inline=True)
             embed.add_field(name=self.runsRemaining[currentUser.id], value='\u200b', inline=True)
         await interaction.response.send_message(embed=embed)
 
