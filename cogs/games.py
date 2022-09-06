@@ -1,7 +1,6 @@
 # Dependencies
 import random
 from threading import Timer
-import time
 
 # File Imports
 import config
@@ -72,7 +71,6 @@ class Games(commands.Cog):
     
     # Initialize currently connected users
     def initUsersRunning(self):
-        updateTime = time.time()
         for guild in self.bot.guilds:
             currentChannels = guild.voice_channels
             for channel in currentChannels:
