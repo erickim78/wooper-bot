@@ -8,6 +8,43 @@ rings = ["Ring of Restraint", "Weapon Jump S Ring", "Weapon Jump I Ring", "Weapo
         "Limit Ring", "Durability Ring", "Clean Defense Ring", "Berserker Ring", "Mana Cut Ring", "Crisis H Ring", "Crisis M Ring", "Critical Shift Ring", "Stance Shift Ring", "Clean Stance Ring", "Swift Ring",
         "Reflective Ring", "Ocean Glow Earrings", "Broken Box Piece x 5" , "Oz Point Pouch x 5", "2x EXP Coupon (15 Minute) x 3"]
 
+rewardLinks = {}
+rewardLinks["Ring of Restraint"] = "https://static.wikia.nocookie.net/maplestory/images/4/4d/Eqp_Ring_of_Restraint.png/revision/latest?cb=20160210033306"
+rewardLinks["Weapon Jump S Ring"] = "https://static.wikia.nocookie.net/maplestory/images/2/27/Eqp_Weapon_Jump_Ring.png/revision/latest?cb=20190925072314"
+rewardLinks["Weapon Jump I Ring"] = "https://static.wikia.nocookie.net/maplestory/images/2/27/Eqp_Weapon_Jump_Ring.png/revision/latest?cb=20190925072314"
+rewardLinks["Weapon Jump L Ring"] = "https://static.wikia.nocookie.net/maplestory/images/2/27/Eqp_Weapon_Jump_Ring.png/revision/latest?cb=20190925072314"
+rewardLinks["Weapon Jump D Ring"] = "https://static.wikia.nocookie.net/maplestory/images/2/27/Eqp_Weapon_Jump_Ring.png/revision/latest?cb=20190925072314"
+rewardLinks["Ultimatum Ring"] = "https://static.wikia.nocookie.net/maplestory/images/4/4b/Eqp_Ultimatum_Ring.png/revision/latest?cb=20160217030325"
+rewardLinks["Risk Taker Ring"] = "https://static.wikia.nocookie.net/maplestory/images/0/0f/Eqp_Risk_Taker_Ring.png/revision/latest?cb=20210326132453"
+rewardLinks["Totalling Ring"] = "https://static.wikia.nocookie.net/maplestory/images/c/c3/Eqp_Totalling_Ring.png/revision/latest?cb=20210326132454"
+rewardLinks["Critical Damage Ring"] = "https://static.wikia.nocookie.net/maplestory/images/b/b6/Eqp_Critical_Damage_Ring.png/revision/latest?cb=20210326132453"
+rewardLinks["Crisis HM Ring"] = "https://static.wikia.nocookie.net/maplestory/images/d/dc/Eqp_Crisis_HM_Ring.png/revision/latest?cb=20210326132453"
+rewardLinks["Tower Boost Ring"] = "https://static.wikia.nocookie.net/maplestory/images/f/fb/Eqp_Tower_Boost_Ring.png/revision/latest?cb=20151128060245"
+rewardLinks["Cleansing Ring"] = "https://static.wikia.nocookie.net/maplestory/images/b/b4/Eqp_Cleansing_Ring.png/revision/latest?cb=20210326132453"
+rewardLinks["Overdrive Ring"] = "https://static.wikia.nocookie.net/maplestory/images/8/85/Eqp_Overdrive_Ring.png/revision/latest?cb=20160214061639"
+rewardLinks["Level Jump I Ring"] = "https://static.wikia.nocookie.net/maplestory/images/c/c4/Eqp_Level_Jump_Ring.png/revision/latest?cb=20210326132453"
+rewardLinks["Level Jump L Ring"] = "https://static.wikia.nocookie.net/maplestory/images/c/c4/Eqp_Level_Jump_Ring.png/revision/latest?cb=20210326132453"
+rewardLinks["Level Jump D Ring"] = "https://static.wikia.nocookie.net/maplestory/images/c/c4/Eqp_Level_Jump_Ring.png/revision/latest?cb=20210326132453"
+rewardLinks["Level Jump S Ring"] = "https://static.wikia.nocookie.net/maplestory/images/c/c4/Eqp_Level_Jump_Ring.png/revision/latest?cb=20210326132453"
+rewardLinks["Health Cut Ring"] = "https://static.wikia.nocookie.net/maplestory/images/0/06/Eqp_Health_Cut_Ring.png/revision/latest?cb=20170829022018"
+rewardLinks["Critical Defense Ring"] = "https://static.wikia.nocookie.net/maplestory/images/5/5f/Eqp_Critical_Defense_Ring.png/revision/latest?cb=20210326132453"
+rewardLinks["Limit Ring"] = "https://static.wikia.nocookie.net/maplestory/images/d/d3/Eqp_Limit_Ring.png/revision/latest?cb=20170829015203"
+rewardLinks["Durability Ring"] = "https://static.wikia.nocookie.net/maplestory/images/b/b8/Eqp_Durability_Ring.png/revision/latest?cb=20171016183528"
+rewardLinks["Clean Defense Ring"] = "https://static.wikia.nocookie.net/maplestory/images/0/0f/Eqp_Clean_Defense_Ring.png/revision/latest?cb=20210326132453"
+rewardLinks["Berserker Ring"] = "https://static.wikia.nocookie.net/maplestory/images/3/36/Eqp_Berserker_Ring.png/revision/latest?cb=20210326132453"
+rewardLinks["Mana Cut Ring"] = "https://static.wikia.nocookie.net/maplestory/images/e/ec/Eqp_Mana_Cut_Ring.png/revision/latest?cb=20170829055212"
+rewardLinks["Crisis H Ring"] = "https://static.wikia.nocookie.net/maplestory/images/e/e6/Eqp_Crisis_H_Ring.png/revision/latest?cb=20210326132453"
+rewardLinks["Crisis M Ring"] = "https://static.wikia.nocookie.net/maplestory/images/f/fe/Eqp_Crisis_M_Ring.png/revision/latest?cb=20210326132453"
+rewardLinks["Critical Shift Ring"] = "https://static.wikia.nocookie.net/maplestory/images/2/27/Eqp_Critical_Shift_Ring.png/revision/latest?cb=20160214055648"
+rewardLinks["Stance Shift Ring"] = "https://static.wikia.nocookie.net/maplestory/images/7/7f/Eqp_Stance_Shift_Ring.png/revision/latest?cb=20210326132453"
+rewardLinks["Clean Stance Ring"] = "https://static.wikia.nocookie.net/maplestory/images/1/11/Eqp_Clean_Stance_Ring.png/revision/latest?cb=20210326132453"
+rewardLinks["Swift Ring"] = "https://static.wikia.nocookie.net/maplestory/images/e/e0/Eqp_Swift_Ring.png/revision/latest?cb=20210326132454"
+rewardLinks["Reflective Ring"] = "https://static.wikia.nocookie.net/maplestory/images/e/ef/Eqp_Reflective_Ring.png/revision/latest?cb=20160214043850"
+rewardLinks["Ocean Glow Earrings"] = "https://static.wikia.nocookie.net/maplestory/images/b/b0/Eqp_Ocean_Glow_Earrings.png/revision/latest?cb=20181210205550"
+rewardLinks["Broken Box Piece x 5"] = "https://static.wikia.nocookie.net/maplestory/images/3/36/Use_Broken_Box_Piece.png/revision/latest?cb=20210910011106"
+rewardLinks["Oz Point Pouch x 5"] = "https://static.wikia.nocookie.net/maplestory/images/c/cd/Use_Oz_Point_Pouch.png/revision/latest?cb=20210910003310"
+rewardLinks["2x EXP Coupon (15 Minute) x 3"] = "https://static.wikia.nocookie.net/maplestory/images/f/f3/Use_2x_EXP_Coupon.png/revision/latest?cb=20220712230445"
+
 nonRings = ["Ocean Glow Earrings", "Broken Box Piece x 5" , "Oz Point Pouch x 5", "2x EXP Coupon (15 Minute) x 3"]
 
 ringOdds = [0.0424955, 0.0262206, 0.0262206, 0.0262206, 0.0262206, 0.0262206, 0.0262206, 0.0185353, 0.0185353, 0.0185353, 0.0185353, 0.0185353, 0.0185353, 0.0185353, 0.0185353, 0.0185353, 0.0185353,
