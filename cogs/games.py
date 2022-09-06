@@ -136,8 +136,8 @@ class Games(commands.Cog):
         else:
             now = time.time()
             start = self.usersRunning[user.id][1]
-            timeLeft = round((start - now)/60)
-            timeString = f'{timeLeft} remaining.'
+            timeLeft = max(round((start - now)/60), 1)
+            timeString = f'{timeLeft} minutes remaining.'
 
         if user.id not in self.runsRemaining:
             embed.add_field(name="Current Run", value=timeString, inline=True)
@@ -145,7 +145,7 @@ class Games(commands.Cog):
             embed.add_field(name="Runs Left", value='5', inline=True)
             embed.add_field(name="Completed Runs", value='Placeholder', inline=True)
         else:
-            embed.add_field(name="Current", value=timeString, inline=True)
+            embed.add_field(name="Current Run", value=timeString, inline=True)
             embed.add_field(name="Boxes", value=self.boxes[user.id], inline=True)
             embed.add_field(name="Runs Left", value=self.runsRemaining[user.id], inline=True)
             embed.add_field(name="Completed Runs", value='Placeholder', inline=True)
