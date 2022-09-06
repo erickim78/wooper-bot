@@ -107,6 +107,7 @@ class Games(commands.Cog):
                 self.quitOzRun(currentId)
             else:
                 # print(f'User {self.connectedUsers} made a non-connection related voice status update.')
+                continue
         return
 
     @app_commands.command(name='conch', description='Ask the Magic Conch for an answer.')
