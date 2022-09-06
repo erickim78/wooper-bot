@@ -153,11 +153,13 @@ class Games(commands.Cog):
         else:
             self.decrementBoxes(currentUser.id)
             reward = numpy.random.choice(data.rings, p=data.ringOdds)
+            rewardURL = "https://static.wikia.nocookie.net/maplestory/images/4/4d/Eqp_Ring_of_Restraint.png/revision/latest?cb=20160210033306"
             if reward in data.nonRings:
                 embed.add_field(name=reward, value='\u200b', inline=False)
             else:
                 level = numpy.random.choice(data.ringLevels, p=data.ringLevelOdds)
                 embed.add_field(name=reward, value=level, inline=False)
+            embed.set_image(url=rewardURL)
             embed.add_field(name='\u200b', value='**Boxes Left**', inline=True)
             embed.add_field(name=self.boxes[currentUser.id], value='**Runs Left**', inline=True)
             embed.add_field(name=self.runsRemaining[currentUser.id], value='\u200b', inline=True)
