@@ -139,10 +139,10 @@ class Games(commands.Cog):
 
     @app_commands.command(name='openbox', description='Open a Tower of Oz ring box (if you have one)')
     async def openbox(self, interaction: discord.Interaction) -> None:
-        imgURL = "https://i.imgur.com/dxPvMN8.gif"
-        embed=discord.Embed(title="Tower of Oz", description=f'Welcome {user.mention}', color=0xf1d3ed)
-        embed.set_thumbnail(url=imgURL)
         currentUser = interaction.user
+        imgURL = "https://i.imgur.com/dxPvMN8.gif"
+        embed=discord.Embed(title="Tower of Oz", description=f'Welcome {currentUser.mention}', color=0xf1d3ed)
+        embed.set_thumbnail(url=imgURL)
         if currentUser.id not in self.boxes:
             embed.add_field(name="You have no oz boxes.", value='It takes 1 hour to complete an oz run.', inline=True)
             embed.add_field(name="Runs Left", value='5', inline=True)
