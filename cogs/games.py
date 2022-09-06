@@ -2,6 +2,7 @@
 import random
 from threading import Timer
 import numpy
+import time
 
 # File Imports
 import config
@@ -42,15 +43,15 @@ class Games(commands.Cog):
     # Oz Run Starter
     def startOzRun(self, memberId):
         print(f'User {self.bot.get_user(memberId)} is starting an Oz run...')
-        self.usersRunning[memberId] = Timer(5, self.ozRun, [memberId])
-        self.usersRunning[memberId].start()
+        self.usersRunning[memberId] = (Timer(5, self.ozRun, [memberId]), time.time())
+        self.usersRunning[memberId][0].start()
         print(f'User {self.bot.get_user(memberId)} started an Oz run.')
 
     def quitOzRun(self, memberId):
         if self.usersRunning[memberId] is None:
             print('BUG: Users running should not be None')
             return
-        self.usersRunning[memberId].cancel()
+        self.usersRunning[memberId][0].cancel()
         self.usersRunning[memberId] = None
         print(f'User {self.bot.get_user(memberId)} abandoned an Oz run.')
 
@@ -122,20 +123,32 @@ class Games(commands.Cog):
         embed.add_field(name=data.conchResponses[rand], value='\u200b', inline=False)
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.command(name='ozstats', description='View your oz stats')
-    async def ozstats(self, interaction: discord.Interaction) -> None:
+    @app_commands.command(name='ozstatus', description='View your oz stats')
+    async def ozstatus(self, interaction: discord.Interaction) -> None:
         user = interaction.user
 
         imgURL = "https://i.imgur.com/dxPvMN8.gif"
         embed=discord.Embed(title="Tower of Oz", description=f'Welcome {user.mention}', color=0xf1d3ed)
         embed.set_thumbnail(url=imgURL)
+        timmeString = "-"
+        if self.usersRunning[user.id] is None:
+            timeString = "Not Running"
+        else:
+            now = time.time()
+            start = self.usersRunning[user.id][1]
+            timeLeft = round((start - now)/60)
+            timeString = f'{timeLeft} remaining.'
+
         if user.id not in self.runsRemaining:
+            embed.add_field(name="Current Run", value=timeString, inline=True)
             embed.add_field(name="Boxes", value='0', inline=True)
             embed.add_field(name="Runs Left", value='5', inline=True)
-        else:
             embed.add_field(name="Completed Runs", value='Placeholder', inline=True)
+        else:
+            embed.add_field(name="Current", value=timeString, inline=True)
             embed.add_field(name="Boxes", value=self.boxes[user.id], inline=True)
             embed.add_field(name="Runs Left", value=self.runsRemaining[user.id], inline=True)
+            embed.add_field(name="Completed Runs", value='Placeholder', inline=True)
         await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name='ozbox', description='Open a Tower of Oz Ring Box (if you have one)')
