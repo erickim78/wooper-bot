@@ -1,9 +1,11 @@
 # Dependencies
 import random
 from threading import Timer
+import numpy
 
 # File Imports
 import config
+import data
 
 # Discord
 import discord
@@ -50,6 +52,7 @@ class Games(commands.Cog):
             return
         self.usersRunning[memberId].cancel()
         self.usersRunning[memberId] = None
+        print(f'User {self.bot.get_user(memberId)} abandoned an Oz run.')
 
     # Box Incrementer
     def incrementBoxes(self, memberId):
@@ -112,19 +115,15 @@ class Games(commands.Cog):
     @app_commands.command(name='conch', description='Ask the Magic Conch for an answer.')
     async def conch(self, interaction: discord.Interaction, question: str) -> None:
         rand = random.randint(0,17)
-    
-        responses = ["IT IS CERTAIN.", "IT IS DECIDEDLY SO.", "WITHOUT A DOUBT", "YES - DEFINITELY", "YOU MAY RELY ON IT.", "AS I SEE IT, YES.", "MOST LIKELY.", "SIGNS POINT TO YES.", "TRY ASKING AGAIN",
-        "ASK AGAIN LATER.", "BETTER NOT TELL YOU NOW.", "CANNOT PREDICT NOW", "CONCENTRATE AND ASK AGAIN.", " DON'T COUNT ON IT.", "MY REPLY IS NO.", "MY SOURCES SAY NO.", "OUTLOOK NOT SO GOOD.", "VERY DOUBTFUL"]
-
         imgURL = "https://i.imgur.com/RLsojmN.jpg"
         embed=discord.Embed(color=0xf1d3ed)
         embed.set_image( url = imgURL )
         embed.add_field(name="Magic Conch", value=question, inline=False)
-        embed.add_field(name=responses[rand], value='\u200b', inline=False)
+        embed.add_field(name=data.conchResponses[rand], value='\u200b', inline=False)
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.command(name='ozstats', description='View your oz stats')
-    async def ozstats(self, interaction: discord.Interaction) -> None:
+    @app_commands.command(name='oz', description='View your oz stats')
+    async def oz(self, interaction: discord.Interaction) -> None:
         user = interaction.user
 
         imgURL = "https://i.imgur.com/dxPvMN8.gif"
@@ -136,6 +135,27 @@ class Games(commands.Cog):
         else:
             embed.add_field(name="Boxes", value=self.boxes[user.id], inline=True)
             embed.add_field(name="Runs Left", value=self.runsRemaining[user.id], inline=True)
+        await interaction.response.send_message(embed=embed)
+
+    @app_commands.command(name='openbox', description='Open a Tower of Oz ring box (if you have one)')
+    async def openbox(self, interaction: discord.Interaction) -> None:
+        imgURL = "https://i.imgur.com/dxPvMN8.gif"
+        embed=discord.Embed(title="Tower of Oz", description=f'Welcome {user.mention}', color=0xf1d3ed)
+        embed.set_thumbnail(url=imgURL)
+        currentUser = interaction.user
+        if currentUser.id not in self.boxes:
+            embed.add_field(name="You have no oz boxes.", value='It takes 1 hour to complete an oz run.', inline=True)
+            embed.add_field(name="Runs Left", value='5', inline=True)
+        else:
+            self.decrementBoxes(currentUser.id)
+            reward = numpy.random.choice(data.rings, p=data.ringOdds)
+            if reward in data.nonRings:
+                embed.add_field(name=reward, value='\u200b', inline=True)
+            else:
+                level = numpy.random.choice(data.ringLevels, p=data.ringLevelOdds)
+                embed.add_field(name=reward, value=level, inline=True)
+            embed.add_field(name="Boxes Left", value=self.boxes[currentUser.id], inline=True)
+            embed.add_field(name="Runs Left", value=self.runsRemaining[currentUser.id], inline=True)
         await interaction.response.send_message(embed=embed)
 
 async def setup(bot):
