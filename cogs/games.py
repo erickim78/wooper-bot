@@ -127,14 +127,15 @@ class Games(commands.Cog):
     async def ozstats(self, interaction: discord.Interaction) -> None:
         user = interaction.user
 
-        embed=discord.Embed(title="Tower of Oz", description=f'Welcome {user.name}', color=0xf1d3ed)
-
+        imgURL = "https://i.imgur.com/dxPvMN8.gif"
+        embed=discord.Embed(title="Tower of Oz", description=f'Welcome {user.mention}', color=0xf1d3ed)
+        embed.set_thumbnail(url=imgURL)
         if user.id not in self.runsRemaining:
             embed.add_field(name="Boxes", value='0', inline=True)
             embed.add_field(name="Runs Left", value='5', inline=True)
         else:
-            embed.add_field(name="Boxes", value={self.boxes[user.id]}, inline=True)
-            embed.add_field(name="Runs Left", value={self.runsRemaining[user.id]}, inline=True)
+            embed.add_field(name="Boxes", value=self.boxes[user.id], inline=True)
+            embed.add_field(name="Runs Left", value=self.runsRemaining[user.id], inline=True)
         await interaction.response.send_message(embed=embed)
 
 async def setup(bot):
