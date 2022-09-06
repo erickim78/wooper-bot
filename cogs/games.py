@@ -44,6 +44,13 @@ class Games(commands.Cog):
         self.usersRunning[memberId].start()
         print(f'User {self.bot.get_user(memberId)} started an Oz run.')
 
+    def quitOzRun(self, memberId):
+        if self.usersRunning[memberId] is None:
+            print('BUG: Users running should not be None')
+            return
+        self.usersRunning[memberId].cancel()
+        self.usersRunning[memberId] = None
+
     # Box Incrementer
     def incrementBoxes(self, memberId):
         if memberId not in self.boxes:
@@ -52,9 +59,18 @@ class Games(commands.Cog):
             self.boxes[memberId] += 1
         print(f'User {self.bot.get_user(memberId)} has received an oz box. Total boxes: {self.boxes[memberId]}.')
 
+    def decrementBoxes(self, memberId):
+        if memberId not in self.boxes:
+            print('BUG: Member id should exist in boxes')
+        else:
+            self.boxes[memberId] = 1
+            if self.boxes[memberId] < 0:
+                print('BUG: Member should not be allowed to decrement box below 0')
+                self.boxes[memberId] = 0
+
     
     # Initialize currently connected users
-    def updateUsersRunning(self):
+    def initUsersRunning(self):
         updateTime = time.time()
         for guild in self.bot.guilds:
             currentChannels = guild.voice_channels
@@ -69,21 +85,26 @@ class Games(commands.Cog):
     # On Ready
     @commands.Cog.listener()
     async def on_ready(self):
-        self.updateUsersRunning()
+        self.initUsersRunning()
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
+        currentId = member.id
         if after.channel == None:
             if before.afk != True:
                 # print(f'User {self.connectedUsers} disconnected.')
+                self.quitOzRun(currentId)
         elif before.channel == None and after.channel != None:
             if after.afk != True:
                 # print(f'User {self.connectedUsers} connected.')
+                self.startOzRun(currentId)
         else:
             if before.afk == True and after.afk == False:
                 # print(f'User {self.connectedUsers} returned from afk.')
+                self.startOzRun(currentId)
             elif before.afk == False and after.afk == True:
                 # print(f'User {self.connectedUsers} went afk.')
+                self.quitOzRun(currentId)
             else:
                 # print(f'User {self.connectedUsers} made a non-connection related voice status update.')
         return
@@ -102,9 +123,19 @@ class Games(commands.Cog):
         embed.add_field(name=responses[rand], value='\u200b', inline=False)
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.command(name='ozbox', description='Open a Tower of Oz ring box')
-    async def ozbox(self, interaction: discord.Interaction) -> None:
-        await interaction.response.send_message("This command is under construction")
+    @app_commands.command(name='Oz Stats', description='View your oz stats')
+    async def ozstats(self, interaction: discord.Interaction) -> None:
+        user = interaction.user
+
+        embed=discord.Embed(title="Tower of Oz", description=f'Welcome {user.name}', color=0xf1d3ed)
+
+        if user.id not in self.runsRemaining:
+            embed.add_field(name="Boxes", value='0', inline=True)
+            embed.add_field(name="Runs Left", value='5', inline=True)
+        else:
+            embed.add_field(name="Boxes", value={self.boxes[user.id]}, inline=True)
+            embed.add_field(name="Runs Left", value={self.runsRemaining[user.id]}, inline=True)
+        await interaction.response.send_message(embed=embed)
 
 async def setup(bot):
     await bot.add_cog(Games(bot), guilds=config.guildList)
