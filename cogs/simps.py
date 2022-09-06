@@ -285,7 +285,7 @@ class Simps(commands.Cog):
             avg3days = round(sum3days/10800,2)
             sum3days = round(sum3days/3600,2)
 
-            self.timeSequenceCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE d BETWEEN date(\'now\', \'-6 day\') and date(\'now\', \'-1 day\')')
+            self.timeSequenceCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE d BETWEEN date(\'now\', \'-6 day\') and date(\'now\')')
             currentSample = self.timeSequenceCursor.fetchall()
             sum7days = 0
             for item in currentSample:
@@ -293,7 +293,7 @@ class Simps(commands.Cog):
             avg7days = round(sum3days/25200,2)
             sum7days = round(sum7days/3600,2)
 
-            self.timeSequenceCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE d BETWEEN date(\'now\', \'-29 day\') and date(\'now\', \'-1 day\')')
+            self.timeSequenceCursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE d BETWEEN date(\'now\', \'-29 day\') and date(\'now\')')
             currentSample = self.timeSequenceCursor.fetchall()
             sum30days = 0
             for item in currentSample:
