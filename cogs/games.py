@@ -43,7 +43,7 @@ class Games(commands.Cog):
     # Oz Run Starter
     def startOzRun(self, memberId):
         print(f'User {self.bot.get_user(memberId)} is starting an Oz run...')
-        self.usersRunning[memberId] = (Timer(5, self.ozRun, [memberId]), time.time())
+        self.usersRunning[memberId] = (Timer(3600, self.ozRun, [memberId]), time.time())
         self.usersRunning[memberId][0].start()
         print(f'User {self.bot.get_user(memberId)} started an Oz run.')
 
