@@ -124,8 +124,9 @@ class Games(commands.Cog):
         await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name='ozstatus', description='View your oz stats')
-    async def ozstatus(self, interaction: discord.Interaction) -> None:
-        user = interaction.user
+    async def ozstatus(self, interaction: discord.Interaction, user: discord.User = None) -> None:
+        if user is None:
+            user = interaction.user
 
         imgURL = "https://i.imgur.com/dxPvMN8.gif"
         embed=discord.Embed(title="Tower of Oz", description=f'Welcome {user.mention}', color=0xf1d3ed)
