@@ -158,10 +158,10 @@ class Games(commands.Cog):
         embed=discord.Embed(title="Tower of Oz", description=f'Box Opening for {currentUser.mention}', color=0xf1d3ed)
         embed.set_thumbnail(url=imgURL)
         if currentUser.id not in self.boxes:
-            embed.add_field(name="You have no Oz Boxes.", value='\u200b', inline=True)
+            embed.add_field(name="You have no Ring Boxes.", value='\u200b', inline=True)
             embed.add_field(name="Runs Left", value='5', inline=True)
         elif self.boxes[currentUser.id] < 1:
-            embed.add_field(name="You have no Oz Boxes.", value='\u200b', inline=True)
+            embed.add_field(name="You have no Ring Boxes.", value='\u200b', inline=True)
             embed.add_field(name="Runs Left", value=self.runsRemaining[currentUser.id], inline=True)
         else:
             self.decrementBoxes(currentUser.id)
