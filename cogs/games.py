@@ -137,7 +137,7 @@ class Games(commands.Cog):
         else:
             now = time.time()
             start = self.usersRunning[user.id][1]
-            timeLeft = max(round((start - now)/60), 1)
+            timeLeft = max(round(60-(start - now)/60), 1)
             timeString = f'{timeLeft} minutes remaining.'
 
         if user.id not in self.runsRemaining:
