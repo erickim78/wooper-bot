@@ -3,6 +3,8 @@ import random
 from threading import Timer
 import numpy
 import time
+import schedule
+import threading
 
 # File Imports
 import config
@@ -72,6 +74,25 @@ class Games(commands.Cog):
                 print('BUG: Member should not be allowed to decrement box below 0')
                 self.boxes[memberId] = 0
 
+    def run_continuously(self, interval = 5):
+        cease_continuous_run = threading.Event()
+        class ScheduleThread(threading.Thread):
+            def run(cls):
+                while not cease_continuous_run.is_set():
+                    schedule.run_pending()
+                    time.sleep(interval)
+        continuous_thread = ScheduleThread()
+        continuous_thread.start()
+        return cease_continuous_run
+
+    def autoUpdateTimes(self):
+        print("RESETTING OZ RUNS:")
+        for user in self.runsRemaining:
+            if user in self.usersRunning and self.usersRunning[user] is not None:
+                self.runsRemaining[user] = 6
+            else:
+                self.runsRemaining[user] = 5
+        print("============================================================")
     
     # Initialize currently connected users
     def initUsersRunning(self):
@@ -89,6 +110,9 @@ class Games(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         self.initUsersRunning()
+        print("Scheduling Oz Run Resets")
+        schedule.every().day.at("23:59").do(self.autoUpdateTimes)
+        self.stop_run_continuously = self.run_continuously()
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
