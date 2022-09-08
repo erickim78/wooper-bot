@@ -25,12 +25,10 @@ class Games(commands.Cog):
         self.boxes = {} # temporary(?)
 
         self.ozRunTime = 50
-
-        self.checkRingTable()
-
         #DB Connection
         self.miscConnection = main.miscConnection
         self.miscCursor = main.miscConnection.cursor()
+        self.checkRingTable()
 
     # Oz Run Handler for branching
     def ozRun(self, memberId):
