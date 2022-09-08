@@ -9,12 +9,12 @@ import threading
 # File Imports
 import config
 import data
+import main
 
 # Discord
 import discord
 from discord.ext import commands
 from discord import app_commands
-
 
 class Games(commands.Cog):
     def __init__(self, bot):
@@ -23,6 +23,14 @@ class Games(commands.Cog):
         self.usersRunning = {}
         self.runsRemaining = {}
         self.boxes = {} # temporary(?)
+
+        self.ozRunTime = 50
+
+        self.checkRingTable()
+
+        #DB Connection
+        self.miscConnection = main.miscConnection
+        self.miscCursor = main.miscConnection.cursor()
 
     # Oz Run Handler for branching
     def ozRun(self, memberId):
@@ -45,7 +53,7 @@ class Games(commands.Cog):
     # Oz Run Starter
     def startOzRun(self, memberId):
         print(f'User {self.bot.get_user(memberId)} is starting an Oz run...')
-        self.usersRunning[memberId] = (Timer(3600, self.ozRun, [memberId]), time.time())
+        self.usersRunning[memberId] = (Timer(self.ozRunTime*60, self.ozRun, [memberId]), time.time())
         self.usersRunning[memberId][0].start()
         print(f'User {self.bot.get_user(memberId)} started an Oz run.')
 
@@ -106,6 +114,13 @@ class Games(commands.Cog):
                     for currentMember in members:
                         self.startOzRun(currentMember.id)
 
+    def checkRingTable(self):
+        self.cursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE type='table' AND name = 'ringTable' ''')
+        if self.cursor.fetchone()[0] != 1:
+            self.cursor.execute(f'''CREATE TABLE 'ringTable' (userid TEXT, itemname TEXT, itemattribute TEXT)''')
+            return False
+        return True
+
     # On Ready
     @commands.Cog.listener()
     async def on_ready(self):
@@ -161,47 +176,72 @@ class Games(commands.Cog):
         else:
             now = time.time()
             start = self.usersRunning[user.id][1]
-            timeLeft = max(round(60-(now-start)/60), 1)
+            timeLeft = max(round((self.ozRunTime*60)-(now-start)/60), 1)
             timeString = f'{timeLeft} minutes remaining.'
 
         if user.id not in self.runsRemaining:
-            embed.add_field(name="Current Run", value=timeString, inline=True)
-            embed.add_field(name="Boxes", value='0', inline=True)
+            embed.add_field(name="Current Status", value=timeString, inline=False)
             embed.add_field(name="Runs Left", value='5', inline=True)
-            embed.add_field(name="Completed Runs", value='Placeholder', inline=True)
+            embed.add_field(name="Boxes", value='0', inline=True)
+            embed.add_field(name="Boxes Opened", value='Placeholder', inline=True)
         else:
-            embed.add_field(name="Current Run", value=timeString, inline=True)
-            embed.add_field(name="Boxes", value=self.boxes[user.id], inline=True)
+            embed.add_field(name="Current Status", value=timeString, inline=False)
             embed.add_field(name="Runs Left", value=self.runsRemaining[user.id], inline=True)
-            embed.add_field(name="Completed Runs", value='Placeholder', inline=True)
+            embed.add_field(name="Boxes", value=self.boxes[user.id], inline=True)
+            embed.add_field(name="Boxes Opened", value='Placeholder', inline=True)
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.command(name='ozbox', description='Open a Tower of Oz Ring Box (if you have one)')
-    async def ozbox(self, interaction: discord.Interaction) -> None:
+    @app_commands.command(name='openbox', description='Open a Tower of Oz Ring Box (if you have one)')
+    async def openbox(self, interaction: discord.Interaction) -> None:
         currentUser = interaction.user
         imgURL = "https://i.imgur.com/lu5MIE1.png"
         embed=discord.Embed(title="Tower of Oz", description=f'Box Opening for {currentUser.mention}', color=0xf1d3ed)
         embed.set_thumbnail(url=imgURL)
         if currentUser.id not in self.boxes:
-            embed.add_field(name="You have no Ring Boxes.", value='\u200b', inline=True)
-            embed.add_field(name="Runs Left", value='5', inline=True)
+            embed.add_field(name="You have no Ring Boxes.", value='\u200b', inline=False)
+            embed.add_field(name="Runs Left", value='5', inline=False)
         elif self.boxes[currentUser.id] < 1:
-            embed.add_field(name="You have no Ring Boxes.", value='\u200b', inline=True)
-            embed.add_field(name="Runs Left", value=self.runsRemaining[currentUser.id], inline=True)
+            embed.add_field(name="You have no Ring Boxes.", value='\u200b', inline=False)
+            embed.add_field(name="Runs Left", value=self.runsRemaining[currentUser.id], inline=False)
         else:
             self.decrementBoxes(currentUser.id)
             reward = numpy.random.choice(data.rings, p=data.ringOdds)
             rewardURL = data.rewardLinks[reward]
+            level = ""
             if reward in data.nonRings:
-                embed.add_field(name=reward, value='\u200b', inline=False)
+                if reward == "Broken Box Piece":
+                    level = "5"
+                elif reward == "Oz Point Pouch":
+                    level = "5"
+                elif reward == "2x EXP Coupon (15 Minute)":
+                    level = "3"
+                else:
+                    print("In OpenBox Error, should not reach this branch")
             else:
                 level = numpy.random.choice(data.ringLevels, p=data.ringLevelOdds)
-                embed.add_field(name=reward, value=level, inline=False)
+            self.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute,) VALUES (\'{currentUser.id}\',\'{reward}\',\'{level}\')')
+            self.miscConnection.commit()
+
+            embed.add_field(name=reward, value=level, inline=False)
             embed.set_image(url=rewardURL)
             #embed.add_field(name='\u200b', value='**Boxes Left**', inline=True)
             #embed.add_field(name=self.boxes[currentUser.id], value='**Runs Left**', inline=True)
             #embed.add_field(name=self.runsRemaining[currentUser.id], value='\u200b', inline=True)
         await interaction.response.send_message(embed=embed)
+
+    @app_commands.command(name='givebox', description='TESTING ONLY - Give Someone a Box')
+    async def givebox(self, interaction: discord.Interaction, user: discord.User = None, numBoxes: int = 1):
+        if user is None:
+            user = interaction.user
+
+        if interaction.user.id == 125114599249936384:
+            if user.id in self.boxes:
+                self.boxes[user.id] += numBoxes
+            else:
+                self.boxes[user.id] = numBoxes
+        else:
+            return
+
 
 async def setup(bot):
     await bot.add_cog(Games(bot), guilds=config.guildList)
