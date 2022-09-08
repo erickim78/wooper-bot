@@ -218,6 +218,7 @@ class Games(commands.Cog):
                     print("In OpenBox Error, should not reach this branch")
             else:
                 level = numpy.random.choice(data.ringLevels, p=data.ringLevelOdds)
+                attribute = level
             self.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{currentUser.id}\',\'{reward}\',\'{attribute}\', datetime(\'now\'))')
             self.miscConnection.commit()
 
