@@ -147,13 +147,13 @@ class Games(commands.Cog):
         embed.add_field(name=data.conchResponses[rand], value='\u200b', inline=False)
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.command(name='ozstatus', description='View your oz stats')
-    async def ozstatus(self, interaction: discord.Interaction, user: discord.User = None) -> None:
+    @app_commands.command(name='oz', description='View your oz stats')
+    async def oz(self, interaction: discord.Interaction, user: discord.User = None) -> None:
         if user is None:
             user = interaction.user
 
         imgURL = "https://i.imgur.com/dxPvMN8.gif"
-        embed=discord.Embed(title="Tower of Oz", description=f'Welcome {user.mention}', color=0xf1d3ed)
+        embed=discord.Embed(title="Tower of Oz", description=f'{user.mention}\'s Oz Stats', color=0xf1d3ed)
         embed.set_thumbnail(url=imgURL)
         timmeString = "-"
         if user.id not in self.usersRunning or self.usersRunning[user.id] is None:
@@ -176,8 +176,8 @@ class Games(commands.Cog):
             embed.add_field(name="Completed Runs", value='Placeholder', inline=True)
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.command(name='oz', description='Open a Tower of Oz Ring Box (if you have one)')
-    async def oz(self, interaction: discord.Interaction) -> None:
+    @app_commands.command(name='ozbox', description='Open a Tower of Oz Ring Box (if you have one)')
+    async def ozbox(self, interaction: discord.Interaction) -> None:
         currentUser = interaction.user
         imgURL = "https://i.imgur.com/lu5MIE1.png"
         embed=discord.Embed(title="Tower of Oz", description=f'Box Opening for {currentUser.mention}', color=0xf1d3ed)
