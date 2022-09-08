@@ -168,7 +168,7 @@ class Games(commands.Cog):
         imgURL = "https://i.imgur.com/dxPvMN8.gif"
         embed=discord.Embed(title="Tower of Oz", description=f'{user.mention}\'s Oz Stats', color=0xf1d3ed)
         embed.set_thumbnail(url=imgURL)
-        timmeString = "-"
+        timeString = "-"
 
         self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE userid = \'{user.id}\'')
         resultTable = self.miscCursor.fetchall()
@@ -246,9 +246,8 @@ class Games(commands.Cog):
             user = interaction.user
 
         imgURL = "https://i.imgur.com/dxPvMN8.gif"
-        embed = discord.Embed(color=0xf1d3ed)
-        embed.set_thumbnail(url=imgURL)
         embed=discord.Embed(title="Tower of Oz", description=f'{user.mention}\'s Recent Rewards', color=0xf1d3ed)
+        embed.set_thumbnail(url=imgURL)
 
         self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE userid = \'{user.id}\' ORDER BY timestamp DESC')
         resultTable = self.miscCursor.fetchall()
