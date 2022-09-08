@@ -228,15 +228,15 @@ class Games(commands.Cog):
         await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name='givebox', description='TESTING ONLY - Give Someone a Box')
-    async def givebox(self, interaction: discord.Interaction, user: discord.User = None, numBoxes: int = 1):
+    async def givebox(self, interaction: discord.Interaction, user: discord.User = None, num: int = 1):
         if user is None:
             user = interaction.user
 
         if interaction.user.id == 125114599249936384:
             if user.id in self.boxes:
-                self.boxes[user.id] += numBoxes
+                self.boxes[user.id] += num
             else:
-                self.boxes[user.id] = numBoxes
+                self.boxes[user.id] = num
         else:
             return
 
