@@ -232,13 +232,20 @@ class Games(commands.Cog):
         if user is None:
             user = interaction.user
 
+        imgURL = "https://i.imgur.com/dxPvMN8.gif"
+        embed=discord.Embed(title="Tower of Oz", description=f'\u200b', color=0xf1d3ed)
+        embed.set_thumbnail(url=imgURL)
+
         if interaction.user.id == 125114599249936384:
             if user.id in self.boxes:
                 self.boxes[user.id] += num
             else:
                 self.boxes[user.id] = num
+            embed.add_field(name='\u200b', value=f'Gave {user.mention} {num} boxes.', inline=False)
         else:
-            return
+            embed.add_field(name='\u200b', value=f'You are not authorized to give boxes.', inline=False)
+
+        await interaction.response.send_message(embed=embed)
 
 
 async def setup(bot):
