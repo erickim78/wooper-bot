@@ -6,7 +6,7 @@ conchResponses = ["IT IS CERTAIN.", "IT IS DECIDEDLY SO.", "WITHOUT A DOUBT", "Y
 rings = ["Ring of Restraint", "Weapon Jump S Ring", "Weapon Jump I Ring", "Weapon Jump L Ring", "Weapon Jump D Ring", "Ultimatum Ring", "Risk Taker Ring", "Totalling Ring", "Critical Damage Ring",
         "Crisis HM Ring", "Tower Boost Ring", "Cleansing Ring", "Overdrive Ring", "Level Jump S Ring", "Level Jump I Ring", "Level Jump L Ring", "Level Jump D Ring", "Health Cut Ring", "Critical Defense Ring", 
         "Limit Ring", "Durability Ring", "Clean Defense Ring", "Berserker Ring", "Mana Cut Ring", "Crisis H Ring", "Crisis M Ring", "Critical Shift Ring", "Stance Shift Ring", "Clean Stance Ring", "Swift Ring",
-        "Reflective Ring", "Ocean Glow Earrings", "Broken Box Piece" , "Oz Point Pouch", "2x EXP Coupon (15 Minute)"]
+        "Reflective Ring", "Ocean Glow Earrings", "Broken Box Piece x5" , "Oz Point Pouch x5", "2x EXP Coupon (15 Minute) x3"]
 
 rewardLinks = {}
 rewardLinks["Ring of Restraint"] = "https://static.wikia.nocookie.net/maplestory/images/4/4d/Eqp_Ring_of_Restraint.png/revision/latest?cb=20160210033306"
@@ -41,11 +41,11 @@ rewardLinks["Clean Stance Ring"] = "https://static.wikia.nocookie.net/maplestory
 rewardLinks["Swift Ring"] = "https://static.wikia.nocookie.net/maplestory/images/e/e0/Eqp_Swift_Ring.png/revision/latest?cb=20210326132454"
 rewardLinks["Reflective Ring"] = "https://static.wikia.nocookie.net/maplestory/images/e/ef/Eqp_Reflective_Ring.png/revision/latest?cb=20160214043850"
 rewardLinks["Ocean Glow Earrings"] = "https://static.wikia.nocookie.net/maplestory/images/b/b0/Eqp_Ocean_Glow_Earrings.png/revision/latest?cb=20181210205550"
-rewardLinks["Broken Box Piece"] = "https://static.wikia.nocookie.net/maplestory/images/3/36/Use_Broken_Box_Piece.png/revision/latest?cb=20210910011106"
-rewardLinks["Oz Point Pouch"] = "https://static.wikia.nocookie.net/maplestory/images/c/cd/Use_Oz_Point_Pouch.png/revision/latest?cb=20210910003310"
-rewardLinks["2x EXP Coupon (15 Minute)"] = "https://static.wikia.nocookie.net/maplestory/images/f/f3/Use_2x_EXP_Coupon.png/revision/latest?cb=20220712230445"
+rewardLinks["Broken Box Piece x5"] = "https://static.wikia.nocookie.net/maplestory/images/3/36/Use_Broken_Box_Piece.png/revision/latest?cb=20210910011106"
+rewardLinks["Oz Point Pouch x5"] = "https://static.wikia.nocookie.net/maplestory/images/c/cd/Use_Oz_Point_Pouch.png/revision/latest?cb=20210910003310"
+rewardLinks["2x EXP Coupon (15 Minute) x3"] = "https://static.wikia.nocookie.net/maplestory/images/f/f3/Use_2x_EXP_Coupon.png/revision/latest?cb=20220712230445"
 
-nonRings = ["Ocean Glow Earrings", "Broken Box Piece" , "Oz Point Pouch", "2x EXP Coupon (15 Minute)"]
+nonRings = ["Ocean Glow Earrings", "Broken Box Piece x5" , "Oz Point Pouch x5", "2x EXP Coupon (15 Minute) x3"]
 
 ringOdds = [0.0424955, 0.0262206, 0.0262206, 0.0262206, 0.0262206, 0.0262206, 0.0262206, 0.0185353, 0.0185353, 0.0185353, 0.0185353, 0.0185353, 0.0185353, 0.0185353, 0.0185353, 0.0185353, 0.0185353,
         0.0185353, 0.0185353, 0.0185353, 0.0162749, 0.0162749, 0.0162749, 0.0162749, 0.0162749, 0.0162749, 0.0162749, 0.0162749, 0.0162749, 0.0162749, 0.0162749, 0.0049729, 0.2441230, 0.0587703, 0.0723327]

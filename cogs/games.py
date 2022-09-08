@@ -115,7 +115,7 @@ class Games(commands.Cog):
     def checkRingTable(self):
         self.miscCursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE type='table' AND name = 'ringTable' ''')
         if self.miscCursor.fetchone()[0] != 1:
-            self.miscCursor.execute(f'''CREATE TABLE 'ringTable' (userid TEXT, itemname TEXT, itemattribute TEXT)''')
+            self.miscCursor.execute(f'''CREATE TABLE 'ringTable' (userid TEXT, itemname TEXT, itemattribute TEXT, timestamp datetime)''')
             return False
         return True
 
@@ -205,19 +205,20 @@ class Games(commands.Cog):
             self.decrementBoxes(currentUser.id)
             reward = numpy.random.choice(data.rings, p=data.ringOdds)
             rewardURL = data.rewardLinks[reward]
-            level = ""
+            level = '\u200b'
+            attribute = ""
             if reward in data.nonRings:
-                if reward == 'Broken Box Piece':
-                    level = "5"
-                elif reward == 'Oz Point Pouch':
-                    level = '5'
-                elif reward == '2x EXP Coupon (15 Minute)':
-                    level = '3'
+                if reward == 'Broken Box Piece x5':
+                    attribute = '5'
+                elif reward == 'Oz Point Pouch x5':
+                    attribute = '5'
+                elif reward == '2x EXP Coupon (15 Minute) x3':
+                    attribute = '3'
                 else:
                     print("In OpenBox Error, should not reach this branch")
             else:
                 level = numpy.random.choice(data.ringLevels, p=data.ringLevelOdds)
-            self.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute) VALUES (\'{currentUser.id}\',\'{reward}\',\'{level}\')')
+            self.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{currentUser.id}\',\'{reward}\',\'{attribute}\', datetime(\'now\'))')
             self.miscConnection.commit()
 
             embed.add_field(name=reward, value=level, inline=False)
