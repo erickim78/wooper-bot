@@ -207,17 +207,17 @@ class Games(commands.Cog):
             rewardURL = data.rewardLinks[reward]
             level = ""
             if reward in data.nonRings:
-                if reward == "Broken Box Piece":
+                if reward == 'Broken Box Piece':
                     level = "5"
-                elif reward == "Oz Point Pouch":
-                    level = "5"
-                elif reward == "2x EXP Coupon (15 Minute)":
-                    level = "3"
+                elif reward == 'Oz Point Pouch':
+                    level = '5'
+                elif reward == '2x EXP Coupon (15 Minute)':
+                    level = '3'
                 else:
                     print("In OpenBox Error, should not reach this branch")
             else:
                 level = numpy.random.choice(data.ringLevels, p=data.ringLevelOdds)
-            self.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute,) VALUES (\'{currentUser.id}\',\'{reward}\',\'{level}\')')
+            self.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute,) VALUES ({currentUser.id},{reward},{level})')
             self.miscConnection.commit()
 
             embed.add_field(name=reward, value=level, inline=False)
