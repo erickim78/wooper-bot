@@ -217,7 +217,7 @@ class Games(commands.Cog):
                     print("In OpenBox Error, should not reach this branch")
             else:
                 level = numpy.random.choice(data.ringLevels, p=data.ringLevelOdds)
-            self.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute,) VALUES ({currentUser.id},{reward},{level})')
+            self.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute) VALUES (\'{currentUser.id}\',\'{reward}\',\'{level}\')')
             self.miscConnection.commit()
 
             embed.add_field(name=reward, value=level, inline=False)
