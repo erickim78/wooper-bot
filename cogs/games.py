@@ -248,7 +248,7 @@ class Games(commands.Cog):
         imgURL = "https://i.imgur.com/dxPvMN8.gif"
         embed = discord.Embed(color=0xf1d3ed)
         embed.set_thumbnail(url=imgURL)
-        embed=discord.Embed(title="Tower of Oz", description=f'{current.mention}\'s Recent Rewards', color=0xf1d3ed)
+        embed=discord.Embed(title="Tower of Oz", description=f'{user.mention}\'s Recent Rewards', color=0xf1d3ed)
 
         self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE userid = \'{user.id}\' ORDER BY timestamp DESC')
         resultTable = self.miscCursor.fetchall()
