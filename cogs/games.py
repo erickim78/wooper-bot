@@ -172,7 +172,6 @@ class Games(commands.Cog):
 
         self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE userid = \'{user.id}\'')
         resultTable = self.miscCursor.fetchall()
-        print(resultTable)
         boxesOpened = len(resultTable)
         boxPieces = 0
         for row in resultTable:
@@ -239,6 +238,30 @@ class Games(commands.Cog):
             #embed.add_field(name='\u200b', value='**Boxes Left**', inline=True)
             #embed.add_field(name=self.boxes[currentUser.id], value='**Runs Left**', inline=True)
             #embed.add_field(name=self.runsRemaining[currentUser.id], value='\u200b', inline=True)
+        await interaction.response.send_message(embed=embed)
+
+    @app_commands.command(name='ozhistory', description='View someone\'s most recent rewards')
+    async def ozhistory(self, interaction: discord.Interaction, user: discord.User = None):
+        if user is None:
+            user = interaction.user
+
+        imgURL = "https://i.imgur.com/dxPvMN8.gif"
+        embed = discord.Embed(color=0xf1d3ed)
+        embed.set_thumbnail(url=imgURL)
+        embed=discord.Embed(title="Tower of Oz", description=f'{currentUser.mention}\'s Recent Rewards', color=0xf1d3ed)
+
+        self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE userid = \'{user.id}\' ORDER BY timestamp DESC')
+        resultTable = self.miscCursor.fetchall()
+        if len(resultTable) > 0:
+            for x in range(max(10, len(resultTable))):
+                currentRow = resultTable[x]
+                if currentRow[1] in data.nonRings:
+                    embed.add_field(name=f'**{x+1}) {currentRow[1]}**', value='\u200b', inline=False)
+                else:
+                    embed.add_field(name=f'**{x+1}) {currentRow[1]}** {currentRow[2]}', value='\u200b', inline=False)
+        else:
+            embed.add_field(name='\u200b', value=f'-', inline=False)
+        
         await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name='givebox', description='TESTING ONLY - Give Someone a Box')
