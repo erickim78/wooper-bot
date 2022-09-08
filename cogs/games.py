@@ -253,7 +253,7 @@ class Games(commands.Cog):
         self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE userid = \'{user.id}\' ORDER BY timestamp DESC')
         resultTable = self.miscCursor.fetchall()
         if len(resultTable) > 0:
-            for x in range(max(10, len(resultTable))):
+            for x in range(min(10, len(resultTable))):
                 currentRow = resultTable[x]
                 if currentRow[1] in data.nonRings:
                     embed.add_field(name=f'**{x+1}) {currentRow[1]}**', value='\u200b', inline=False)
