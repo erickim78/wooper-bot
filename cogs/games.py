@@ -169,6 +169,16 @@ class Games(commands.Cog):
         embed=discord.Embed(title="Tower of Oz", description=f'{user.mention}\'s Oz Stats', color=0xf1d3ed)
         embed.set_thumbnail(url=imgURL)
         timmeString = "-"
+
+        self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE userid = \'{user.id}\'')
+        resultTable = self.miscCursor.fetchall()
+        print(resultTable)
+        boxesOpened = len(resultTable)
+        boxPieces = 0
+        for row in resultTable:
+            if row[2] == '5':
+                boxPieces += int(row[2])
+        
         if user.id not in self.usersRunning or self.usersRunning[user.id] is None:
             timeString = "Not Running"
         else:
@@ -181,12 +191,14 @@ class Games(commands.Cog):
             embed.add_field(name="Current Status", value=timeString, inline=False)
             embed.add_field(name="Runs Left", value='5', inline=True)
             embed.add_field(name="Boxes", value='0', inline=True)
-            embed.add_field(name="Boxes Opened", value='Placeholder', inline=True)
+            embed.add_field(name="Box Pieces", value=boxPieces, inline=True)
+            embed.add_field(name="Boxes Opened", value=boxesOpened, inline=True)
         else:
             embed.add_field(name="Current Status", value=timeString, inline=False)
             embed.add_field(name="Runs Left", value=self.runsRemaining[user.id], inline=True)
             embed.add_field(name="Boxes", value=self.boxes[user.id], inline=True)
-            embed.add_field(name="Boxes Opened", value='Placeholder', inline=True)
+            embed.add_field(name="Box Pieces", value=boxPieces, inline=True)
+            embed.add_field(name="Boxes Opened", value=boxesOpened, inline=True)
         await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name='openbox', description='Open a Tower of Oz Ring Box (if you have one)')
