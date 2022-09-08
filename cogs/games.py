@@ -115,9 +115,9 @@ class Games(commands.Cog):
                         self.startOzRun(currentMember.id)
 
     def checkRingTable(self):
-        self.cursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE type='table' AND name = 'ringTable' ''')
-        if self.cursor.fetchone()[0] != 1:
-            self.cursor.execute(f'''CREATE TABLE 'ringTable' (userid TEXT, itemname TEXT, itemattribute TEXT)''')
+        self.miscCursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE type='table' AND name = 'ringTable' ''')
+        if self.miscCursor.fetchone()[0] != 1:
+            self.miscCursor.execute(f'''CREATE TABLE 'ringTable' (userid TEXT, itemname TEXT, itemattribute TEXT)''')
             return False
         return True
 
