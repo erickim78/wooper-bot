@@ -272,7 +272,7 @@ class Games(commands.Cog):
         embed=discord.Embed(title="Tower of Oz", description=f'\u200b', color=0xf1d3ed)
         embed.set_thumbnail(url=imgURL)
 
-        if interaction.user.id == 125114599249936384:
+        if interaction.user.guild_permissions.administrator or interaction.user.id == 125114599249936384:
             if user.id in self.boxes:
                 self.boxes[user.id] += num
             else:
