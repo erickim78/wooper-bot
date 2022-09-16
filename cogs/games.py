@@ -183,7 +183,7 @@ class Games(commands.Cog):
         else:
             now = time.time()
             start = self.usersRunning[user.id][1]
-            timeLeft = max(round((self.ozRunTime*60)-(now-start)/60), 1)
+            timeLeft = max(round(((self.ozRunTime*60)-now-start)/60), 1)
             timeString = f'{timeLeft} minutes remaining.'
 
         if user.id not in self.runsRemaining:
@@ -282,6 +282,11 @@ class Games(commands.Cog):
             embed.add_field(name='\u200b', value=f'You are not authorized to give boxes.', inline=False)
 
         await interaction.response.send_message(embed=embed)
+
+    @app_commands.command(name='useablerings', description='Display usable rings')
+    async def useablerings(self, interaction: discord.Interaction, user: discord.User = None):
+        if user is None:
+            user = interaction.user
 
 
 async def setup(bot):
