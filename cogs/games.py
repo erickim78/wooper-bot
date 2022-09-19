@@ -43,6 +43,7 @@ class Games(commands.Cog):
         elif self.runsRemaining[memberId] == 1:
             self.runsRemaining[memberId] -= 1
             self.incrementBoxes(memberId)
+            del self.usersRunning[memberId]
         else:
             print("Should never reach this statement, check remaining runs before starting a run")
             return
@@ -97,6 +98,7 @@ class Games(commands.Cog):
             if user in self.usersRunning and self.usersRunning[user] is not None:
                 self.runsRemaining[user] = 6
             else:
+                self.startOzRun(user)
                 self.runsRemaining[user] = 5
         print("============================================================")
     
