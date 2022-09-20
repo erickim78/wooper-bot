@@ -22,6 +22,13 @@ class ShopButtons(discord.ui.View):
 
     @discord.ui.button(label="1", style=discord.ButtonStyle.primary)
     async def buttonOne(self, button:discord.ui.Button, interaction: discord.Interaction):
+        rand = random.randint(0,17)
+        imgURL = "https://i.imgur.com/RLsojmN.jpg"
+        embed=discord.Embed(color=0xf1d3ed)
+        embed.set_image( url = imgURL )
+        embed.add_field(name="Magic Conch", value=question, inline=False)
+        embed.add_field(name=data.conchResponses[rand], value='\u200b', inline=False)
+        await interaction.response.send_message(embed=embed)
         return
 
     @discord.ui.button(label="2", style=discord.ButtonStyle.primary)
@@ -33,6 +40,10 @@ class ShopButtons(discord.ui.View):
         return
 
     @discord.ui.button(label="4", style=discord.ButtonStyle.primary)
+    async def buttonFour(self, button:discord.ui.Button, interaction: discord.Interaction):
+        return
+
+    @discord.ui.button(label="5", style=discord.ButtonStyle.primary)
     async def buttonFour(self, button:discord.ui.Button, interaction: discord.Interaction):
         return
 
