@@ -16,65 +16,6 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 
-class ShopButtons(discord.ui.View):
-    def __init__(self, *, timeout=180):
-        super().__init__(timeout=timeout)
-
-    @discord.ui.button(label="1", style=discord.ButtonStyle.primary)
-    async def buttonOne(self, interaction: discord.Interaction, button:discord.ui.Button):
-        embed=discord.Embed(color=0xf1d3ed)
-        imgURL = "https://static.wikia.nocookie.net/maplestory/images/3/36/Use_Broken_Box_Piece.png/revision/latest?cb=20210910011106"
-        embed.set_thumbnail(url=imgURL)
-        embed.add_field(name="Tower of Oz", value=f'Prize Redemption for {interaction.user.mention}', inline=False)
-        embed.add_field(name="Whoomper's Ring Box", value= '\u200b', inline=False)
-        embed.add_field(name="Ring Name Placeholder", value= 'Ring Level Placeholder', inline=False)
-        embed.set_footer(text=f'Remaining box pieces: {0}')
-        await interaction.response.send_message(embed=embed)
-
-    @discord.ui.button(label="2", style=discord.ButtonStyle.primary)
-    async def buttonTwo(self, interaction: discord.Interaction, button:discord.ui.Button):
-        embed=discord.Embed(color=0xf1d3ed)
-        imgURL = "https://static.wikia.nocookie.net/maplestory/images/3/36/Use_Broken_Box_Piece.png/revision/latest?cb=20210910011106"
-        embed.set_thumbnail(url=imgURL)
-        embed.add_field(name="Tower of Oz", value=f'Prize Redemption for {interaction.user.mention}', inline=False)
-        embed.add_field(name="Whoomper's Ring Box", value= '\u200b', inline=False)
-        embed.add_field(name="Ring Name Placeholder", value= 'Ring Level Placeholder', inline=False)
-        embed.set_footer(text=f'Remaining box pieces: {0}')
-        await interaction.response.send_message(embed=embed)
-
-    @discord.ui.button(label="3", style=discord.ButtonStyle.primary)
-    async def buttonThree(self, interaction: discord.Interaction, button:discord.ui.Button):
-        embed=discord.Embed(color=0xf1d3ed)
-        imgURL = "https://static.wikia.nocookie.net/maplestory/images/3/36/Use_Broken_Box_Piece.png/revision/latest?cb=20210910011106"
-        embed.set_thumbnail(url=imgURL)
-        embed.add_field(name="Tower of Oz", value=f'Prize Redemption for {interaction.user.mention}', inline=False)
-        embed.add_field(name="Whoomper's Ring Box", value= '\u200b', inline=False)
-        embed.add_field(name="Ring Name Placeholder", value= 'Ring Level Placeholder', inline=False)
-        embed.set_footer(text=f'Remaining box pieces: {0}')
-        await interaction.response.send_message(embed=embed)
-
-    @discord.ui.button(label="4", style=discord.ButtonStyle.primary)
-    async def buttonFour(self, interaction: discord.Interaction, button:discord.ui.Button):
-        embed=discord.Embed(color=0xf1d3ed)
-        imgURL = "https://static.wikia.nocookie.net/maplestory/images/3/36/Use_Broken_Box_Piece.png/revision/latest?cb=20210910011106"
-        embed.set_thumbnail(url=imgURL)
-        embed.add_field(name="Tower of Oz", value=f'Prize Redemption for {interaction.user.mention}', inline=False)
-        embed.add_field(name="Whoomper's Ring Box", value= '\u200b', inline=False)
-        embed.add_field(name="Ring Name Placeholder", value= 'Ring Level Placeholder', inline=False)
-        embed.set_footer(text=f'Remaining box pieces: {0}')
-        await interaction.response.send_message(embed=embed)
-
-    @discord.ui.button(label="5", style=discord.ButtonStyle.primary)
-    async def buttonFive(self, interaction: discord.Interaction, button:discord.ui.Button):
-        embed=discord.Embed(color=0xf1d3ed)
-        imgURL = "https://static.wikia.nocookie.net/maplestory/images/3/36/Use_Broken_Box_Piece.png/revision/latest?cb=20210910011106"
-        embed.set_thumbnail(url=imgURL)
-        embed.add_field(name="Tower of Oz", value=f'Prize Redemption for {interaction.user.mention}', inline=False)
-        embed.add_field(name="Whoomper's Ring Box", value= '\u200b', inline=False)
-        embed.add_field(name="Ring Name Placeholder", value= 'Ring Level Placeholder', inline=False)
-        embed.set_footer(text=f'Remaining box pieces: {0}')
-        await interaction.response.send_message(embed=embed)
-
 class Games(commands.Cog):
     def __init__(self, bot):
         print(f'games.cog init')
@@ -88,6 +29,66 @@ class Games(commands.Cog):
         self.miscConnection = main.miscConnection
         self.miscCursor = main.miscConnection.cursor()
         self.checkRingTable()
+
+    class ShopButtons(discord.ui.View):
+        def __init__(self, *, timeout=90):
+            super().__init__(timeout=timeout)
+
+        @discord.ui.button(label="1", style=discord.ButtonStyle.primary)
+        async def buttonOne(self, interaction: discord.Interaction, button:discord.ui.Button):
+            embed=discord.Embed(color=0xf1d3ed)
+            imgURL = "https://static.wikia.nocookie.net/maplestory/images/3/36/Use_Broken_Box_Piece.png/revision/latest?cb=20210910011106"
+            embed.set_thumbnail(url=imgURL)
+            embed.add_field(name="Tower of Oz", value=f'Prize Redemption for {interaction.user.mention}', inline=False)
+            embed.add_field(name="Whoomper's Ring Box", value= '\u200b', inline=False)
+            embed.add_field(name="Ring Name Placeholder", value= 'Ring Level Placeholder', inline=False)
+            embed.set_footer(text=f'Remaining box pieces: {0}')
+            await interaction.response.send_message(embed=embed)
+
+        @discord.ui.button(label="2", style=discord.ButtonStyle.primary)
+        async def buttonTwo(self, interaction: discord.Interaction, button:discord.ui.Button):
+            embed=discord.Embed(color=0xf1d3ed)
+            imgURL = "https://static.wikia.nocookie.net/maplestory/images/3/36/Use_Broken_Box_Piece.png/revision/latest?cb=20210910011106"
+            embed.set_thumbnail(url=imgURL)
+            embed.add_field(name="Tower of Oz", value=f'Prize Redemption for {interaction.user.mention}', inline=False)
+            embed.add_field(name="Whoomper's Ring Box", value= '\u200b', inline=False)
+            embed.add_field(name="Ring Name Placeholder", value= 'Ring Level Placeholder', inline=False)
+            embed.set_footer(text=f'Remaining box pieces: {0}')
+            await interaction.response.send_message(embed=embed)
+
+        @discord.ui.button(label="3", style=discord.ButtonStyle.primary)
+        async def buttonThree(self, interaction: discord.Interaction, button:discord.ui.Button):
+            embed=discord.Embed(color=0xf1d3ed)
+            imgURL = "https://static.wikia.nocookie.net/maplestory/images/3/36/Use_Broken_Box_Piece.png/revision/latest?cb=20210910011106"
+            embed.set_thumbnail(url=imgURL)
+            embed.add_field(name="Tower of Oz", value=f'Prize Redemption for {interaction.user.mention}', inline=False)
+            embed.add_field(name="Whoomper's Ring Box", value= '\u200b', inline=False)
+            embed.add_field(name="Ring Name Placeholder", value= 'Ring Level Placeholder', inline=False)
+            embed.set_footer(text=f'Remaining box pieces: {0}')
+            await interaction.response.send_message(embed=embed)
+
+        @discord.ui.button(label="4", style=discord.ButtonStyle.primary)
+        async def buttonFour(self, interaction: discord.Interaction, button:discord.ui.Button):
+            embed=discord.Embed(color=0xf1d3ed)
+            imgURL = "https://static.wikia.nocookie.net/maplestory/images/3/36/Use_Broken_Box_Piece.png/revision/latest?cb=20210910011106"
+            embed.set_thumbnail(url=imgURL)
+            embed.add_field(name="Tower of Oz", value=f'Prize Redemption for {interaction.user.mention}', inline=False)
+            embed.add_field(name="Whoomper's Ring Box", value= '\u200b', inline=False)
+            embed.add_field(name="Ring Name Placeholder", value= 'Ring Level Placeholder', inline=False)
+            embed.set_footer(text=f'Remaining box pieces: {0}')
+            await interaction.response.send_message(embed=embed)
+
+        @discord.ui.button(label="5", style=discord.ButtonStyle.primary)
+        async def buttonFive(self, interaction: discord.Interaction, button:discord.ui.Button):
+            embed=discord.Embed(color=0xf1d3ed)
+            imgURL = "https://static.wikia.nocookie.net/maplestory/images/3/36/Use_Broken_Box_Piece.png/revision/latest?cb=20210910011106"
+            embed.set_thumbnail(url=imgURL)
+            embed.add_field(name="Tower of Oz", value=f'Prize Redemption for {interaction.user.mention}', inline=False)
+            embed.add_field(name="Whoomper's Ring Box", value= '\u200b', inline=False)
+            embed.add_field(name="Ring Name Placeholder", value= 'Ring Level Placeholder', inline=False)
+            embed.set_footer(text=f'Remaining box pieces: {0}')
+            await interaction.response.send_message(embed=embed)
+
 
     # Oz Run Handler for branching
     def ozRun(self, memberId):
@@ -333,12 +334,7 @@ class Games(commands.Cog):
         embed=discord.Embed(title="Tower of Oz", description=f'Whoomper Shop', color=0xf1d3ed)
         embed.set_thumbnail(url=imgURL)
 
-        self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE userid = \'{user.id}\' AND itemname = \'Broken Box Piece x5\' ORDER BY timestamp DESC')
-        resultTable = self.miscCursor.fetchall()
-        boxPieces = 0
-        for row in resultTable:
-            boxPieces += int(row[2])
-        embed.add_field(name=f'React with the prize number you want to redeem', value='\u200b', inline=False)
+        embed.add_field(name=f'Select your prize.', value='\u200b', inline=False)
 
         embed.add_field(name=f'**1.** Whoomper\'s Ring Box', value='10x Box Pieces', inline=False)
         embed.add_field(name=f'**2.** Whoomper\'s Shiny Ring Box', value='100x Box Pieces', inline=False)
