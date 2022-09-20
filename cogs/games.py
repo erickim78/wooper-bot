@@ -177,7 +177,7 @@ class Games(commands.Cog):
         boxesOpened = len(resultTable)
         boxPieces = 0
         for row in resultTable:
-            if row[2] == '5':
+            if row [1] == 'Broken Box Piece x5' and row[2] == '5':
                 boxPieces += int(row[2])
         
         if user.id not in self.usersRunning or self.usersRunning[user.id] is None:
@@ -263,6 +263,28 @@ class Games(commands.Cog):
         else:
             embed.add_field(name='\u200b', value=f'-', inline=False)
         
+        await interaction.response.send_message(embed=embed)
+
+    @app_commands.command(name='ozstore', description='Open the oz store.')
+    async def ozstore(self, interaction: discord.Interaction, user: discord.User = None, num: int = 1):
+        if user is None:
+            user = interaction.user
+
+        imgURL = "https://static.wikia.nocookie.net/maplestory/images/3/36/Use_Broken_Box_Piece.png/revision/latest?cb=20210910011106"
+        embed=discord.Embed(title="Tower of Oz", description=f'Box Piece Store', color=0xf1d3ed)
+        embed.set_thumbnail(url=imgURL)
+
+        self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE userid = \'{user.id}\' AND itemname = \'Broken Box Piece x5\' AND itemattribute = \'5\' ORDER BY timestamp DESC')
+        resultTable = self.miscCursor.fetchall()
+        boxPieces = len(resultTable)
+        embed.add_field(name=f'{user.mention} has {boxPieces} box pieces.', value='React with the number you want to redeem', inline=False)
+
+        embed.add_field(name=f'Whoomper\'s Ring Box', value='10x Box Pieces', inline=False)
+        embed.add_field(name=f'Whoomper\'s Shiny Ring Box', value='100x Box Pieces', inline=False)
+        embed.add_field(name=f'Hand Pic', value = 'Placeholder', inline=False)
+        embed.add_field(name=f'Feet Pic', value = 'Placeholder', inline=False)
+        embed.add_field(name=f'???', value = 'Placeholder', inline=False)
+
         await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name='givebox', description='TESTING ONLY - Give Someone a Box')
