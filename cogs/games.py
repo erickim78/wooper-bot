@@ -266,7 +266,7 @@ class Games(commands.Cog):
         await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name='ozstore', description='Open the oz store.')
-    async def ozstore(self, interaction: discord.Interaction, user: discord.User = None, num: int = 1):
+    async def ozstore(self, interaction: discord.Interaction):
         if user is None:
             user = interaction.user
 
@@ -274,9 +274,11 @@ class Games(commands.Cog):
         embed=discord.Embed(title="Tower of Oz", description=f'Whoomper Shop', color=0xf1d3ed)
         embed.set_thumbnail(url=imgURL)
 
-        self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE userid = \'{user.id}\' AND itemname = \'Broken Box Piece x5\' AND itemattribute = \'5\' ORDER BY timestamp DESC')
+        self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE userid = \'{user.id}\' AND itemname = \'Broken Box Piece x5\' ORDER BY timestamp DESC')
         resultTable = self.miscCursor.fetchall()
-        boxPieces = len(resultTable)
+        boxPieces = 0
+        for row in resultTable:
+            boxPieces += int(row[2])
         embed.add_field(name=f'{user.mention} has {boxPieces} box pieces.', value='React with the number you want to redeem', inline=False)
 
         embed.add_field(name=f'**1.** Whoomper\'s Ring Box', value='10x Box Pieces', inline=False)
