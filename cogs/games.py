@@ -267,8 +267,7 @@ class Games(commands.Cog):
 
     @app_commands.command(name='ozstore', description='Open the oz store.')
     async def ozstore(self, interaction: discord.Interaction):
-        if user is None:
-            user = interaction.user
+        user = interaction.user
 
         imgURL = "https://static.wikia.nocookie.net/maplestory/images/3/36/Use_Broken_Box_Piece.png/revision/latest?cb=20210910011106"
         embed=discord.Embed(title="Tower of Oz", description=f'Whoomper Shop', color=0xf1d3ed)
