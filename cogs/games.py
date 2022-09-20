@@ -342,7 +342,7 @@ class Games(commands.Cog):
         embed.add_field(name=f'**4.** Feet Pics', value = 'Placeholder', inline=False)
         embed.add_field(name=f'**5.** ???', value = 'Placeholder', inline=False)
 
-        await interaction.response.send_message(embed=embed, view=ShopButtons())
+        await interaction.response.send_message(embed=embed, view=self.ShopButtons())
 
     @app_commands.command(name='givebox', description='TESTING ONLY - Give Someone a Box')
     async def givebox(self, interaction: discord.Interaction, user: discord.User = None, num: int = 1):
