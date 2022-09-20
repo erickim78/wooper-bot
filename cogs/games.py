@@ -21,25 +21,25 @@ class ShopButtons(discord.ui.View):
         super().__init__(timeout=timeout)
 
     @discord.ui.button(label="1", style=discord.ButtonStyle.primary)
-    async def buttonOne(self, button:discord.ui.Button, interaction: discord.Interaction):
+    async def buttonOne(self, interaction: discord.Interaction, button:discord.ui.Button):
         embed=discord.Embed(color=0xf1d3ed)
         embed.add_field(name="Test Embed", value="question", inline=False)
         await interaction.response.edit_message(embed=embed)
 
     @discord.ui.button(label="2", style=discord.ButtonStyle.primary)
-    async def buttonTwo(self, button:discord.ui.Button, interaction: discord.Interaction):
+    async def buttonTwo(self, interaction: discord.Interaction, button:discord.ui.Button):
         return
 
     @discord.ui.button(label="3", style=discord.ButtonStyle.primary)
-    async def buttonThree(self, button:discord.ui.Button, interaction: discord.Interaction):
+    async def buttonThree(self, interaction: discord.Interaction, button:discord.ui.Button):
         return
 
     @discord.ui.button(label="4", style=discord.ButtonStyle.primary)
-    async def buttonFour(self, button:discord.ui.Button, interaction: discord.Interaction):
+    async def buttonFour(self, interaction: discord.Interaction, button:discord.ui.Button):
         return
 
     @discord.ui.button(label="5", style=discord.ButtonStyle.primary)
-    async def buttonFive(self, button:discord.ui.Button, interaction: discord.Interaction):
+    async def buttonFive(self, interaction: discord.Interaction, button:discord.ui.Button):
         return
 
 class Games(commands.Cog):
