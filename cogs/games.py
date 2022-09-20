@@ -24,7 +24,7 @@ class ShopButtons(discord.ui.View):
     async def buttonOne(self, button:discord.ui.Button, interaction: discord.Interaction):
         embed=discord.Embed(color=0xf1d3ed)
         embed.add_field(name="Test Embed", value="question", inline=False)
-        await interaction.response.send_message(embed=embed)
+        await interaction.response.edit_message(embed=embed)
 
     @discord.ui.button(label="2", style=discord.ButtonStyle.primary)
     async def buttonTwo(self, button:discord.ui.Button, interaction: discord.Interaction):
@@ -293,8 +293,8 @@ class Games(commands.Cog):
         
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.command(name='ozstore', description='Open the oz store.')
-    async def ozstore(self, interaction: discord.Interaction):
+    @app_commands.command(name='ozshop', description='Open the oz store.')
+    async def ozshop(self, interaction: discord.Interaction):
         user = interaction.user
         self.currentShopInteraction = interaction
 
