@@ -16,6 +16,26 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 
+class ShopButtons(discord.ui.View):
+    def __init__(self, *, timeout=180):
+        super().__init__(timeout=timeout)
+
+    @discord.ui.button(label="1", style=discord.ButtonStyle.primary)
+    async def buttonOne(self, button:discord.ui.Button, interaction: discord.Interaction):
+        return
+
+    @discord.ui.button(label="2", style=discord.ButtonStyle.primary)
+    async def buttonTwo(self, button:discord.ui.Button, interaction: discord.Interaction):
+        return
+
+    @discord.ui.button(label="3", style=discord.ButtonStyle.primary)
+    async def buttonThree(self, button:discord.ui.Button, interaction: discord.Interaction):
+        return
+
+    @discord.ui.button(label="4", style=discord.ButtonStyle.primary)
+    async def buttonFour(self, button:discord.ui.Button, interaction: discord.Interaction):
+        return
+
 class Games(commands.Cog):
     def __init__(self, bot):
         print(f'games.cog init')
@@ -289,15 +309,7 @@ class Games(commands.Cog):
         embed.add_field(name=f'**4.** Feet Pics', value = 'Placeholder', inline=False)
         embed.add_field(name=f'**5.** ???', value = 'Placeholder', inline=False)
 
-        buttons = [
-            create_button(style=ButtonStyle.green, label="1"), 
-            create_button(style=ButtonStyle.green, label="2"), 
-            create_button(style=ButtonStyle.green, label="3")
-            create_button(style=ButtonStyle.green, label="4")
-            create_button(style=ButtonStyle.green, label="5")
-            ]
-        action_row = create_actionrow(*buttons)
-        await interaction.response.send_message(embed=embed, components=[action_row])
+        await interaction.response.send_message(embed=embed, view=ShopButtons())
 
     @app_commands.command(name='givebox', description='TESTING ONLY - Give Someone a Box')
     async def givebox(self, interaction: discord.Interaction, user: discord.User = None, num: int = 1):
