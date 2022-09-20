@@ -271,7 +271,7 @@ class Games(commands.Cog):
             user = interaction.user
 
         imgURL = "https://static.wikia.nocookie.net/maplestory/images/3/36/Use_Broken_Box_Piece.png/revision/latest?cb=20210910011106"
-        embed=discord.Embed(title="Tower of Oz", description=f'Box Piece Store', color=0xf1d3ed)
+        embed=discord.Embed(title="Tower of Oz", description=f'Whoomper Shop', color=0xf1d3ed)
         embed.set_thumbnail(url=imgURL)
 
         self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE userid = \'{user.id}\' AND itemname = \'Broken Box Piece x5\' AND itemattribute = \'5\' ORDER BY timestamp DESC')
@@ -279,11 +279,11 @@ class Games(commands.Cog):
         boxPieces = len(resultTable)
         embed.add_field(name=f'{user.mention} has {boxPieces} box pieces.', value='React with the number you want to redeem', inline=False)
 
-        embed.add_field(name=f'Whoomper\'s Ring Box', value='10x Box Pieces', inline=False)
-        embed.add_field(name=f'Whoomper\'s Shiny Ring Box', value='100x Box Pieces', inline=False)
-        embed.add_field(name=f'Hand Pic', value = 'Placeholder', inline=False)
-        embed.add_field(name=f'Feet Pic', value = 'Placeholder', inline=False)
-        embed.add_field(name=f'???', value = 'Placeholder', inline=False)
+        embed.add_field(name=f'**1.** Whoomper\'s Ring Box', value='10x Box Pieces', inline=False)
+        embed.add_field(name=f'**2.** Whoomper\'s Shiny Ring Box', value='100x Box Pieces', inline=False)
+        embed.add_field(name=f'**3.** Hand Pics', value = 'Placeholder', inline=False)
+        embed.add_field(name=f'**4.** Feet Pics', value = 'Placeholder', inline=False)
+        embed.add_field(name=f'**5.** ???', value = 'Placeholder', inline=False)
 
         await interaction.response.send_message(embed=embed)
 
