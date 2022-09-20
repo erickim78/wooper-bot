@@ -26,7 +26,7 @@ class ShopButtons(discord.ui.View):
         imgURL = "https://i.imgur.com/RLsojmN.jpg"
         embed=discord.Embed(color=0xf1d3ed)
         embed.set_image( url = imgURL )
-        embed.add_field(name="Magic Conch", value=question, inline=False)
+        embed.add_field(name="Magic Conch", value="question", inline=False)
         embed.add_field(name=data.conchResponses[rand], value='\u200b', inline=False)
         await interaction.response.send_message(embed=embed)
         return
