@@ -30,6 +30,8 @@ class Games(commands.Cog):
         self.miscCursor = main.miscConnection.cursor()
         self.checkRingTable()
 
+        self.currentShopInteraction = None
+
     # Oz Run Handler for branching
     def ozRun(self, memberId):
         if memberId not in self.runsRemaining:
@@ -268,6 +270,7 @@ class Games(commands.Cog):
     @app_commands.command(name='ozstore', description='Open the oz store.')
     async def ozstore(self, interaction: discord.Interaction):
         user = interaction.user
+        self.currentShopInteraction = interaction
 
         imgURL = "https://static.wikia.nocookie.net/maplestory/images/3/36/Use_Broken_Box_Piece.png/revision/latest?cb=20210910011106"
         embed=discord.Embed(title="Tower of Oz", description=f'Whoomper Shop', color=0xf1d3ed)
@@ -278,7 +281,7 @@ class Games(commands.Cog):
         boxPieces = 0
         for row in resultTable:
             boxPieces += int(row[2])
-        embed.add_field(name=f'{user.mention} has {boxPieces} box pieces.', value='React with the number you want to redeem', inline=False)
+        embed.add_field(name=f'{user.mention} has {boxPieces} box pieces.', value='React with the prize number you want to redeem', inline=False)
 
         embed.add_field(name=f'**1.** Whoomper\'s Ring Box', value='10x Box Pieces', inline=False)
         embed.add_field(name=f'**2.** Whoomper\'s Shiny Ring Box', value='100x Box Pieces', inline=False)
@@ -286,7 +289,15 @@ class Games(commands.Cog):
         embed.add_field(name=f'**4.** Feet Pics', value = 'Placeholder', inline=False)
         embed.add_field(name=f'**5.** ???', value = 'Placeholder', inline=False)
 
-        await interaction.response.send_message(embed=embed)
+        buttons = [
+            create_button(style=ButtonStyle.green, label="1"), 
+            create_button(style=ButtonStyle.green, label="2"), 
+            create_button(style=ButtonStyle.green, label="3")
+            create_button(style=ButtonStyle.green, label="4")
+            create_button(style=ButtonStyle.green, label="5")
+            ]
+        action_row = create_actionrow(*buttons)
+        await interaction.response.send_message(embed=embed, components=[action_row])
 
     @app_commands.command(name='givebox', description='TESTING ONLY - Give Someone a Box')
     async def givebox(self, interaction: discord.Interaction, user: discord.User = None, num: int = 1):
