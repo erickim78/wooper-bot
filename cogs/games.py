@@ -469,9 +469,9 @@ class Games(commands.Cog):
             for choice in choices if current.lower() in choice.lower()
         ]
 
-    @app_commands.command(name='ozleaderboard', description='Display usable rings')
+    @app_commands.command(name='ozrings', description='Display usable rings')
     @app_commands.autocomplete(ringname=ozleaderboard_autocomplete, ringlevel=ozleaderboardlevel_autocomplete)
-    async def ozleaderboard(self, interaction: discord.Interaction, ringname: str = 'Ring of Restraint', ringlevel: str = 'Level 4'):
+    async def ozrings(self, interaction: discord.Interaction, ringname: str = 'Ring of Restraint', ringlevel: str = 'Level 4'):
         if ringname == 'Weapon Jump Ring':
             imgURL = data.rewardLinks['Weapon Jump S Ring']
             self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE (itemname = \'Weapon Jump I Ring\' OR itemname = \'Weapon Jump L Ring\' OR itemname = \'Weapon Jump S Ring\' OR itemname = \'Weapon Jump D Ring\') AND itemattribute = \'{ringlevel}\'')
