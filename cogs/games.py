@@ -72,10 +72,11 @@ class Games(commands.Cog):
                 self.parent.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{currentUser.id}\',\'{reward}\',\'{level}\', datetime(\'now\'))')
                 self.parent.miscConnection.commit()
 
-                embed=discord.Embed(title="Whooper's Ring Box", description=f'{currentUser.mention} you have {boxPieces-10} pieces left.', color=0xf1d3ed)
+                embed=discord.Embed(title="Whooper's Ring Box", description=f'Redeemed by {currentUser.mention}.', color=0xf1d3ed)
                 embed.set_thumbnail(url=imgURL)
                 embed.add_field(name=reward, value=level, inline=False)
                 embed.set_image(url=rewardURL)
+                embed.set_footer(text=f'Remaining box pieces: {boxPieces-10}')
             await interaction.response.send_message(embed=embed)
 
         @discord.ui.button(label="2", style=discord.ButtonStyle.primary)
@@ -116,10 +117,11 @@ class Games(commands.Cog):
                 self.parent.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{currentUser.id}\',\'{reward}\',\'{level}\', datetime(\'now\'))')
                 self.parent.miscConnection.commit()
 
-                embed=discord.Embed(title="Whooper's Shiny Ring Box", description=f'{currentUser.mention} you have {boxPieces-100} pieces left.', color=0xf1d3ed)
+                embed=discord.Embed(title="Whooper's Shiny Ring Box", description=f'Redeemed by {currentUser.mention}.', color=0xf1d3ed)
                 embed.set_thumbnail(url=imgURL)
                 embed.add_field(name=reward, value=level, inline=False)
                 embed.set_image(url=rewardURL)
+                embed.set_footer(text=f'Remaining box pieces: {boxPieces-100}')
             await interaction.response.send_message(embed=embed)
 
         @discord.ui.button(label="3", style=discord.ButtonStyle.primary)
@@ -427,23 +429,29 @@ class Games(commands.Cog):
 
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.command(name='givepieces')
+    @app_commands.command(name='givepieces', description='TESTING ONLY - Give Someone Box Pieces')
     async def givepieces(self, interaction: discord.Interaction, user: discord.User = None, num: int = 5):
         if user is None:
             user = interaction.user
 
-        self.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{user.id}\',\'Broken Box Piece x5\',\'{num}\', datetime(\'now\'))')
-        self.miscConnection.commit()
-
-        self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE userid = \'{user.id}\' AND itemname = \'Broken Box Piece x5\'')
-        resultTable = self.miscCursor.fetchall()
-        boxPieces = 0
-        for row in resultTable:
-            boxPieces += int(row[2])
-
         imgURL = "https://static.wikia.nocookie.net/maplestory/images/3/36/Use_Broken_Box_Piece.png/revision/latest?cb=20210910011106"
-        embed.set_thumbnail(url=imgURL)
-        embed=discord.Embed(title="Box Piece Dispenser", description=f'{currentUser.mention} you have {boxPieces} pieces.', color=0xf1d3ed)
+        if interaction.user.guild_permissions.administrator or interaction.user.id == 125114599249936384:
+            self.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{user.id}\',\'Broken Box Piece x5\',\'{num}\', datetime(\'now\'))')
+            self.miscConnection.commit()
+
+            self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE userid = \'{user.id}\' AND itemname = \'Broken Box Piece x5\'')
+            resultTable = self.miscCursor.fetchall()
+            boxPieces = 0
+            for row in resultTable:
+                boxPieces += int(row[2])
+
+            
+            embed=discord.Embed(title="Box Piece Dispenser", description=f'{user.mention} you now have {boxPieces} pieces.', color=0xf1d3ed)
+            embed.set_thumbnail(url=imgURL)
+        else:
+            embed=discord.Embed(title="Box Piece Dispenser", description=f'{interaction.user} is not authorized to give pieces.', color=0xf1d3ed)
+            embed.set_thumbnail(url=imgURL)
+
         await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name='useablerings', description='Display usable rings')
