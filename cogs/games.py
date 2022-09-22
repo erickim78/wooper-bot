@@ -454,10 +454,23 @@ class Games(commands.Cog):
 
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.command(name='useablerings', description='Display usable rings')
-    async def useablerings(self, interaction: discord.Interaction, user: discord.User = None):
+    async def ozleaderboard_autocomplete(self, interaction: discord.Interaction, current: str,) -> List[app_commands.Choice[str]]:
+        choices = ['Ring of Restraint', 'Weapon Jump']
+        return [
+            app_commands.Choice(name=choice, value=choice)
+            for choice in choices if current.lower() in choice.lower()
+        ]
+
+    @app_commands.command(name='ozleaderboard', description='Display usable rings')
+    @app_commands.autocomplete(choices=ozleaderboard_autocomplete)
+    async def ozleaderboard(self, interaction: discord.Interaction, ringName: app_commands.Choice[str], ringLevel = 4):
         if user is None:
             user = interaction.user
+
+        imgURL = "https://i.imgur.com/dxPvMN8.gif"
+        embed = discord.Embed(title="Tower of Oz Leaderboard", description=f'for {ringName} Level {ringLevel}')
+        embed.set_thumbnail(url=imgURL)
+        await interaction.response.send_message(embed=embed)
 
 
 async def setup(bot):
