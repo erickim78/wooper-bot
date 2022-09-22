@@ -464,7 +464,7 @@ class Games(commands.Cog):
 
     async def ozleaderboardlevel_autocomplete(self, interaction: discord.Interaction, current: str,) -> List[app_commands.Choice[str]]:
         localcopy = data.ringLevels
-        choices = localcopy.reverse()
+        choices = localcopy[::-1]
         return [
             app_commands.Choice(name=choice, value=choice)
             for choice in choices if current.lower() in choice.lower()
