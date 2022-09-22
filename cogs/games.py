@@ -45,14 +45,13 @@ class Games(commands.Cog):
             for row in resultTable:
                 boxPieces += int(row[2])
 
-            cost = 10
-            
             imgURL = "https://static.wikia.nocookie.net/maplestory/images/b/b1/Use_Hidden_Ring_Box.png/revision/latest?cb=20210914225553"
-            embed.set_thumbnail(url=imgURL)
+            cost = 10
             if boxPieces < cost:
-                embed=discord.Embed(title="Whooper's Ring Box", description=f'{currentUser.mention} you have {boxPieces} pieces left.', color=0xf1d3ed)
+                embed=discord.Embed(title="Whooper's Ring Box", description=f'{currentUser.mention} you have {boxPieces} pieces.', color=0xf1d3ed)
+                embed.set_thumbnail(url=imgURL)
                 embed.add_field(name="You do not have enough box pieces.", value='\u200b', inline=False)
-                embed.add_field(name="Current box pieces", value='placeholder', inline=False)
+                embed.add_field(name="Pieces needed", value=cost-boxPieces, inline=False)
             else:
                 updateCursor = self.parent.miscConnection.cursor()
                 for row in resultTable:
@@ -74,6 +73,7 @@ class Games(commands.Cog):
                 self.parent.miscConnection.commit()
 
                 embed=discord.Embed(title="Whooper's Ring Box", description=f'{currentUser.mention} you have {boxPieces-10} pieces left.', color=0xf1d3ed)
+                embed.set_thumbnail(url=imgURL)
                 embed.add_field(name=reward, value=level, inline=False)
                 embed.set_image(url=rewardURL)
             await interaction.response.send_message(embed=embed)
@@ -91,11 +91,11 @@ class Games(commands.Cog):
             cost = 100
             
             imgURL = "https://static.wikia.nocookie.net/maplestory/images/b/ba/Use_Shiny_Ring_Box.png/revision/latest?cb=20210914225555"
-            embed.set_thumbnail(url=imgURL)
             if boxPieces < cost:
-                embed=discord.Embed(title="Whooper's Shiny Ring Box", description=f'{currentUser.mention} you have {boxPieces} pieces left.', color=0xf1d3ed)
+                embed=discord.Embed(title="Whooper's Shiny Ring Box", description=f'{currentUser.mention} you have {boxPieces} pieces.', color=0xf1d3ed)
+                embed.set_thumbnail(url=imgURL)
                 embed.add_field(name="You do not have enough box pieces.", value='\u200b', inline=False)
-                embed.add_field(name="Current box pieces", value='placeholder', inline=False)
+                embed.add_field(name="Pieces needed", value=cost-boxPieces, inline=False)
             else:
                 updateCursor = self.parent.miscConnection.cursor()
                 for row in resultTable:
@@ -117,6 +117,7 @@ class Games(commands.Cog):
                 self.parent.miscConnection.commit()
 
                 embed=discord.Embed(title="Whooper's Shiny Ring Box", description=f'{currentUser.mention} you have {boxPieces-100} pieces left.', color=0xf1d3ed)
+                embed.set_thumbnail(url=imgURL)
                 embed.add_field(name=reward, value=level, inline=False)
                 embed.set_image(url=rewardURL)
             await interaction.response.send_message(embed=embed)
