@@ -31,29 +31,94 @@ class Games(commands.Cog):
         self.checkRingTable()
 
     class ShopButtons(discord.ui.View):
-        def __init__(self, *, timeout=90):
+        def __init__(self, parent, *, timeout=90):
             super().__init__(timeout=timeout)
+            self.parent = parent
 
         @discord.ui.button(label="1", style=discord.ButtonStyle.primary)
         async def buttonOne(self, interaction: discord.Interaction, button:discord.ui.Button):
-            embed=discord.Embed(color=0xf1d3ed)
-            imgURL = "https://static.wikia.nocookie.net/maplestory/images/3/36/Use_Broken_Box_Piece.png/revision/latest?cb=20210910011106"
+            currentUser = interaction.user
+
+            self.parent.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE userid = \'{user.id}\' AND itemname = \'Broken Box Piece x5\' AND itemattribute != \'0\'')
+            resultTable = self.parent.miscCursor.fetchall()
+            boxPieces = 0
+            for row in resultTable:
+                boxPieces += int(row[2])
+
+            cost = 10
+            
+            imgURL = "https://static.wikia.nocookie.net/maplestory/images/b/b1/Use_Hidden_Ring_Box.png/revision/latest?cb=20210914225553"
             embed.set_thumbnail(url=imgURL)
-            embed.add_field(name="Tower of Oz", value=f'Prize Redemption for {interaction.user.mention}', inline=False)
-            embed.add_field(name="Whoomper's Ring Box", value= '\u200b', inline=False)
-            embed.add_field(name="Ring Name Placeholder", value= 'Ring Level Placeholder', inline=False)
-            embed.set_footer(text=f'Remaining box pieces: {0}')
+            if boxPieces < cost:
+                embed=discord.Embed(title="Whooper's Ring Box", description=f'{currentUser.mention} you have {boxPieces} pieces left.', color=0xf1d3ed)
+                embed.add_field(name="You do not have enough box pieces.", value='\u200b', inline=False)
+                embed.add_field(name="Current box pieces", value='placeholder', inline=False)
+            else:
+                updateCursor = self.parent.miscConnection.cursor()
+                for row in resultTable:
+                    currentPieces = int(row[2])
+                    cost = cost-currentPieces
+                    if cost > 0:
+                        # update row with 0
+                        updateCursor.execute(f'UPDATE \'ringTable\' SET itemattribute = \'0\' WHERE userid = \'{currentUser.id}\' AND itemname = \'Broken Box Piece x5\' AND timestamp = \'{row[3]}\'')
+                    else:
+                        # update row with abs value of remaining cost and exit
+                        updateCursor.execute(f'UPDATE \'ringTable\' SET itemattribute = \'{abs(cost)}\' WHERE userid = \'{currentUser.id}\' AND itemname = \'Broken Box Piece x5\' AND timestamp = \'{row[3]}\'')
+                        break
+                self.parent.miscConnection.commit()
+
+                reward = numpy.random.choice(data.hiddenBox, p=data.hiddenRingOdds)
+                rewardURL = data.rewardLinks[reward]
+                level = numpy.random.choice(data.ringLevels, p=data.ringLevelOdds)
+                self.parent.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{currentUser.id}\',\'{reward}\',\'{level}\', datetime(\'now\'))')
+                self.parent.miscConnection.commit()
+
+                embed=discord.Embed(title="Whooper's Ring Box", description=f'{currentUser.mention} you have {boxPieces-10} pieces left.', color=0xf1d3ed)
+                embed.add_field(name=reward, value=level, inline=False)
+                embed.set_image(url=rewardURL)
             await interaction.response.send_message(embed=embed)
 
         @discord.ui.button(label="2", style=discord.ButtonStyle.primary)
         async def buttonTwo(self, interaction: discord.Interaction, button:discord.ui.Button):
-            embed=discord.Embed(color=0xf1d3ed)
-            imgURL = "https://static.wikia.nocookie.net/maplestory/images/3/36/Use_Broken_Box_Piece.png/revision/latest?cb=20210910011106"
+            currentUser = interaction.user
+            
+            self.parent.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE userid = \'{user.id}\' AND itemname = \'Broken Box Piece x5\' AND itemattribute != \'0\'')
+            resultTable = self.parent.miscCursor.fetchall()
+            boxPieces = 0
+            for row in resultTable:
+                boxPieces += int(row[2])
+
+            cost = 100
+            
+            imgURL = "https://static.wikia.nocookie.net/maplestory/images/b/ba/Use_Shiny_Ring_Box.png/revision/latest?cb=20210914225555"
             embed.set_thumbnail(url=imgURL)
-            embed.add_field(name="Tower of Oz", value=f'Prize Redemption for {interaction.user.mention}', inline=False)
-            embed.add_field(name="Whoomper's Ring Box", value= '\u200b', inline=False)
-            embed.add_field(name="Ring Name Placeholder", value= 'Ring Level Placeholder', inline=False)
-            embed.set_footer(text=f'Remaining box pieces: {0}')
+            if boxPieces < cost:
+                embed=discord.Embed(title="Whooper's Shiny Ring Box", description=f'{currentUser.mention} you have {boxPieces} pieces left.', color=0xf1d3ed)
+                embed.add_field(name="You do not have enough box pieces.", value='\u200b', inline=False)
+                embed.add_field(name="Current box pieces", value='placeholder', inline=False)
+            else:
+                updateCursor = self.parent.miscConnection.cursor()
+                for row in resultTable:
+                    currentPieces = int(row[2])
+                    cost = cost-currentPieces
+                    if cost > 0:
+                        # update row with 0
+                        updateCursor.execute(f'UPDATE \'ringTable\' SET itemattribute = \'0\' WHERE userid = \'{currentUser.id}\' AND itemname = \'Broken Box Piece x5\' AND timestamp = \'{row[3]}\'')
+                    else:
+                        # update row with abs value of remaining cost and exit
+                        updateCursor.execute(f'UPDATE \'ringTable\' SET itemattribute = \'{abs(cost)}\' WHERE userid = \'{currentUser.id}\' AND itemname = \'Broken Box Piece x5\' AND timestamp = \'{row[3]}\'')
+                        break
+                self.parent.miscConnection.commit()
+
+                reward = numpy.random.choice(data.shinyBox, p=data.shinyRingOdds)
+                rewardURL = data.rewardLinks[reward]
+                level = numpy.random.choice(data.shinyBoxLevels, p=data.shinyBoxlevelOdds)
+                self.parent.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{currentUser.id}\',\'{reward}\',\'{level}\', datetime(\'now\'))')
+                self.parent.miscConnection.commit()
+
+                embed=discord.Embed(title="Whooper's Shiny Ring Box", description=f'{currentUser.mention} you have {boxPieces-100} pieces left.', color=0xf1d3ed)
+                embed.add_field(name=reward, value=level, inline=False)
+                embed.set_image(url=rewardURL)
             await interaction.response.send_message(embed=embed)
 
         @discord.ui.button(label="3", style=discord.ButtonStyle.primary)
@@ -237,7 +302,7 @@ class Games(commands.Cog):
         boxesOpened = len(resultTable)
         boxPieces = 0
         for row in resultTable:
-            if row [1] == 'Broken Box Piece x5' and row[2] == '5':
+            if row [1] == 'Broken Box Piece x5':
                 boxPieces += int(row[2])
         
         if user.id not in self.usersRunning or self.usersRunning[user.id] is None:
@@ -297,9 +362,6 @@ class Games(commands.Cog):
 
             embed.add_field(name=reward, value=level, inline=False)
             embed.set_image(url=rewardURL)
-            #embed.add_field(name='\u200b', value='**Boxes Left**', inline=True)
-            #embed.add_field(name=self.boxes[currentUser.id], value='**Runs Left**', inline=True)
-            #embed.add_field(name=self.runsRemaining[currentUser.id], value='\u200b', inline=True)
         await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name='ozhistory', description='View someone\'s most recent rewards')
@@ -342,7 +404,7 @@ class Games(commands.Cog):
         embed.add_field(name=f'**4.** Feet Pics', value = 'Placeholder', inline=False)
         embed.add_field(name=f'**5.** ???', value = 'Placeholder', inline=False)
 
-        await interaction.response.send_message(embed=embed, view=self.ShopButtons())
+        await interaction.response.send_message(embed=embed, view=self.ShopButtons(self))
 
     @app_commands.command(name='givebox', description='TESTING ONLY - Give Someone a Box')
     async def givebox(self, interaction: discord.Interaction, user: discord.User = None, num: int = 1):
@@ -362,6 +424,25 @@ class Games(commands.Cog):
         else:
             embed.add_field(name='\u200b', value=f'You are not authorized to give boxes.', inline=False)
 
+        await interaction.response.send_message(embed=embed)
+
+    @app_commands.command(name='givepieces')
+    async def givepieces(self, interaction: discord.Interaction, user: discord.User = None, num: int = 5):
+        if user is None:
+            user = interaction.user
+
+        self.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{user.id}\',\'Broken Box Piece x5\',\'{num}\', datetime(\'now\'))')
+        self.miscConnection.commit()
+
+        self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE userid = \'{user.id}\' AND itemname = \'Broken Box Piece x5\'')
+        resultTable = self.miscCursor.fetchall()
+        boxPieces = 0
+        for row in resultTable:
+            boxPieces += int(row[2])
+
+        imgURL = "https://static.wikia.nocookie.net/maplestory/images/3/36/Use_Broken_Box_Piece.png/revision/latest?cb=20210910011106"
+        embed.set_thumbnail(url=imgURL)
+        embed=discord.Embed(title="Box Piece Dispenser", description=f'{currentUser.mention} you have {boxPieces} pieces.', color=0xf1d3ed)
         await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name='useablerings', description='Display usable rings')

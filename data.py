@@ -8,6 +8,15 @@ rings = ["Ring of Restraint", "Weapon Jump S Ring", "Weapon Jump I Ring", "Weapo
         "Limit Ring", "Durability Ring", "Clean Defense Ring", "Berserker Ring", "Mana Cut Ring", "Crisis H Ring", "Crisis M Ring", "Critical Shift Ring", "Stance Shift Ring", "Clean Stance Ring", "Swift Ring",
         "Reflective Ring", "Ocean Glow Earrings", "Broken Box Piece x5" , "Oz Point Pouch x5", "2x EXP Coupon (15 Minute) x3"]
 
+hiddenBox = ["Ring of Restraint", "Weapon Jump S Ring", "Weapon Jump I Ring", "Weapon Jump L Ring", "Weapon Jump D Ring", "Ultimatum Ring", "Risk Taker Ring", "Totalling Ring", "Critical Damage Ring",
+        "Crisis HM Ring", "Tower Boost Ring", "Cleansing Ring", "Overdrive Ring", "Level Jump S Ring", "Level Jump I Ring", "Level Jump L Ring", "Level Jump D Ring", "Health Cut Ring", "Critical Defense Ring", 
+        "Limit Ring", "Durability Ring", "Clean Defense Ring", "Berserker Ring", "Mana Cut Ring", "Crisis H Ring", "Crisis M Ring", "Critical Shift Ring", "Stance Shift Ring", "Clean Stance Ring", "Swift Ring",
+        "Reflective Ring"]
+
+shinyBox = ["Ring of Restraint", "Weapon Jump S Ring", "Weapon Jump I Ring", "Weapon Jump L Ring", "Weapon Jump D Ring", "Ultimatum Ring", "Risk Taker Ring", "Totalling Ring", "Critical Damage Ring",
+        "Crisis HM Ring", "Tower Boost Ring", "Cleansing Ring", "Overdrive Ring", "Level Jump S Ring", "Level Jump I Ring", "Level Jump L Ring", "Level Jump D Ring", "Health Cut Ring", "Critical Defense Ring", 
+        "Limit Ring"]
+
 rewardLinks = {}
 rewardLinks["Ring of Restraint"] = "https://static.wikia.nocookie.net/maplestory/images/4/4d/Eqp_Ring_of_Restraint.png/revision/latest?cb=20160210033306"
 rewardLinks["Weapon Jump S Ring"] = "https://static.wikia.nocookie.net/maplestory/images/2/27/Eqp_Weapon_Jump_Ring.png/revision/latest?cb=20190925072314"
@@ -51,5 +60,16 @@ ringOdds = [0.0424955, 0.0262206, 0.0262206, 0.0262206, 0.0262206, 0.0262206, 0.
         0.0185353, 0.0185353, 0.0185353, 0.0162749, 0.0162749, 0.0162749, 0.0162749, 0.0162749, 0.0162749, 0.0162749, 0.0162749, 0.0162749, 0.0162749, 0.0162749, 0.0049729, 0.2441230, 0.0587703, 0.0723327]
 ringOdds[-1] = 1 - numpy.sum(ringOdds[0:-1])
 
+hiddenRingOdds = [0.0068027, 0.0068027, 0.0068027, 0.0068027, 0.0068027, 0.0068027, 0.0068027, 0.0272109, 0.0272109, 0.0272109, 0.0272109, 0.0272109, 0.0272109, 0.0272109, 0.0272109, 0.0272109, 
+        0.0272109, 0.0272109, 0.0272109, 0.0272109, 0.0544218, 0.0544218, 0.0544218, 0.0544218, 0.0544218, 0.0544218, 0.0544218, 0.0544218, 0.0544218, 0.0544218, 0.0544218]
+hiddenRingOdds[-1] = 1 - numpy.sum(hiddenRingOdds[0:-1])
+
+shinyRingOdds = [0.0348837, 0.0348837, 0.0348837, 0.0348837, 0.0348837, 0.0348837, 0.0348837, 0.0581395, 0.0581395, 0.0581395, 0.0581395, 0.0581395, 0.0581395, 0.0581395, 0.0581395, 0.0581395,
+         0.0581395, 0.0581395, 0.0581395,  0.0581395]
+shinyRingOdds[-1] = 1 - numpy.sum(shinyRingOdds[0:-1])
+
 ringLevels = ['Level 1','Level 2','Level 3','Level 4']
 ringLevelOdds = [0.41,0.28,0.20,0.11]
+
+shinyBoxLevels = ['Level 3', 'Level 4']
+shinyBoxlevelOdds = [0.75, 0.25]
