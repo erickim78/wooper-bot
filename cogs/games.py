@@ -39,7 +39,7 @@ class Games(commands.Cog):
         async def buttonOne(self, interaction: discord.Interaction, button:discord.ui.Button):
             currentUser = interaction.user
 
-            self.parent.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE userid = \'{user.id}\' AND itemname = \'Broken Box Piece x5\' AND itemattribute != \'0\'')
+            self.parent.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE userid = \'{currentUser.id}\' AND itemname = \'Broken Box Piece x5\' AND itemattribute != \'0\'')
             resultTable = self.parent.miscCursor.fetchall()
             boxPieces = 0
             for row in resultTable:
@@ -82,7 +82,7 @@ class Games(commands.Cog):
         async def buttonTwo(self, interaction: discord.Interaction, button:discord.ui.Button):
             currentUser = interaction.user
             
-            self.parent.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE userid = \'{user.id}\' AND itemname = \'Broken Box Piece x5\' AND itemattribute != \'0\'')
+            self.parent.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE userid = \'{currentUser.id}\' AND itemname = \'Broken Box Piece x5\' AND itemattribute != \'0\'')
             resultTable = self.parent.miscCursor.fetchall()
             boxPieces = 0
             for row in resultTable:
