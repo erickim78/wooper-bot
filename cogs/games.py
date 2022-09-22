@@ -463,7 +463,7 @@ class Games(commands.Cog):
         ]
 
     async def ozleaderboardlevel_autocomplete(self, interaction: discord.Interaction, current: str,) -> List[app_commands.Choice[str]]:
-        choices = ['1', '2', '3', '4']
+        choices = ['Level 1', 'Level 2', 'Level 3', 'Level 4']
         return [
             app_commands.Choice(name=choice, value=choice)
             for choice in choices if current.lower() in choice.lower()
@@ -471,10 +471,10 @@ class Games(commands.Cog):
 
     @app_commands.command(name='ozleaderboard', description='Display usable rings')
     @app_commands.autocomplete(ringname=ozleaderboard_autocomplete, ringlevel=ozleaderboardlevel_autocomplete)
-    async def ozleaderboard(self, interaction: discord.Interaction, ringname: str = 'Ring of Restraint', ringlevel: str = '4'):
+    async def ozleaderboard(self, interaction: discord.Interaction, ringname: str = 'Ring of Restraint', ringlevel: str = 'Level 4'):
         if ringname == 'Weapon Jump':
             imgURL = data.rewardLinks['Weapon Jump S Ring']
-            self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE (itemname = \'Weapon Jump I Ring\' OR itemname = \'Weapon Jump L Ring\ OR itemname = \'Weapon Jump S Ring\' OR itemname = \'Weapon Jump D Ring\') AND itemattribute = \'{ringlevel}\'')
+            self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE (itemname = \'Weapon Jump I Ring\' OR itemname = \'Weapon Jump L Ring\' OR itemname = \'Weapon Jump S Ring\' OR itemname = \'Weapon Jump D Ring\') AND itemattribute = \'{ringlevel}\'')
         elif ringname == 'Ring of Restraint':
             imgURL = data.rewardLinks[ringname]
             self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE itemname = \'{ringname}\' AND itemattribute = \'{ringlevel}\'')
@@ -492,7 +492,7 @@ class Games(commands.Cog):
             else:
                 leaderboardDict[currentUser] = 1
 
-        embed = discord.Embed(title="Tower of Oz Leaderboard", description=f'{ringname} Level {ringlevel}')
+        embed = discord.Embed(title="Tower of Oz Leaderboard", description=f'{ringname} {ringlevel}')
         embed.set_thumbnail(url=imgURL)
 
         count = 0
