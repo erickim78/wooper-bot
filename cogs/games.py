@@ -462,15 +462,45 @@ class Games(commands.Cog):
             for choice in choices if current.lower() in choice.lower()
         ]
 
-    @app_commands.command(name='ozleaderboard', description='Display usable rings')
-    @app_commands.autocomplete(ringname=ozleaderboard_autocomplete)
-    async def ozleaderboard(self, interaction: discord.Interaction, ringname: str = 'Ring of Restraint', ringlevel: str = '4'):
-        if user is None:
-            user = interaction.user
+    async def ozleaderboardlevel_autocomplete(self, interaction: discord.Interaction, current: str,) -> List[app_commands.Choice[str]]:
+        choices = ['1', '2', '3', '4']
+        return [
+            app_commands.Choice(name=choice, value=choice)
+            for choice in choices if current.lower() in choice.lower()
+        ]
 
-        imgURL = "https://i.imgur.com/dxPvMN8.gif"
+    @app_commands.command(name='ozleaderboard', description='Display usable rings')
+    @app_commands.autocomplete(ringname=ozleaderboard_autocomplete, ringlevel=ozleaderboardlevel_autocomplete)
+    async def ozleaderboard(self, interaction: discord.Interaction, ringname: str = 'Ring of Restraint', ringlevel: str = '4'):
+        if ringname == 'Weapon Jump':
+            imgURL = data.rewardLinks['Weapon Jump S']
+            self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE (itemname = \'Weapon Jump I\' OR itemname = \'Weapon Jump L\ OR itemname = \'Weapon Jump S\' OR itemname = \'Weapon Jump D\') AND itemattribute = \'{ringlevel}\''')
+        elif ringname == 'Ring of Restraint':
+            imgURL = data.rewardLinks[ringname]
+            self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE userid = \'{ringname}\' AND itemattribute = \'{ringlevel}\'')
+        else:
+            print("ERROR SHOULD NOT HAVE ENTERED HERE")
+            return
+
+        resultTable = self.miscCursor.fetchall()
+        leaderboardDict = {}
+        for row in resultTable:
+            currentUser = row[0]
+            if currentUser in leaderboardDict:
+                leaderboardDict[currentUser] += 1
+            else:
+                leaderboardDict[currentUser] = 1
+
         embed = discord.Embed(title="Tower of Oz Leaderboard", description=f'for {ringname} Level {ringlevel}')
         embed.set_thumbnail(url=imgURL)
+
+        count = 0
+        for key, value in sorted(leaderboardDict.items(), key=lambda item: item[1], reverse=True):
+            embed.add_field(name=f'1) {self.bot.get_user(key).mention}', value=f'{value} rings.', inline=False)
+            count += 1
+            if count >= 5:
+                break
+
         await interaction.response.send_message(embed=embed)
 
 
