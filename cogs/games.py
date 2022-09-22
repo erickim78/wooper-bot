@@ -483,6 +483,7 @@ class Games(commands.Cog):
             return
 
         resultTable = self.miscCursor.fetchall()
+        print(resultTable)
         leaderboardDict = {}
         for row in resultTable:
             currentUser = row[0]
