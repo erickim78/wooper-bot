@@ -456,14 +456,14 @@ class Games(commands.Cog):
         await interaction.response.send_message(embed=embed)
 
     async def ozleaderboard_autocomplete(self, interaction: discord.Interaction, current: str,) -> List[app_commands.Choice[str]]:
-        choices = ['Ring of Restraint', 'Weapon Jump']
+        choices = data.leaderboardRings
         return [
             app_commands.Choice(name=choice, value=choice)
             for choice in choices if current.lower() in choice.lower()
         ]
 
     async def ozleaderboardlevel_autocomplete(self, interaction: discord.Interaction, current: str,) -> List[app_commands.Choice[str]]:
-        choices = ['Level 1', 'Level 2', 'Level 3', 'Level 4']
+        choices = data.ringLevels
         return [
             app_commands.Choice(name=choice, value=choice)
             for choice in choices if current.lower() in choice.lower()
@@ -472,12 +472,12 @@ class Games(commands.Cog):
     @app_commands.command(name='ozleaderboard', description='Display usable rings')
     @app_commands.autocomplete(ringname=ozleaderboard_autocomplete, ringlevel=ozleaderboardlevel_autocomplete)
     async def ozleaderboard(self, interaction: discord.Interaction, ringname: str = 'Ring of Restraint', ringlevel: str = 'Level 4'):
-        if ringname == 'Weapon Jump':
+        if ringname == 'Weapon Jump Ring':
             imgURL = data.rewardLinks['Weapon Jump S Ring']
             self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE (itemname = \'Weapon Jump I Ring\' OR itemname = \'Weapon Jump L Ring\' OR itemname = \'Weapon Jump S Ring\' OR itemname = \'Weapon Jump D Ring\') AND itemattribute = \'{ringlevel}\'')
         else:
-            if ringname not in data.rewardLinks:
-                embed = discord.Embed(title="Tower of Oz Leaderboard", description=f'Invalid Ring Name')
+            if ringname not in data.rewardLinks or ringlevel not in data.ringLevels:
+                embed = discord.Embed(title="Tower of Oz Leaderboard", description=f'Invalid Ring Name or Level')
                 embed.set_thumbnail(url="https://i.imgur.com/dxPvMN8.gif")
                 await interaction.response.send_message(embed=embed)
                 return
