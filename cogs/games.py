@@ -463,13 +463,13 @@ class Games(commands.Cog):
         ]
 
     @app_commands.command(name='ozleaderboard', description='Display usable rings')
-    @app_commands.autocomplete(ringName=ozleaderboard_autocomplete)
-    async def ozleaderboard(self, interaction: discord.Interaction, ringName: str = 'Ring of Restraint', ringLevel: str = '4'):
+    @app_commands.autocomplete(ringname=ozleaderboard_autocomplete)
+    async def ozleaderboard(self, interaction: discord.Interaction, ringname: str = 'Ring of Restraint', ringlevel: str = '4'):
         if user is None:
             user = interaction.user
 
         imgURL = "https://i.imgur.com/dxPvMN8.gif"
-        embed = discord.Embed(title="Tower of Oz Leaderboard", description=f'for {ringName} Level {ringLevel}')
+        embed = discord.Embed(title="Tower of Oz Leaderboard", description=f'for {ringname} Level {ringlevel}')
         embed.set_thumbnail(url=imgURL)
         await interaction.response.send_message(embed=embed)
 
