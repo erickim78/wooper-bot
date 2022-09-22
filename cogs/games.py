@@ -497,7 +497,7 @@ class Games(commands.Cog):
 
         count = 0
         for key, value in sorted(leaderboardDict.items(), key=lambda item: item[1], reverse=True):
-            embed.add_field(name=f'1) {self.bot.get_user(key).mention}', value=f'{value} rings.', inline=False)
+            embed.add_field(name=f'1) {self.bot.get_user(int(key)).mention}', value=f'{value} rings.', inline=False)
             count += 1
             if count >= 5:
                 break
