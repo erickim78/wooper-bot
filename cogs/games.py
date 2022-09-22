@@ -463,8 +463,8 @@ class Games(commands.Cog):
         ]
 
     @app_commands.command(name='ozleaderboard', description='Display usable rings')
-    @app_commands.autocomplete(choices=ozleaderboard_autocomplete)
-    async def ozleaderboard(self, interaction: discord.Interaction, ringName: app_commands.Choice[str], ringLevel: str = '4'):
+    @app_commands.autocomplete(ringName=ozleaderboard_autocomplete)
+    async def ozleaderboard(self, interaction: discord.Interaction, ringName: str = 'Ring of Restraint', ringLevel: str = '4'):
         if user is None:
             user = interaction.user
 
