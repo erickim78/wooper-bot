@@ -390,8 +390,8 @@ class Games(commands.Cog):
         
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.command(name='ozshop', description='Open the oz store.')
-    async def ozshop(self, interaction: discord.Interaction):
+    @app_commands.command(name='shop', description='Opens Whooper\'s Box Piece Shop (Active for 90 seconds)')
+    async def shop(self, interaction: discord.Interaction):
         user = interaction.user
         self.currentShopInteraction = interaction
 
@@ -409,7 +409,7 @@ class Games(commands.Cog):
 
         await interaction.response.send_message(embed=embed, view=self.ShopButtons(self))
 
-    @app_commands.command(name='givebox', description='TESTING ONLY - Give Someone a Box')
+    @app_commands.command(name='givebox', description='TESTING ONLY')
     async def givebox(self, interaction: discord.Interaction, user: discord.User = None, num: int = 1):
         if user is None:
             user = interaction.user
@@ -429,13 +429,13 @@ class Games(commands.Cog):
 
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.command(name='givepieces', description='TESTING ONLY - Give Someone Box Pieces')
+    @app_commands.command(name='givepieces', description='TESTING ONLY')
     async def givepieces(self, interaction: discord.Interaction, user: discord.User = None, num: int = 5):
         if user is None:
             user = interaction.user
 
         imgURL = "https://static.wikia.nocookie.net/maplestory/images/3/36/Use_Broken_Box_Piece.png/revision/latest?cb=20210910011106"
-        if interaction.user.guild_permissions.administrator or interaction.user.id == 125114599249936384:
+        if interaction.user.id == 125114599249936384:
             self.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{user.id}\',\'Broken Box Piece x5\',\'{num}\', datetime(\'now\'))')
             self.miscConnection.commit()
 
