@@ -475,12 +475,14 @@ class Games(commands.Cog):
         if ringname == 'Weapon Jump':
             imgURL = data.rewardLinks['Weapon Jump S Ring']
             self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE (itemname = \'Weapon Jump I Ring\' OR itemname = \'Weapon Jump L Ring\' OR itemname = \'Weapon Jump S Ring\' OR itemname = \'Weapon Jump D Ring\') AND itemattribute = \'{ringlevel}\'')
-        elif ringname == 'Ring of Restraint':
+        else:
+            if ringname not in data.rewardLinks:
+                embed = discord.Embed(title="Tower of Oz Leaderboard", description=f'Invalid Ring Name')
+                embed.set_thumbnail(url="https://i.imgur.com/dxPvMN8.gif")
+                await interaction.response.send_message(embed=embed)
+                return
             imgURL = data.rewardLinks[ringname]
             self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE itemname = \'{ringname}\' AND itemattribute = \'{ringlevel}\'')
-        else:
-            print("ERROR SHOULD NOT HAVE ENTERED HERE")
-            return
 
         resultTable = self.miscCursor.fetchall()
         print(resultTable)
@@ -497,7 +499,7 @@ class Games(commands.Cog):
 
         count = 0
         for key, value in sorted(leaderboardDict.items(), key=lambda item: item[1], reverse=True):
-            embed.add_field(name=f'1) {self.bot.get_user(int(key)).mention}', value=f'{value} rings.', inline=False)
+            embed.add_field(name=f'**{count+1}) {self.bot.get_user(int(key)).mention}**', value=f'**{value} rings.**', inline=False)
             count += 1
             if count >= 5:
                 break
