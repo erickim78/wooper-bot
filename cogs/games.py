@@ -5,6 +5,7 @@ import numpy
 import time
 import schedule
 import threading
+from typing import List
 
 # File Imports
 import config
