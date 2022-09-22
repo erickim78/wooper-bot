@@ -474,7 +474,7 @@ class Games(commands.Cog):
     async def ozleaderboard(self, interaction: discord.Interaction, ringname: str = 'Ring of Restraint', ringlevel: str = '4'):
         if ringname == 'Weapon Jump':
             imgURL = data.rewardLinks['Weapon Jump S']
-            self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE (itemname = \'Weapon Jump I\' OR itemname = \'Weapon Jump L\ OR itemname = \'Weapon Jump S\' OR itemname = \'Weapon Jump D\') AND itemattribute = \'{ringlevel}\''')
+            self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE (itemname = \'Weapon Jump I\' OR itemname = \'Weapon Jump L\ OR itemname = \'Weapon Jump S\' OR itemname = \'Weapon Jump D\') AND itemattribute = \'{ringlevel}\'')
         elif ringname == 'Ring of Restraint':
             imgURL = data.rewardLinks[ringname]
             self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE userid = \'{ringname}\' AND itemattribute = \'{ringlevel}\'')
