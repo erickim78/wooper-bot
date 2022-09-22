@@ -18,10 +18,8 @@ shinyBox = ["Ring of Restraint", "Weapon Jump S Ring", "Weapon Jump I Ring", "We
         "Limit Ring"]
 
 
-leaderboardRings = ["Ring of Restraint", "Weapon Jump Ring", "Ultimatum Ring", "Risk Taker Ring", "Totalling Ring", "Critical Damage Ring",
-        "Crisis HM Ring", "Tower Boost Ring", "Cleansing Ring", "Overdrive Ring", "Level Jump S Ring", "Level Jump I Ring", "Level Jump L Ring", "Level Jump D Ring", "Health Cut Ring", "Critical Defense Ring", 
-        "Limit Ring", "Durability Ring", "Clean Defense Ring", "Berserker Ring", "Mana Cut Ring", "Crisis H Ring", "Crisis M Ring", "Critical Shift Ring", "Stance Shift Ring", "Clean Stance Ring", "Swift Ring",
-        "Reflective Ring"]
+leaderboardRings = ["Ring of Restraint", "Weapon Jump Ring", "Risk Taker Ring", "Totalling Ring", "Critical Damage Ring",
+        "Crisis HM Ring", "Tower Boost Ring", "Reflective Ring"]
 
 rewardLinks = {}
 rewardLinks["Ring of Restraint"] = "https://static.wikia.nocookie.net/maplestory/images/4/4d/Eqp_Ring_of_Restraint.png/revision/latest?cb=20160210033306"
