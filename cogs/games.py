@@ -50,8 +50,8 @@ class Games(commands.Cog):
             if boxPieces < cost:
                 embed=discord.Embed(title="Whooper's Ring Box", description=f'{currentUser.mention} you have {boxPieces} pieces.', color=0xf1d3ed)
                 embed.set_thumbnail(url=imgURL)
-                embed.add_field(name="You do not have enough box pieces.", value='\u200b', inline=False)
-                embed.add_field(name="Pieces needed", value=cost-boxPieces, inline=False)
+                embed.add_field(name="Not enough box pieces.", value='\u200b', inline=False)
+                embed.add_field(name="Pieces needed:", value=cost-boxPieces, inline=False)
             else:
                 updateCursor = self.parent.miscConnection.cursor()
                 for row in resultTable:
@@ -95,8 +95,8 @@ class Games(commands.Cog):
             if boxPieces < cost:
                 embed=discord.Embed(title="Whooper's Shiny Ring Box", description=f'{currentUser.mention} you have {boxPieces} pieces.', color=0xf1d3ed)
                 embed.set_thumbnail(url=imgURL)
-                embed.add_field(name="You do not have enough box pieces.", value='\u200b', inline=False)
-                embed.add_field(name="Pieces needed", value=cost-boxPieces, inline=False)
+                embed.add_field(name="Not enough box pieces.", value='\u200b', inline=False)
+                embed.add_field(name="Pieces needed:", value=cost-boxPieces, inline=False)
             else:
                 updateCursor = self.parent.miscConnection.cursor()
                 for row in resultTable:
