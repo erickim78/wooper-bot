@@ -473,11 +473,11 @@ class Games(commands.Cog):
     @app_commands.autocomplete(ringname=ozleaderboard_autocomplete, ringlevel=ozleaderboardlevel_autocomplete)
     async def ozleaderboard(self, interaction: discord.Interaction, ringname: str = 'Ring of Restraint', ringlevel: str = '4'):
         if ringname == 'Weapon Jump':
-            imgURL = data.rewardLinks['Weapon Jump S']
-            self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE (itemname = \'Weapon Jump I\' OR itemname = \'Weapon Jump L\ OR itemname = \'Weapon Jump S\' OR itemname = \'Weapon Jump D\') AND itemattribute = \'{ringlevel}\'')
+            imgURL = data.rewardLinks['Weapon Jump S Ring']
+            self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE (itemname = \'Weapon Jump I Ring\' OR itemname = \'Weapon Jump L Ring\ OR itemname = \'Weapon Jump S Ring\' OR itemname = \'Weapon Jump D Ring\') AND itemattribute = \'{ringlevel}\'')
         elif ringname == 'Ring of Restraint':
             imgURL = data.rewardLinks[ringname]
-            self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE userid = \'{ringname}\' AND itemattribute = \'{ringlevel}\'')
+            self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE itemname = \'{ringname}\' AND itemattribute = \'{ringlevel}\'')
         else:
             print("ERROR SHOULD NOT HAVE ENTERED HERE")
             return
@@ -491,7 +491,7 @@ class Games(commands.Cog):
             else:
                 leaderboardDict[currentUser] = 1
 
-        embed = discord.Embed(title="Tower of Oz Leaderboard", description=f'for {ringname} Level {ringlevel}')
+        embed = discord.Embed(title="Tower of Oz Leaderboard", description=f'{ringname} Level {ringlevel}')
         embed.set_thumbnail(url=imgURL)
 
         count = 0
