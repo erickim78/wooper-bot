@@ -280,7 +280,9 @@ class Simps(commands.Cog):
 
             for simp in simpList:
                 self.cursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE id =\'{simp[0]}\'')
-                simp[1] = simp[1]/self.cursor.fetchall()[0][1]
+                as_list = list(simp)
+                as_list[1] = as_list[1]/self.cursor.fetchall()[0][1]
+                simp = tuple(as_list)
             
             simpList = sorted(simpList, key=lambda t: t[1], reverse=True)
             print(simpList)
