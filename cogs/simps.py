@@ -278,11 +278,13 @@ class Simps(commands.Cog):
                 embed.add_field(name=f'{user.name}\'s simps', value=f'*Online: {round(referenceTime//3600)} hrs, {round((referenceTime-3600*(referenceTime//3600))//60)} mins*', inline=False)   
             del simpList[delIndex]
 
+            i = 0
             for simp in simpList:
                 self.cursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE id =\'{simp[0]}\'')
                 as_list = list(simp)
                 as_list[1] = as_list[1]/self.cursor.fetchall()[0][1]
-                simp = tuple(as_list)
+                simpList[i] = tuple(as_list)
+                i += 1
             
             simpList = sorted(simpList, key=lambda t: t[1], reverse=True)
             print(simpList)
