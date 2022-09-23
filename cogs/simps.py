@@ -273,9 +273,9 @@ class Simps(commands.Cog):
                     break
 
             if userName[-1] == 's':
-                embed.add_field(name=f'{user.name}\' real simps', value=f'*% of their total time on spent with {user.mention}*', inline=False)
+                embed.add_field(name=f'{user.name}\' real simps', value=f'*% total online time spent with {user.mention}*', inline=False)
             else:
-                embed.add_field(name=f'{user.name}\'s real simps', value=f'*% of their total time on spent with {user.mention}*', inline=False)   
+                embed.add_field(name=f'{user.name}\'s real simps', value=f'*% total online time on spent with {user.mention}*', inline=False)   
             del simpList[delIndex]
 
             print(simpList)
@@ -293,9 +293,9 @@ class Simps(commands.Cog):
                 currentUser = self.bot.get_user(int(realSimpList[i][0]))
                 currentTime = realSimpList[i][1]
                 if i > 0:
-                    result += f'{i+1}) {currentUser.mention}, **{round((float(currentTime)/referenceTime)*100,2)}% Online Rate**\n\n'
+                    result += f'{i+1}) {currentUser.mention}, **{round(currentTime*100,2)}% Simp Rate**\n\n'
                 else:
-                    result += f'**{i+1}) {currentUser.mention},  {round((float(currentTime)/referenceTime)*100,2)}% Online Rate**\n\n\n'
+                    result += f'**{i+1}) {currentUser.mention},  {round(currentTime*100,2)}% Simp Rate**\n\n\n'
                     embed.set_image(url=currentUser.avatar.url)
 
             embed.add_field(name='\u200b', value=result, inline=True)
