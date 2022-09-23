@@ -246,6 +246,67 @@ class Simps(commands.Cog):
 
         await interaction.response.send_message(embed=embed)
 
+    @app_commands.command(name="realsimps", description='Simp Leaderboard')
+    async def realsimps(self, interaction: discord.Interaction, user: discord.User = None) -> None:
+        if user is None:
+            user = interaction.user
+        self.updateTimes()
+        self.cursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE type='table' AND name = '{user.id}' ''')
+
+        # Build Embed Common Fields
+        embed = discord.Embed(color=0xf1d3ed)
+        embed.set_thumbnail(url=user.avatar.url) 
+        userName = user.name
+
+        # Build Simps String
+        self.cursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE type='table' AND name = '{user.id}' ''')
+        if self.cursor.fetchone()[0] == 1:
+            self.cursor.execute(f'SELECT * FROM \'{str(user.id)}\' ORDER BY count DESC, reactions DESC')
+            simpList = self.cursor.fetchall()
+
+            referenceTime = 0
+            delIndex = 0
+            for x in range(len(simpList)):
+                if int(simpList[x][0]) == user.id:
+                    delIndex = x
+                    referenceTime = float(simpList[x][1])
+                    break
+
+            if userName[-1] == 's':
+                embed.add_field(name=f'{user.name}\' simps', value=f'*Online: {round(referenceTime//3600)} hrs, {round((referenceTime-3600*(referenceTime//3600))//60)} mins*', inline=False)
+            else:
+                embed.add_field(name=f'{user.name}\'s simps', value=f'*Online: {round(referenceTime//3600)} hrs, {round((referenceTime-3600*(referenceTime//3600))//60)} mins*', inline=False)   
+            del simpList[delIndex]
+
+            for simp in simpList:
+                self.cursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE id =\'{simp[0]}\'')
+                simp[1] = simp[1]/self.cursor.fetchall()[0][1]
+            
+            simpList = sorted(simpList, key=lambda t: t[1], reverse=True)
+            print(simpList)
+            
+            result = f''
+            for i in range(min(5, len(simpList))):
+                currentUser = self.bot.get_user(int(simpList[i][0]))
+                currentTime = simpList[i][1]
+                if i > 0:
+                    result += f'{i+1}) {currentUser.mention}, **{round((float(currentTime)/referenceTime)*100,2)}% Attendance** \n*Time Together: {round(currentTime//3600)} hrs, {round((currentTime-3600*(currentTime//3600))//60)} mins*\n\n'
+                else:
+                    result += f'**{i+1}) {currentUser.mention},  {round((float(currentTime)/referenceTime)*100,2)}% Attendance** \n*Time Together: {round(currentTime//3600)} hrs, {round((currentTime-3600*(currentTime//3600))//60)} mins* \n\n\n'
+                    embed.set_image(url=currentUser.avatar.url)
+
+            embed.add_field(name='\u200b', value=result, inline=True)
+            embed.set_footer(text=f'Tracking since September 2, 2022')
+        else:
+            if userName[-1] == 's':
+                embed.add_field(name=f'{user.name}\' simps', value='\u200b', inline=False)
+            else:
+                embed.add_field(name=f'{user.name}\'s simps', value='\u200b', inline=False)
+            embed.add_field(name='\u200b', value=f'{user.mention} has no simps', inline=False)
+            embed.set_footer(text=f'Tracking since September 2, 2022')
+
+        await interaction.response.send_message(embed=embed)
+
     @app_commands.command(name="stats", description='Server Stats')
     async def stats(self, interaction: discord.Interaction, user: discord.User = None) -> None:
         if user is None:

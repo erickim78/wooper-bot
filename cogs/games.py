@@ -186,7 +186,7 @@ class Games(commands.Cog):
         print(f'User {self.bot.get_user(memberId)} started an Oz run.')
 
     def quitOzRun(self, memberId):
-        if self.usersRunning[memberId] is None:
+        if memberId not in self.usersRunning or self.usersRunning[memberId] is None:
             print('BUG: Users running should not be None')
             return
         self.usersRunning[memberId][0].cancel()
