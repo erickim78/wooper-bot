@@ -273,31 +273,29 @@ class Simps(commands.Cog):
                     break
 
             if userName[-1] == 's':
-                embed.add_field(name=f'{user.name}\' simps', value=f'*Online: {round(referenceTime//3600)} hrs, {round((referenceTime-3600*(referenceTime//3600))//60)} mins*', inline=False)
+                embed.add_field(name=f'{user.name}\' real simps', value=f'*% of their total time on spent with {user.mention}*', inline=False)
             else:
-                embed.add_field(name=f'{user.name}\'s simps', value=f'*Online: {round(referenceTime//3600)} hrs, {round((referenceTime-3600*(referenceTime//3600))//60)} mins*', inline=False)   
+                embed.add_field(name=f'{user.name}\'s real simps', value=f'*% of their total time on spent with {user.mention}*', inline=False)   
             del simpList[delIndex]
 
-            i = 0
             print(simpList)
+            realSimpList = []
             for simp in simpList:
                 self.cursor.execute(f'SELECT * FROM \'{simp[0]}\' WHERE id =\'{simp[0]}\'')
                 as_list = list(simp)
                 as_list[1] = as_list[1]/self.cursor.fetchall()[0][1]
-                simpList[i] = tuple(as_list)
-                i += 1
-            
-            simpList = sorted(simpList, key=lambda t: t[1], reverse=True)
-            print(simpList)
+                realSimpList.append(tuple(as_list))
+
+            realSimpList = sorted(simpList, key=lambda t: t[1], reverse=True)
             
             result = f''
-            for i in range(min(5, len(simpList))):
-                currentUser = self.bot.get_user(int(simpList[i][0]))
-                currentTime = simpList[i][1]
+            for i in range(min(5, len(realSimpList))):
+                currentUser = self.bot.get_user(int(realSimpList[i][0]))
+                currentTime = realSimpList[i][1]
                 if i > 0:
-                    result += f'{i+1}) {currentUser.mention}, **{round((float(currentTime)/referenceTime)*100,2)}% Attendance** \n*Time Together: {round(currentTime//3600)} hrs, {round((currentTime-3600*(currentTime//3600))//60)} mins*\n\n'
+                    result += f'{i+1}) {currentUser.mention}, **{round(currentTime*100,2)}% Online Rate**\n\n'
                 else:
-                    result += f'**{i+1}) {currentUser.mention},  {round((float(currentTime)/referenceTime)*100,2)}% Attendance** \n*Time Together: {round(currentTime//3600)} hrs, {round((currentTime-3600*(currentTime//3600))//60)} mins* \n\n\n'
+                    result += f'**{i+1}) {currentUser.mention},  {round(currentTime*100,2)}% Online Rate**\n\n\n'
                     embed.set_image(url=currentUser.avatar.url)
 
             embed.add_field(name='\u200b', value=result, inline=True)
