@@ -290,7 +290,7 @@ class Simps(commands.Cog):
                 realSimpList.append(tuple(as_list))
 
             realSimpList = sorted(simpList, key=lambda t: t[1], reverse=True)
-            print(simpList)
+            print(realSimpList)
             
             result = f''
             for i in range(min(5, len(realSimpList))):
