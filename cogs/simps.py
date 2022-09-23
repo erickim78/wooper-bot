@@ -282,20 +282,24 @@ class Simps(commands.Cog):
             realSimpList = []
             for simp in simpList:
                 self.cursor.execute(f'SELECT * FROM \'{simp[0]}\' WHERE id =\'{simp[0]}\'')
+                simpsTime = self.cursor.fetchall()[0]
+                print(simpsTime)
+                print(simp)
                 as_list = list(simp)
-                as_list[1] = as_list[1]/self.cursor.fetchall()[0][1]
+                as_list[1] = as_list[1]/simpsTime[1]
                 realSimpList.append(tuple(as_list))
 
             realSimpList = sorted(simpList, key=lambda t: t[1], reverse=True)
+            print(simpList)
             
             result = f''
             for i in range(min(5, len(realSimpList))):
                 currentUser = self.bot.get_user(int(realSimpList[i][0]))
                 currentTime = realSimpList[i][1]
                 if i > 0:
-                    result += f'{i+1}) {currentUser.mention}, **{round(currentTime*100,2)}% Online Rate**\n\n'
+                    result += f'{i+1}) {currentUser.mention}, **{round((float(currentTime)/referenceTime)*100,2)}% Online Rate**\n\n'
                 else:
-                    result += f'**{i+1}) {currentUser.mention},  {round(currentTime*100,2)}% Online Rate**\n\n\n'
+                    result += f'**{i+1}) {currentUser.mention},  {round((float(currentTime)/referenceTime)*100,2)}% Online Rate**\n\n\n'
                     embed.set_image(url=currentUser.avatar.url)
 
             embed.add_field(name='\u200b', value=result, inline=True)
