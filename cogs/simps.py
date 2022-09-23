@@ -279,8 +279,9 @@ class Simps(commands.Cog):
             del simpList[delIndex]
 
             i = 0
+            print(simpList)
             for simp in simpList:
-                self.cursor.execute(f'SELECT * FROM \'{str(user.id)}\' WHERE id =\'{simp[0]}\'')
+                self.cursor.execute(f'SELECT * FROM \'{simp[0]}\' WHERE id =\'{simp[0]}\'')
                 as_list = list(simp)
                 as_list[1] = str(float(as_list[1])/float(self.cursor.fetchall()[0][1]))
                 simpList[i] = tuple(as_list)
