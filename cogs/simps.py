@@ -282,14 +282,10 @@ class Simps(commands.Cog):
             realSimpList = []
             for simp in simpList:
                 self.cursor.execute(f'SELECT * FROM \'{simp[0]}\' WHERE id =\'{simp[0]}\'')
-                simpsTime = self.cursor.fetchall()[0]
-                print(simpsTime)
-                print(simp)
-                as_list = list(simp)
-                as_list[1] = as_list[1]/simpsTime[1]
-                realSimpList.append(tuple(as_list))
+                simpsTime = self.cursor.fetchall()[0][1]
+                realSimpList.append((simp[0], simp[1]/simpsTime))
 
-            realSimpList = sorted(simpList, key=lambda t: t[1], reverse=True)
+            realSimpList = sorted(realSimpList, key=lambda t: t[1], reverse=True)
             print(realSimpList)
             
             result = f''
