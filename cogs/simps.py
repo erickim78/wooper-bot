@@ -278,7 +278,6 @@ class Simps(commands.Cog):
                 embed.add_field(name=f'{user.name}\'s real simps', value=f'*% total online time on spent with {user.mention}*', inline=False)   
             del simpList[delIndex]
 
-            print(simpList)
             realSimpList = []
             for simp in simpList:
                 self.cursor.execute(f'SELECT * FROM \'{simp[0]}\' WHERE id =\'{simp[0]}\'')
@@ -286,7 +285,6 @@ class Simps(commands.Cog):
                 realSimpList.append((simp[0], simp[1]/simpsTime))
 
             realSimpList = sorted(realSimpList, key=lambda t: t[1], reverse=True)
-            print(realSimpList)
             
             result = f''
             for i in range(min(5, len(realSimpList))):
