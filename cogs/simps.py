@@ -283,7 +283,7 @@ class Simps(commands.Cog):
             for simp in simpList:
                 self.cursor.execute(f'SELECT * FROM \'{simp[0]}\' WHERE id =\'{simp[0]}\'')
                 as_list = list(simp)
-                as_list[1] = str(float(as_list[1])/float(self.cursor.fetchall()[0][1]))
+                as_list[1] = as_list[1]/self.cursor.fetchall()[0][1]
                 simpList[i] = tuple(as_list)
                 i += 1
             
