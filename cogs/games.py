@@ -125,7 +125,7 @@ class Games(commands.Cog):
                 embed.set_footer(text=f'Remaining box pieces: {boxPieces-100}')
             await interaction.response.send_message(embed=embed)
 
-        @discord.ui.button(label="3", style=discord.ButtonStyle.secondary)
+        @discord.ui.button(label="3", style=discord.ButtonStyle.secondary, disabled=True)
         async def buttonThree(self, interaction: discord.Interaction, button:discord.ui.Button):
             embed=discord.Embed(color=0xf1d3ed)
             imgURL = "https://static.wikia.nocookie.net/maplestory/images/3/36/Use_Broken_Box_Piece.png/revision/latest?cb=20210910011106"
@@ -136,7 +136,7 @@ class Games(commands.Cog):
             embed.set_footer(text=f'Remaining box pieces: {0}')
             await interaction.response.send_message(embed=embed)
 
-        @discord.ui.button(label="4", style=discord.ButtonStyle.secondary)
+        @discord.ui.button(label="4", style=discord.ButtonStyle.secondary, disabled=True)
         async def buttonFour(self, interaction: discord.Interaction, button:discord.ui.Button):
             embed=discord.Embed(color=0xf1d3ed)
             imgURL = "https://static.wikia.nocookie.net/maplestory/images/3/36/Use_Broken_Box_Piece.png/revision/latest?cb=20210910011106"
@@ -147,7 +147,7 @@ class Games(commands.Cog):
             embed.set_footer(text=f'Remaining box pieces: {0}')
             await interaction.response.send_message(embed=embed)
 
-        @discord.ui.button(label="5", style=discord.ButtonStyle.secondary)
+        @discord.ui.button(label="5", style=discord.ButtonStyle.secondary, disabled=True)
         async def buttonFive(self, interaction: discord.Interaction, button:discord.ui.Button):
             embed=discord.Embed(color=0xf1d3ed)
             imgURL = "https://static.wikia.nocookie.net/maplestory/images/3/36/Use_Broken_Box_Piece.png/revision/latest?cb=20210910011106"
