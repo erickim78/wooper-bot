@@ -18,7 +18,7 @@ shinyBox = ["Ring of Restraint", "Weapon Jump S Ring", "Weapon Jump I Ring", "We
         "Limit Ring"]
 
 
-leaderboardRings = ["Ring of Restraint", "Weapon Jump Ring", "Risk Taker Ring", "Totalling Ring", "Critical Damage Ring",
+leaderboardRings = ["Ring of Restraint", "Weapon Jump Rings (All)", "Weapon Jump S Ring", "Weapon Jump I Ring", "Weapon Jump L Ring", "Weapon Jump D Ring", "Risk Taker Ring", "Totalling Ring", "Critical Damage Ring",
         "Crisis HM Ring", "Tower Boost Ring", "Reflective Ring"]
 
 rewardLinks = {}

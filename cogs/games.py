@@ -473,7 +473,7 @@ class Games(commands.Cog):
     @app_commands.command(name='ozrings', description='Display usable rings')
     @app_commands.autocomplete(ringname=ozleaderboard_autocomplete, ringlevel=ozleaderboardlevel_autocomplete)
     async def ozrings(self, interaction: discord.Interaction, ringname: str = 'Ring of Restraint', ringlevel: str = 'Level 4'):
-        if ringname == 'Weapon Jump Ring':
+        if ringname == 'Weapon Jump Rings (All)':
             imgURL = data.rewardLinks['Weapon Jump S Ring']
             self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE (itemname = \'Weapon Jump I Ring\' OR itemname = \'Weapon Jump L Ring\' OR itemname = \'Weapon Jump S Ring\' OR itemname = \'Weapon Jump D Ring\') AND itemattribute = \'{ringlevel}\'')
         else:
@@ -486,7 +486,6 @@ class Games(commands.Cog):
             self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE itemname = \'{ringname}\' AND itemattribute = \'{ringlevel}\'')
 
         resultTable = self.miscCursor.fetchall()
-        print(resultTable)
         leaderboardDict = {}
         for row in resultTable:
             currentUser = row[0]
