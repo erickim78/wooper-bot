@@ -141,11 +141,6 @@ class Simps(commands.Cog):
             self.updateTimeWithoutDisconnect(user)
         print("============================================================")
 
-    def tupleToDict(self, tuple, d):
-        for a, b in tuple:
-            d.setdefault(a, []).append(b)
-        return d
-
     # On Ready
     @commands.Cog.listener()
     async def on_ready(self):
@@ -283,8 +278,7 @@ class Simps(commands.Cog):
                 embed.add_field(name=f'{user.name}\'s real simps', value=f'*% total online time on spent with {user.mention}*', inline=False)   
             del simpList[delIndex]
 
-            simpDict = {}
-            self.tupleToDict(simpList,simpDict)
+            simpDict = { tup[0] : tup[1:] for tup in simpList}
             print(simpDict)
 
             realSimpList = []
