@@ -141,7 +141,7 @@ class Simps(commands.Cog):
             self.updateTimeWithoutDisconnect(user)
         print("============================================================")
 
-    def tupleToDict(tuple, d):
+    def tupleToDict(self, tuple, d):
         for a, b in tuple:
             d.setdefault(a, []).append(b)
         return d
