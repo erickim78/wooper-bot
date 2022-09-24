@@ -141,6 +141,11 @@ class Simps(commands.Cog):
             self.updateTimeWithoutDisconnect(user)
         print("============================================================")
 
+    def tupleToDict(tuple, d):
+        for a, b in tuple:
+            d.setdefault(a, []).append(b)
+        return d
+
     # On Ready
     @commands.Cog.listener()
     async def on_ready(self):
@@ -278,6 +283,10 @@ class Simps(commands.Cog):
                 embed.add_field(name=f'{user.name}\'s real simps', value=f'*% total online time on spent with {user.mention}*', inline=False)   
             del simpList[delIndex]
 
+            simpDict = {}
+            self.tupleToDict(simpList,simpDict)
+            print(simpDict)
+
             realSimpList = []
             for simp in simpList:
                 self.cursor.execute(f'SELECT * FROM \'{simp[0]}\' WHERE id =\'{simp[0]}\'')
@@ -290,10 +299,11 @@ class Simps(commands.Cog):
             for i in range(min(5, len(realSimpList))):
                 currentUser = self.bot.get_user(int(realSimpList[i][0]))
                 currentTime = realSimpList[i][1]
+                timeTogether = simpDict[realSimpList[i][0]]
                 if i > 0:
-                    result += f'{i+1}) {currentUser.mention} **{round(currentTime*100,2)}%**\n\n'
+                    result += f'{i+1}) {currentUser.mention} **{round(currentTime*100,2)}%* \n*Time Together: {round(timeTogether//3600)} hrs, {round((timeTogether-3600*(timeTogether//3600))//60)} mins*\n\n'
                 else:
-                    result += f'**{i+1}) {currentUser.mention}  {round(currentTime*100,2)}% simp rate**\n\n\n'
+                    result += f'**{i+1}) {currentUser.mention}  {round(currentTime*100,2)}% simp rate** \n*Time Together: {round(timeTogether//3600)} hrs, {round((timeTogether-3600*(timeTogether//3600))//60)} mins* \n\n\n'
                     embed.set_image(url=currentUser.avatar.url)
 
             embed.add_field(name='\u200b', value=result, inline=True)
