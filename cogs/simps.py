@@ -192,8 +192,8 @@ class Simps(commands.Cog):
                 print(f'User {self.connectedUsers} made a non-connection related voice status update.')
         return
 
-    @app_commands.command(name="simps", description='Simp Leaderboard')
-    async def simps(self, interaction: discord.Interaction, user: discord.User = None) -> None:
+    @app_commands.command(name="besties", description='Check a user\'s besties')
+    async def besties(self, interaction: discord.Interaction, user: discord.User = None) -> None:
         if user is None:
             user = interaction.user
         self.updateTimes()
@@ -246,8 +246,8 @@ class Simps(commands.Cog):
 
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.command(name="realsimps", description='Simp Leaderboard')
-    async def realsimps(self, interaction: discord.Interaction, user: discord.User = None) -> None:
+    @app_commands.command(name="simps", description='Check a user\'s simps')
+    async def simps(self, interaction: discord.Interaction, user: discord.User = None) -> None:
         if user is None:
             user = interaction.user
         self.updateTimes()
@@ -295,9 +295,9 @@ class Simps(commands.Cog):
                 currentTime = realSimpList[i][1]
                 timeTogether = simpDict[realSimpList[i][0]][0]
                 if i > 0:
-                    result += f'{i+1}) {currentUser.mention} **{round(currentTime*100,2)}%* \n*Time Together: {round(timeTogether//3600)} hrs, {round((timeTogether-3600*(timeTogether//3600))//60)} mins*\n\n'
+                    result += f'{i+1}) {currentUser.mention} **{round(currentTime*100,2)}%** \nTime Together: {round(timeTogether//3600)} hrs, {round((timeTogether-3600*(timeTogether//3600))//60)} mins\n\n'
                 else:
-                    result += f'**{i+1}) {currentUser.mention}  {round(currentTime*100,2)}% simp rate** \n*Time Together: {round(timeTogether//3600)} hrs, {round((timeTogether-3600*(timeTogether//3600))//60)} mins* \n\n\n'
+                    result += f'**{i+1}) {currentUser.mention}  {round(currentTime*100,2)}% simp rate** \nTime Together: {round(timeTogether//3600)} hrs, {round((timeTogether-3600*(timeTogether//3600))//60)} mins \n\n\n'
                     embed.set_image(url=currentUser.avatar.url)
 
             embed.add_field(name='\u200b', value=result, inline=True)
