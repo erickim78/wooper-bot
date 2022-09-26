@@ -172,6 +172,7 @@ class Games(commands.Cog):
         elif self.runsRemaining[memberId] == 1:
             self.runsRemaining[memberId] -= 1
             self.incrementBoxes(memberId)
+            self.usersRunning[memberId] = None
             del self.usersRunning[memberId]
         else:
             print("Should never reach this statement, check remaining runs before starting a run")
