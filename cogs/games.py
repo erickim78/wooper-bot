@@ -27,13 +27,13 @@ class Games(commands.Cog):
 
         self.runsRemaining = {}
         if os.path.isfile('runs.obj') and os.access('runs.obj', os.R_OK):
-            with open('runs.obj', 'r') as file_object:
+            with open('runs.obj', 'rb') as file_object:
                 self.boxes = pickle.load(file_object)
                 print('Loaded # of Runs from File')
 
         self.boxes = {} 
         if os.path.isfile('boxes.obj') and os.access('boxes.obj', os.R_OK):
-            with open('boxes.obj', 'r') as file_object:
+            with open('boxes.obj', 'rb') as file_object:
                 self.boxes = pickle.load(file_object)
                 print('Loaded # of Boxes from File')
 
@@ -227,13 +227,13 @@ class Games(commands.Cog):
         self.saveNumBoxesToJson()
 
     def saveNumBoxesToJson(self):
-        with open('boxes.obj', 'w') as file_object:
+        with open('boxes.obj', 'wb') as file_object:
             pickle.dump(self.boxes, file_object)
         print(self.boxes)
         print('Storing # of Boxes to File')
 
     def saveRunsRemainingToJson(self):
-        with open('runs.obj', 'w') as file_object:
+        with open('runs.obj', 'wb') as file_object:
             pickle.dump(self.runsRemaining, file_object)
         print('Storing # of Runs to File')
 
