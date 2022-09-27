@@ -347,15 +347,18 @@ class Games(commands.Cog):
         if user.id not in self.runsRemaining:
             embed.add_field(name="Current Status", value=timeString, inline=False)
             embed.add_field(name="Runs Left", value='5', inline=True)
-            embed.add_field(name="Boxes", value='0', inline=True)
-            embed.add_field(name="Box Pieces", value=boxPieces, inline=True)
-            embed.add_field(name="Boxes Opened", value=boxesOpened, inline=True)
         else:
             embed.add_field(name="Current Status", value=timeString, inline=False)
             embed.add_field(name="Runs Left", value=self.runsRemaining[user.id], inline=True)
+
+        if user.id not in self.boxes:
+            embed.add_field(name="Boxes", value='0', inline=True)
+        else:
             embed.add_field(name="Boxes", value=self.boxes[user.id], inline=True)
-            embed.add_field(name="Box Pieces", value=boxPieces, inline=True)
-            embed.add_field(name="Boxes Opened", value=boxesOpened, inline=True)
+        
+        embed.add_field(name="Box Pieces", value=boxPieces, inline=True)
+        embed.add_field(name="Boxes Opened", value=boxesOpened, inline=True)
+
         await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name='openbox', description='Open a Tower of Oz Ring Box (if you have one)')
