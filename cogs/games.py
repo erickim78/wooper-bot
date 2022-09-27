@@ -6,6 +6,8 @@ import time
 import schedule
 import threading
 from typing import List
+import json
+import os
 
 # File Imports
 import config
@@ -23,7 +25,10 @@ class Games(commands.Cog):
         self.bot = bot
         self.usersRunning = {}
         self.runsRemaining = {}
-        self.boxes = {} # temporary(?)
+        self.boxes = {} 
+        if os.path.isfile('boxes.json') and os.access('boxes.json', os.R_OK):
+            with open('boxes.json', 'r') as file_object:
+                self.boxes = json.load(file_object)
 
         self.ozRunTime = 50
         #DB Connection
@@ -200,6 +205,7 @@ class Games(commands.Cog):
             self.boxes[memberId] = 1
         else:
             self.boxes[memberId] += 1
+        self.storeBoxes()
         print(f'User {self.bot.get_user(memberId)} has received an oz box. Total boxes: {self.boxes[memberId]}.')
 
     def decrementBoxes(self, memberId):
@@ -210,6 +216,11 @@ class Games(commands.Cog):
             if self.boxes[memberId] < 0:
                 print('BUG: Member should not be allowed to decrement box below 0')
                 self.boxes[memberId] = 0
+        self.storeBoxes()
+
+    def storeBoxes(self):
+        with open('boxes.json', 'w') as file_object:
+            json.dump(self.boxes, file_object)
 
     def run_continuously(self, interval = 5):
         cease_continuous_run = threading.Event()
