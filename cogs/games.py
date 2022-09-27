@@ -29,11 +29,13 @@ class Games(commands.Cog):
         if os.path.isfile('runs.json') and os.access('runs.json', os.R_OK):
             with open('runs.json', 'r') as file_object:
                 self.boxes = json.load(file_object)
+                print('Loaded # of Runs from File')
 
         self.boxes = {} 
         if os.path.isfile('boxes.json') and os.access('boxes.json', os.R_OK):
             with open('boxes.json', 'r') as file_object:
                 self.boxes = json.load(file_object)
+                print('Loaded # of Boxes from File')
 
         self.ozRunTime = 50
         #DB Connection
@@ -187,7 +189,7 @@ class Games(commands.Cog):
         else:
             print("Should never reach this statement, check remaining runs before starting a run")
             return
-        self.storeRuns()
+        self.saveRunsRemainingToJson()
         print(f'User {self.bot.get_user(memberId)} completed an Oz run. Runs Remaining: {self.runsRemaining[memberId]}.')
         
     # Oz Run Starter
@@ -211,7 +213,7 @@ class Games(commands.Cog):
             self.boxes[memberId] = 1
         else:
             self.boxes[memberId] += 1
-        self.storeBoxes()
+        self.saveNumBoxesToJson()
         print(f'User {self.bot.get_user(memberId)} has received an oz box. Total boxes: {self.boxes[memberId]}.')
 
     def decrementBoxes(self, memberId):
@@ -222,15 +224,17 @@ class Games(commands.Cog):
             if self.boxes[memberId] < 0:
                 print('BUG: Member should not be allowed to decrement box below 0')
                 self.boxes[memberId] = 0
-        self.storeBoxes()
+        self.saveNumBoxesToJson()
 
-    def storeBoxes(self):
+    def saveNumBoxesToJson(self):
         with open('boxes.json', 'w') as file_object:
             json.dump(self.boxes, file_object)
+        print('Storing # of Boxes to JSON')
 
-    def storeRuns(self):
+    def saveRunsRemainingToJson(self):
         with open('runs.json', 'w') as file_object:
             json.dump(self.runsRemaining, file_object)
+        print('Storing # of Runs to JSON')
 
     def run_continuously(self, interval = 5):
         cease_continuous_run = threading.Event()
@@ -450,6 +454,7 @@ class Games(commands.Cog):
             else:
                 self.boxes[user.id] = num
             embed.add_field(name='\u200b', value=f'Gave {user.mention} {num} boxes.', inline=False)
+            self.saveNumBoxesToJson()
         else:
             embed.add_field(name='\u200b', value=f'You are not authorized to give boxes.', inline=False)
 
