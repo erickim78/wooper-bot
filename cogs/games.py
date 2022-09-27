@@ -6,7 +6,7 @@ import time
 import schedule
 import threading
 from typing import List
-import json
+import pickle
 import os
 
 # File Imports
@@ -26,15 +26,15 @@ class Games(commands.Cog):
         self.usersRunning = {}
 
         self.runsRemaining = {}
-        if os.path.isfile('runs.json') and os.access('runs.json', os.R_OK):
-            with open('runs.json', 'r') as file_object:
-                self.boxes = json.load(file_object)
+        if os.path.isfile('runs.obj') and os.access('runs.obj', os.R_OK):
+            with open('runs.obj', 'r') as file_object:
+                self.boxes = pickle.load(file_object)
                 print('Loaded # of Runs from File')
 
         self.boxes = {} 
-        if os.path.isfile('boxes.json') and os.access('boxes.json', os.R_OK):
-            with open('boxes.json', 'r') as file_object:
-                self.boxes = json.load(file_object)
+        if os.path.isfile('boxes.obj') and os.access('boxes.obj', os.R_OK):
+            with open('boxes.obj', 'r') as file_object:
+                self.boxes = pickle.load(file_object)
                 print('Loaded # of Boxes from File')
 
         self.ozRunTime = 50
@@ -227,15 +227,15 @@ class Games(commands.Cog):
         self.saveNumBoxesToJson()
 
     def saveNumBoxesToJson(self):
-        with open('boxes.json', 'w') as file_object:
-            json.dump(self.boxes, file_object)
+        with open('boxes.obj', 'w') as file_object:
+            pickle.dump(self.boxes, file_object)
         print(self.boxes)
-        print('Storing # of Boxes to JSON')
+        print('Storing # of Boxes to File')
 
     def saveRunsRemainingToJson(self):
-        with open('runs.json', 'w') as file_object:
-            json.dump(self.runsRemaining, file_object)
-        print('Storing # of Runs to JSON')
+        with open('runs.obj', 'w') as file_object:
+            pickle.dump(self.runsRemaining, file_object)
+        print('Storing # of Runs to File')
 
     def run_continuously(self, interval = 5):
         cease_continuous_run = threading.Event()
