@@ -24,7 +24,12 @@ class Games(commands.Cog):
         print(f'games.cog init')
         self.bot = bot
         self.usersRunning = {}
+
         self.runsRemaining = {}
+        if os.path.isfile('runs.json') and os.access('runs.json', os.R_OK):
+            with open('runs.json', 'r') as file_object:
+                self.boxes = json.load(file_object)
+
         self.boxes = {} 
         if os.path.isfile('boxes.json') and os.access('boxes.json', os.R_OK):
             with open('boxes.json', 'r') as file_object:
@@ -182,6 +187,7 @@ class Games(commands.Cog):
         else:
             print("Should never reach this statement, check remaining runs before starting a run")
             return
+        self.storeRuns()
         print(f'User {self.bot.get_user(memberId)} completed an Oz run. Runs Remaining: {self.runsRemaining[memberId]}.')
         
     # Oz Run Starter
@@ -221,6 +227,10 @@ class Games(commands.Cog):
     def storeBoxes(self):
         with open('boxes.json', 'w') as file_object:
             json.dump(self.boxes, file_object)
+
+    def storeRuns(self):
+        with open('runs.json', 'w') as file_object:
+            json.dump(self.runsRemaining, file_object)
 
     def run_continuously(self, interval = 5):
         cease_continuous_run = threading.Event()
