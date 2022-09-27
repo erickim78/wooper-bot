@@ -229,6 +229,7 @@ class Games(commands.Cog):
     def saveNumBoxesToJson(self):
         with open('boxes.json', 'w') as file_object:
             json.dump(self.boxes, file_object)
+        print(self.boxes)
         print('Storing # of Boxes to JSON')
 
     def saveRunsRemainingToJson(self):
