@@ -343,7 +343,10 @@ class Games(commands.Cog):
             embed.add_field(name="Runs Left", value='5', inline=False)
         elif self.boxes[currentUser.id] < 1:
             embed.add_field(name="You have no Ring Boxes.", value='\u200b', inline=False)
-            embed.add_field(name="Runs Left", value=self.runsRemaining[currentUser.id], inline=False)
+            if currentUser.id not in self.runsRemaining:
+                embed.add_field(name="Runs Left", value="5", inline=False)
+            else:
+                embed.add_field(name="Runs Left", value=self.runsRemaining[currentUser.id], inline=False)
         else:
             self.decrementBoxes(currentUser.id)
             reward = numpy.random.choice(data.rings, p=data.ringOdds)
