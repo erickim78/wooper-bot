@@ -219,9 +219,9 @@ class Simps(commands.Cog):
                     break
 
             if userName[-1] == 's':
-                embed.add_field(name=f'{user.name}\' simps', value=f'*Online: {round(referenceTime//3600)} hrs, {round((referenceTime-3600*(referenceTime//3600))//60)} mins*', inline=False)
+                embed.add_field(name=f'{user.name}\' besties', value=f'*Online: {round(referenceTime//3600)} hrs, {round((referenceTime-3600*(referenceTime//3600))//60)} mins*', inline=False)
             else:
-                embed.add_field(name=f'{user.name}\'s simps', value=f'*Online: {round(referenceTime//3600)} hrs, {round((referenceTime-3600*(referenceTime//3600))//60)} mins*', inline=False)   
+                embed.add_field(name=f'{user.name}\'s besties', value=f'*Online: {round(referenceTime//3600)} hrs, {round((referenceTime-3600*(referenceTime//3600))//60)} mins*', inline=False)   
             del simpList[delIndex]
             
             result = f''
@@ -238,10 +238,10 @@ class Simps(commands.Cog):
             embed.set_footer(text=f'Tracking since September 2, 2022')
         else:
             if userName[-1] == 's':
-                embed.add_field(name=f'{user.name}\' simps', value='\u200b', inline=False)
+                embed.add_field(name=f'{user.name}\' bestes', value='\u200b', inline=False)
             else:
-                embed.add_field(name=f'{user.name}\'s simps', value='\u200b', inline=False)
-            embed.add_field(name='\u200b', value=f'{user.mention} has no simps', inline=False)
+                embed.add_field(name=f'{user.name}\'s besties', value='\u200b', inline=False)
+            embed.add_field(name='\u200b', value=f'{user.mention} has no besties', inline=False)
             embed.set_footer(text=f'Tracking since September 2, 2022')
 
         await interaction.response.send_message(embed=embed)
@@ -273,9 +273,9 @@ class Simps(commands.Cog):
                     break
 
             if userName[-1] == 's':
-                embed.add_field(name=f'{user.name}\' real simps', value=f'*% total online time spent with {user.mention}*', inline=False)
+                embed.add_field(name=f'{user.name}\' simps', value=f'*% total online time spent with {user.mention}*', inline=False)
             else:
-                embed.add_field(name=f'{user.name}\'s real simps', value=f'*% total online time on spent with {user.mention}*', inline=False)   
+                embed.add_field(name=f'{user.name}\'s simps', value=f'*% total online time on spent with {user.mention}*', inline=False)   
             del simpList[delIndex]
 
             simpDict = { tup[0] : tup[1:] for tup in simpList}
@@ -297,7 +297,7 @@ class Simps(commands.Cog):
                 if i > 0:
                     result += f'{i+1}) {currentUser.mention} **{round(currentTime*100,2)}%** \nTime Together: {round(timeTogether//3600)} hrs, {round((timeTogether-3600*(timeTogether//3600))//60)} mins\n\n'
                 else:
-                    result += f'**{i+1}) {currentUser.mention}  {round(currentTime*100,2)}% simp rate** \nTime Together: {round(timeTogether//3600)} hrs, {round((timeTogether-3600*(timeTogether//3600))//60)} mins \n\n\n'
+                    result += f'**{i+1}) {currentUser.mention}  {round(currentTime*100,2)}% simp** \nTime Together: {round(timeTogether//3600)} hrs, {round((timeTogether-3600*(timeTogether//3600))//60)} mins \n\n\n'
                     embed.set_image(url=currentUser.avatar.url)
 
             embed.add_field(name='\u200b', value=result, inline=True)

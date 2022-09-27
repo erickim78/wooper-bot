@@ -256,6 +256,7 @@ class Games(commands.Cog):
             else:
                 self.startOzRun(user)
                 self.runsRemaining[user] = 5
+        self.saveRunsRemainingToJson()
         print("============================================================")
     
     # Initialize currently connected users
