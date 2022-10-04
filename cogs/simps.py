@@ -6,6 +6,7 @@ from datetime import timedelta
 from profanity_check import predict
 import schedule
 import threading
+from typing import List
 
 # File Imports
 import config
