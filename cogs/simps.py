@@ -453,7 +453,11 @@ class Simps(commands.Cog):
                 return
 
             embed = discord.Embed(color=0xf1d3ed)
-            embed.set_thumbnail(url=interaction.guild.icon.url)
+            emblemUrl = interaction.guild.icon.url
+            if emblemUrl is None:
+                emblemUrl = "https://i.imgur.com/dxPvMN8.gif"
+            else:
+                embed.set_thumbnail(url=emblemUrl)
             embed.add_field(name=f'Top {category}', value=f'{period}', inline=False)
             if category == "Streaming Time" or category == "AFK Time":
                 result = f''
