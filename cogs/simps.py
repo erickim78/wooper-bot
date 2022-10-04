@@ -422,16 +422,16 @@ class Simps(commands.Cog):
             for table in self.timeSequenceCursor.execute(f'''SELECT name FROM sqlite_master WHERE type='table' ORDER BY name'''):
                 print(table)
                 if period == "All Time":
-                    self.miscCursor.execute(f'SELECT d, SUM(count) as Total, d FROM \'{table[0]}\'')
-                    queryList = self.miscCursor.fetchall()
+                    self.timeSequenceCursor.execute(f'SELECT d, SUM(count) as Total, d FROM \'{table[0]}\'')
+                    queryList = self.timeSequenceCursor.fetchall()
                     print(queryList)   
                 elif period == "Today":
-                    self.miscCursor.execute(f'SELECT d, SUM(count) as Total, d FROM \'{table[0]}\' WHERE d = date(\'now\')')
-                    queryList = self.miscCursor.fetchall()
+                    self.timeSequenceCursor.execute(f'SELECT d, SUM(count) as Total, d FROM \'{table[0]}\' WHERE d = date(\'now\')')
+                    queryList = self.timeSequenceCursor.fetchall()
                     print(queryList)   
                 elif period in data.periodsDict:
-                    self.miscCursor.execute(f'SELECT d, SUM(count) as Total, d FROM \'{table[0]}\' WHERE d BETWEEN date(\'now\', \'-{data.periodsDict[period]} day\') and date(\'now\')')
-                    queryList = self.miscCursor.fetchall()
+                    self.timeSequenceCursor.execute(f'SELECT d, SUM(count) as Total, d FROM \'{table[0]}\' WHERE d BETWEEN date(\'now\', \'-{data.periodsDict[period]} day\') and date(\'now\')')
+                    queryList = self.timeSequenceCursor.fetchall()
                     print(queryList)           
                 else:
                     print("ERROR IN TOP COMMANDS WITH PARAMETERS: ", category, period)
