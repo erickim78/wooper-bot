@@ -29,13 +29,15 @@ class Games(commands.Cog):
         if os.path.isfile('runs.obj') and os.access('runs.obj', os.R_OK):
             with open('runs.obj', 'rb') as file_object:
                 self.boxes = pickle.load(file_object)
-                print('Loaded # of Runs from File')
+                print('Loaded # of Runs from File: ')
+        print(self.runsRemaining)
 
         self.boxes = {} 
         if os.path.isfile('boxes.obj') and os.access('boxes.obj', os.R_OK):
             with open('boxes.obj', 'rb') as file_object:
                 self.boxes = pickle.load(file_object)
-                print('Loaded # of Boxes from File')
+                print('Loaded # of Boxes from File: ')
+        print(self.boxes)
 
         self.ozRunTime = 50
 
