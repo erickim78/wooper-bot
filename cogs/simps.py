@@ -428,7 +428,7 @@ class Simps(commands.Cog):
             else:
                 # User has no time on table yet
                 return     
-        elif category in data.periodsDict:
+        elif category in data.categoriesDict:
             if period == "All Time":
                 self.miscCursor.execute(f'SELECT userid, SUM(count), timestamp as Total FROM \'{data.categoriesDict[category]}\' GROUP BY userid ORDER BY Total DESC')
                 queryList = self.miscCursor.fetchall()
