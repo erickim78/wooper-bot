@@ -38,6 +38,7 @@ class Games(commands.Cog):
                 print('Loaded # of Boxes from File')
 
         self.ozRunTime = 50
+
         #DB Connection
         self.miscConnection = main.miscConnection
         self.miscCursor = main.miscConnection.cursor()
@@ -184,7 +185,6 @@ class Games(commands.Cog):
         elif self.runsRemaining[memberId] == 1:
             self.runsRemaining[memberId] -= 1
             self.incrementBoxes(memberId)
-            self.usersRunning[memberId] = None
             del self.usersRunning[memberId]
         else:
             print("Should never reach this statement, check remaining runs before starting a run")
@@ -194,17 +194,25 @@ class Games(commands.Cog):
         
     # Oz Run Starter
     def startOzRun(self, memberId):
-        print(f'User {self.bot.get_user(memberId)} is starting an Oz run...')
-        self.usersRunning[memberId] = (Timer(self.ozRunTime*60, self.ozRun, [memberId]), time.time())
-        self.usersRunning[memberId][0].start()
-        print(f'User {self.bot.get_user(memberId)} started an Oz run.')
+        username = self.bot.get_user(memberId)
+        print(f'User {username} is starting an Oz run...')
+        if memberId not in self.runsRemaining:
+            self.usersRunning[memberId] = (Timer(self.ozRunTime*60, self.ozRun, [memberId]), time.time())
+            self.usersRunning[memberId][0].start()
+            print(f'User {self.bot.get_user(memberId)} started an Oz run.')
+        elif self.runsRemaining[memberId] > 0:
+            self.usersRunning[memberId] = (Timer(self.ozRunTime*60, self.ozRun, [memberId]), time.time())
+            self.usersRunning[memberId][0].start()
+            print(f'User {self.bot.get_user(memberId)} started an Oz run.')
+        else:
+            print(f'User {username} has no more runs left.')
 
     def quitOzRun(self, memberId):
-        if memberId not in self.usersRunning or self.usersRunning[memberId] is None:
-            print('BUG: Users running should not be None')
+        if memberId not in self.usersRunning:
+            print('User exited but is not currently running.')
             return
         self.usersRunning[memberId][0].cancel()
-        self.usersRunning[memberId] = None
+        del self.usersRunning[memberId]
         print(f'User {self.bot.get_user(memberId)} abandoned an Oz run.')
 
     # Box Incrementer
@@ -248,14 +256,15 @@ class Games(commands.Cog):
         continuous_thread.start()
         return cease_continuous_run
 
-    def autoUpdateTimes(self):
+    def resetOzRuns(self):
         print("RESETTING OZ RUNS:")
         for user in self.runsRemaining:
-            if user in self.usersRunning and self.usersRunning[user] is not None:
+            if user in self.usersRunning:
                 self.runsRemaining[user] = 6
             else:
-                self.startOzRun(user)
                 self.runsRemaining[user] = 5
+        
+        self.initUsersRunning()
         self.saveRunsRemainingToJson()
         print("============================================================")
     
@@ -269,7 +278,8 @@ class Games(commands.Cog):
                 else:
                     members = channel.members
                     for currentMember in members:
-                        self.startOzRun(currentMember.id)
+                        if currentMember not in self.usersRunning:
+                            self.startOzRun(currentMember.id)
 
     def checkRingTable(self):
         self.miscCursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE type='table' AND name = 'ringTable' ''')
@@ -283,7 +293,7 @@ class Games(commands.Cog):
     async def on_ready(self):
         self.initUsersRunning()
         print("Scheduling Oz Run Resets")
-        schedule.every().day.at("23:59").do(self.autoUpdateTimes)
+        schedule.every().day.at("23:59").do(self.resetOzRuns)
         self.stop_run_continuously = self.run_continuously()
 
     @commands.Cog.listener()
