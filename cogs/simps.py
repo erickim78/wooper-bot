@@ -68,7 +68,7 @@ class Simps(commands.Cog):
                         self.connectedUsers[currentMember.id] = updateTime
                         self.timeTracker[currentMember.id] = updateTime
                         if currentMember.voice.afk == True:
-                            self.afk[currentMember.id] = updateTime
+                            self.afkTracker[currentMember.id] = updateTime
                         if currentMember.voice.self_stream == True:
                             self.streamTracker[currentMember.id] = updateTime
     
@@ -119,6 +119,13 @@ class Simps(commands.Cog):
         self.miscCursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE type='table' AND name = 'afkTable' ''')
         if self.miscCursor.fetchone()[0] != 1:
             self.miscCursor.execute(f'''CREATE TABLE 'afkTable' (userid TEXT, count DECIMAL(38,4), timestamp datetime)''')
+            return False
+        return True
+
+    def checkMuteTable(self):
+        self.miscCursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE type='table' AND name = 'muteTable' ''')
+        if self.miscCursor.fetchone()[0] != 1:
+            self.miscCursor.execute(f'''CREATE TABLE 'muteTable' (userid TEXT, count DECIMAL(38,4), timestamp datetime)''')
             return False
         return True
 
@@ -458,7 +465,7 @@ class Simps(commands.Cog):
                 embed.set_thumbnail(url="https://i.imgur.com/dxPvMN8.gif")
             else:
                 embed.set_thumbnail(url=guildIcon.url)
-            embed.add_field(name=f'Top {category}', value=f'Time Period: {period}', inline=False)
+            embed.add_field(name=f'Top {category}', value=f'{period}', inline=False)
             if category == "Streaming Time" or category == "AFK Time":
                 result = f'\u200b'
                 for i in range(min(5, len(queryList))):
