@@ -434,7 +434,7 @@ class Simps(commands.Cog):
             else:
                 # User has no time on table yet
                 return     
-        elif category in data.categoriesDict:
+        elif category in data.categoriesDict: 
             if period == "All Time":
                 self.miscCursor.execute(f'SELECT userid, SUM(count) as Total, timestamp FROM \'{data.categoriesDict[category]}\' GROUP BY userid ORDER BY Total DESC')
                 queryList = self.miscCursor.fetchall()
@@ -449,6 +449,40 @@ class Simps(commands.Cog):
                 print(queryList)           
             else:
                 print("ERROR IN TOP COMMANDS WITH PARAMETERS: ", category, period)
+                await interaction.response.send_message(embed=embed)
+                return
+
+            embed = discord.Embed(color=0xf1d3ed)
+            embed.set_thumbnail(url=interaction.guild.icon.url)
+            embed.add_field(name=f'Top {category}', value=f'{period}', inline=False)
+            if category == "Streaming Time" or category == "AFK Time":
+                result = f''
+                for i in range(min(5, len(queryList))):
+                    currentUser = self.bot.get_user(int(queryList[i][0]))
+                    currentTime = queryList[i][1]
+                    if i > 0:
+                        result += f'{i+1}) {currentUser.mention} \n{round(currentTime//3600)} hrs, {round((currentTime-3600*(currentTime//3600))//60)} mins\n\n'
+                    else:
+                        result += f'**{i+1}) {currentUser.mention} \n{round(currentTime//3600)} hrs, {round((currentTime-3600*(currentTime//3600))//60)} mins \n\n\n'
+                        embed.set_image(url=currentUser.avatar.url)
+
+                embed.add_field(name='\u200b', value=result, inline=True)
+                embed.set_footer(text=f'Tracking since October 4, 2022')
+            else:
+                # Build Embed
+                result = f''
+                for i in range(min(5, len(queryList))):
+                    currentUser = self.bot.get_user(int(queryList[i][0]))
+                    total = queryList[i][1]
+                    if i > 0:
+                        result += f'{i+1}) {currentUser.mention} \n{category}: {total}\n\n'
+                    else:
+                        result += f'**{i+1}) {currentUser.mention} \n{category}: {total} \n\n\n'
+                        embed.set_image(url=currentUser.avatar.url)
+                embed.add_field(name='\u200b', value=result, inline=True)
+                embed.set_footer(text=f'Tracking since October 4, 2022')
+            
+            await interaction.response.send_message(embed=embed)
         else:
             print("ERROR IN TOP COMMANDS WITH PARAMETERS: ", category, period)
 
