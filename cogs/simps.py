@@ -428,16 +428,16 @@ class Simps(commands.Cog):
             else:
                 # User has no time on table yet
                 return     
-        elif category in data.categoriesDict:
+        elif category in data.periodsDict:
             if period == "All Time":
                 self.miscCursor.execute(f'SELECT userid, SUM(count), timestamp as Total FROM \'{data.categoriesDict[category]}\' GROUP BY userid ORDER BY Total DESC')
                 queryList = self.miscCursor.fetchall()
                 print(queryList)   
             elif period == "Today":
-                self.miscCursor.execute(f'SELECT userid, SUM(count), timestamp as Total FROM \'{data.categoriesDict[category]}\' WHERE timestamp = date(\'now\') GROUP BY userid ORDER BY Total DESC')
+                self.miscCursor.execute(f'SELECT userid, SUM(count), timestamp as Total FROM \'{data.categoriesDict[category]}\' WHERE timestamp >= date(\'now\') GROUP BY userid ORDER BY Total DESC')
                 queryList = self.miscCursor.fetchall()
                 print(queryList)   
-            elif period in data.categoriesDict:
+            elif period in data.periodsDict:
                 self.miscCursor.execute(f'SELECT userid, SUM(count), timestamp as Total FROM \'{data.categoriesDict[category]}\' WHERE timestamp BETWEEN date(\'now\', \'-{data.periodsDict[period]} day\') and date(\'now\') GROUP BY userid ORDER BY Total DESC')
                 queryList = self.miscCursor.fetchall()
                 print(queryList)           
