@@ -419,21 +419,18 @@ class Simps(commands.Cog):
     @app_commands.autocomplete(category=category_autocomplete, period=period_autocomplete)
     async def top(self, interaction: discord.Interaction, category: str = "Online Time", period: str = "All Time") -> None:
         if category == "Online Time":
-            return 
-            # FIGURE THIS OUT LATER
-            self.cursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE type='table' AND name = '{user.id}' ''')
-            if self.cursor.fetchone()[0] == 1:
-                self.cursor.execute(f'SELECT * FROM \'{str(user.id)}\' ORDER BY count DESC, reactions DESC')
+            for table in self.timeSequenceCursor.execute(f'''SELECT name FROM sqlite_master WHERE type='table' ORDER BY name'''):
+                print(table)
                 if period == "All Time":
-                    self.miscCursor.execute(f'SELECT userid, SUM(count) as Total, timestamp FROM \'{data.categoriesDict[category]}\' GROUP BY userid ORDER BY Total DESC')
+                    self.miscCursor.execute(f'SELECT d, SUM(count) as Total, d FROM \'{table[0]}\'')
                     queryList = self.miscCursor.fetchall()
                     print(queryList)   
                 elif period == "Today":
-                    self.miscCursor.execute(f'SELECT userid, SUM(count) as Total, timestamp FROM \'{data.categoriesDict[category]}\' WHERE timestamp = date(\'now\') GROUP BY userid ORDER BY Total DESC')
+                    self.miscCursor.execute(f'SELECT d, SUM(count) as Total, d FROM \'{table[0]}\' WHERE d = date(\'now\')')
                     queryList = self.miscCursor.fetchall()
                     print(queryList)   
-                elif period in data.categoriesDict:
-                    self.miscCursor.execute(f'SELECT userid, SUM(count) as Total, timestamp FROM \'{data.categoriesDict[category]}\' WHERE timestamp BETWEEN date(\'now\', \'-{data.periodsDict[period]} day\') and date(\'now\') GROUP BY userid ORDER BY Total DESC')
+                elif period in data.periodsDict:
+                    self.miscCursor.execute(f'SELECT d, SUM(count) as Total, d FROM \'{table[0]}\' WHERE d BETWEEN date(\'now\', \'-{data.periodsDict[period]} day\') and date(\'now\')')
                     queryList = self.miscCursor.fetchall()
                     print(queryList)           
                 else:
