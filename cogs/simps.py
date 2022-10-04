@@ -412,15 +412,15 @@ class Simps(commands.Cog):
             if self.cursor.fetchone()[0] == 1:
                 self.cursor.execute(f'SELECT * FROM \'{str(user.id)}\' ORDER BY count DESC, reactions DESC')
                 if period == "All Time":
-                    self.miscCursor.execute(f'SELECT id, SUM(count) as Total FROM \'{data.categoriesDict[category]}\' GROUP BY id ORDER BY Total DESC')
+                    self.miscCursor.execute(f'SELECT userid, SUM(count), timestamp as Total FROM \'{data.categoriesDict[category]}\' GROUP BY userid ORDER BY Total DESC')
                     queryList = self.miscCursor.fetchall()
                     print(queryList)   
                 elif period == "Today":
-                    self.miscCursor.execute(f'SELECT id, SUM(count) as Total FROM \'{data.categoriesDict[category]}\' WHERE d = date(\'now\') GROUP BY id ORDER BY Total DESC')
+                    self.miscCursor.execute(f'SELECT userid, SUM(count), timestamp as Total FROM \'{data.categoriesDict[category]}\' WHERE d = date(\'now\') GROUP BY userid ORDER BY Total DESC')
                     queryList = self.miscCursor.fetchall()
                     print(queryList)   
                 elif period in data.categoriesDict:
-                    self.miscCursor.execute(f'SELECT id, SUM(count) as Total FROM \'{data.categoriesDict[category]}\' WHERE d BETWEEN date(\'now\', \'-{data.periodsDict[period]} day\') and date(\'now\') GROUP BY id ORDER BY Total DESC')
+                    self.miscCursor.execute(f'SELECT userid, SUM(count), timestamp as Total FROM \'{data.categoriesDict[category]}\' WHERE d BETWEEN date(\'now\', \'-{data.periodsDict[period]} day\') and date(\'now\') GROUP BY userid ORDER BY Total DESC')
                     queryList = self.miscCursor.fetchall()
                     print(queryList)           
                 else:
@@ -430,15 +430,15 @@ class Simps(commands.Cog):
                 return     
         elif category in data.categoriesDict:
             if period == "All Time":
-                self.miscCursor.execute(f'SELECT id, SUM(count) as Total FROM \'{data.categoriesDict[category]}\' GROUP BY id ORDER BY Total DESC')
+                self.miscCursor.execute(f'SELECT userid, SUM(count), timestamp as Total FROM \'{data.categoriesDict[category]}\' GROUP BY userid ORDER BY Total DESC')
                 queryList = self.miscCursor.fetchall()
                 print(queryList)   
             elif period == "Today":
-                self.miscCursor.execute(f'SELECT id, SUM(count) as Total FROM \'{data.categoriesDict[category]}\' WHERE d = date(\'now\') GROUP BY id ORDER BY Total DESC')
+                self.miscCursor.execute(f'SELECT userid, SUM(count), timestamp as Total FROM \'{data.categoriesDict[category]}\' WHERE d = date(\'now\') GROUP BY userid ORDER BY Total DESC')
                 queryList = self.miscCursor.fetchall()
                 print(queryList)   
             elif period in data.categoriesDict:
-                self.miscCursor.execute(f'SELECT id, SUM(count) as Total FROM \'{data.categoriesDict[category]}\' WHERE d BETWEEN date(\'now\', \'-{data.periodsDict[period]} day\') and date(\'now\') GROUP BY id ORDER BY Total DESC')
+                self.miscCursor.execute(f'SELECT userid, SUM(count), timestamp as Total FROM \'{data.categoriesDict[category]}\' WHERE d BETWEEN date(\'now\', \'-{data.periodsDict[period]} day\') and date(\'now\') GROUP BY userid ORDER BY Total DESC')
                 queryList = self.miscCursor.fetchall()
                 print(queryList)           
             else:
