@@ -200,8 +200,10 @@ class Simps(commands.Cog):
         self.checkMessageTable(currentId)
         self.messageCursor.execute(f'INSERT INTO \'{str(currentId)}\' (k, messages, swears) VALUES ({0}, {1}, {swearCount[0]}) ON CONFLICT (k) DO UPDATE SET messages = messages + 1, swears = swears + {swearCount[0]}')
         self.messageConn.commit()
-        self.miscCursor.execute(f'INSERT INTO \'profanitiesTable\' (userid, count, timestamp) VALUES (\'{message.author.id}\', {1}, datetime(\'now\'))')
-        self.miscConnection.commit()
+        
+        if (sum(swearCount) > 0):
+            self.miscCursor.execute(f'INSERT INTO \'profanitiesTable\' (userid, count, timestamp) VALUES (\'{message.author.id}\', {sum(swearCount)}, datetime(\'now\'))')
+            self.miscConnection.commit()
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
@@ -212,7 +214,7 @@ class Simps(commands.Cog):
         print(f'User {self.bot.get_user(simp).name} reacted with {payload.emoji.name} to user {self.bot.get_user(simped).name}.')
 
         self.checkTable(simped)
-        self.cursor.execute(f'INSERT INTO \'{str(simped)}\' (userid, count, reactions) VALUES ({str(simp)}, {0}, {1}) ON CONFLICT (id) DO UPDATE SET reactions = reactions + 1')
+        self.cursor.execute(f'INSERT INTO \'{str(simped)}\' (id, count, reactions) VALUES ({str(simp)}, {0}, {1}) ON CONFLICT (id) DO UPDATE SET reactions = reactions + 1')
         self.connection.commit()
 
         self.miscCursor.execute(f'INSERT INTO \'reactionTable\' (id, reactions, timestamp) VALUES (\'{simped}\', {1}, datetime(\'now\'))')
