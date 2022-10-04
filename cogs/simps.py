@@ -67,9 +67,9 @@ class Simps(commands.Cog):
                     for currentMember in members:
                         self.connectedUsers[currentMember.id] = updateTime
                         self.timeTracker[currentMember.id] = updateTime
-                        if currentMember.afk == True:
+                        if currentMember.voice.afk == True:
                             self.afk[currentMember.id] = updateTime
-                        if currentMember.self_stream == True:
+                        if currentMember.voice.self_stream == True:
                             self.streamTracker[currentMember.id] = updateTime
     
     def updateTimes(self):
