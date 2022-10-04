@@ -326,7 +326,6 @@ class Simps(commands.Cog):
         if user is None:
             user = interaction.user
         self.updateTimes()
-        self.cursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE type='table' AND name = '{user.id}' ''')
 
         # Build Embed Common Fields
         embed = discord.Embed(color=0xf1d3ed)
@@ -405,7 +404,46 @@ class Simps(commands.Cog):
     @app_commands.command(name="top", description='Server Stats Leaderboard')
     @app_commands.autocomplete(category=category_autocomplete, period=period_autocomplete)
     async def top(self, interaction: discord.Interaction, category: str = "Online Time", period: str = "All Time") -> None:
-        return
+        if category == "Online Time":
+            return 
+            # FIGURE THIS OUT LATER
+            self.cursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE type='table' AND name = '{user.id}' ''')
+            if self.cursor.fetchone()[0] == 1:
+                self.cursor.execute(f'SELECT * FROM \'{str(user.id)}\' ORDER BY count DESC, reactions DESC')
+                if period == "All Time":
+                    self.miscCursor.execute(f'SELECT id, SUM(count) as Total FROM \'{data.categoriesDict[category]}\' GROUP BY id ORDER BY Total DESC')
+                    queryList = self.miscCursor.fetchall()
+                    print(queryList)   
+                elif period == "Today":
+                    self.miscCursor.execute(f'SELECT id, SUM(count) as Total FROM \'{data.categoriesDict[category]}\' WHERE d = date(\'now\') GROUP BY id ORDER BY Total DESC')
+                    queryList = self.miscCursor.fetchall()
+                    print(queryList)   
+                elif period in data.categoriesDict:
+                    self.miscCursor.execute(f'SELECT id, SUM(count) as Total FROM \'{data.categoriesDict[category]}\' WHERE d BETWEEN date(\'now\', \'-{data.periodsDict[period]} day\') and date(\'now\') GROUP BY id ORDER BY Total DESC')
+                    queryList = self.miscCursor.fetchall()
+                    print(queryList)           
+                else:
+                    print("ERROR IN TOP COMMANDS WITH PARAMETERS: ", category, period)
+            else:
+                # User has no time on table yet
+                return     
+        elif category in data.categoriesDict:
+            if period == "All Time":
+                self.miscCursor.execute(f'SELECT id, SUM(count) as Total FROM \'{data.categoriesDict[category]}\' GROUP BY id ORDER BY Total DESC')
+                queryList = self.miscCursor.fetchall()
+                print(queryList)   
+            elif period == "Today":
+                self.miscCursor.execute(f'SELECT id, SUM(count) as Total FROM \'{data.categoriesDict[category]}\' WHERE d = date(\'now\') GROUP BY id ORDER BY Total DESC')
+                queryList = self.miscCursor.fetchall()
+                print(queryList)   
+            elif period in data.categoriesDict:
+                self.miscCursor.execute(f'SELECT id, SUM(count) as Total FROM \'{data.categoriesDict[category]}\' WHERE d BETWEEN date(\'now\', \'-{data.periodsDict[period]} day\') and date(\'now\') GROUP BY id ORDER BY Total DESC')
+                queryList = self.miscCursor.fetchall()
+                print(queryList)           
+            else:
+                print("ERROR IN TOP COMMANDS WITH PARAMETERS: ", category, period)
+        else:
+            print("ERROR IN TOP COMMANDS WITH PARAMETERS: ", category, period)
 
     @app_commands.command(name="stats", description='Server Stats')
     async def stats(self, interaction: discord.Interaction, user: discord.User = None) -> None:
