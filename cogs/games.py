@@ -239,13 +239,14 @@ class Games(commands.Cog):
     def saveNumBoxesToJson(self):
         with open('boxes.obj', 'wb') as file_object:
             pickle.dump(self.boxes, file_object)
+        print('Storing # of Boxes to File: ')
         print(self.boxes)
-        print('Storing # of Boxes to File')
 
     def saveRunsRemainingToJson(self):
         with open('runs.obj', 'wb') as file_object:
             pickle.dump(self.runsRemaining, file_object)
-        print('Storing # of Runs to File')
+        print('Storing # of Runs to File: ')
+        print(self.runsRemaining)
 
     def run_continuously(self, interval = 5):
         cease_continuous_run = threading.Event()
@@ -303,21 +304,16 @@ class Games(commands.Cog):
         currentId = member.id
         if after.channel == None:
             if before.afk != True:
-                # print(f'User {self.connectedUsers} disconnected.')
                 self.quitOzRun(currentId)
         elif before.channel == None and after.channel != None:
             if after.afk != True:
-                # print(f'User {self.connectedUsers} connected.')
                 self.startOzRun(currentId)
         else:
             if before.afk == True and after.afk == False:
-                # print(f'User {self.connectedUsers} returned from afk.')
                 self.startOzRun(currentId)
             elif before.afk == False and after.afk == True:
-                # print(f'User {self.connectedUsers} went afk.')
                 self.quitOzRun(currentId)
             else:
-                # print(f'User {self.connectedUsers} made a non-connection related voice status update.')
                 return
         return
 

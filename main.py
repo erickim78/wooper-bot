@@ -46,6 +46,7 @@ connection = sqlite3.connect("bot.db")
 timeSequenceConn = sqlite3.connect("timeSequence.db", detect_types=sqlite3.PARSE_DECLTYPES|sqlite3.PARSE_COLNAMES, check_same_thread=False)
 messageAnalysis = sqlite3.connect("messageAnalysis.db")
 miscConnection = sqlite3.connect("misc.db", detect_types=sqlite3.PARSE_DECLTYPES|sqlite3.PARSE_COLNAMES)
+otherTimeConn = sqlite3.connect("otherTime.db", detect_types=sqlite3.PARSE_DECLTYPES|sqlite3.PARSE_COLNAMES)
 
 # Run Main Script
 if __name__ == '__main__':

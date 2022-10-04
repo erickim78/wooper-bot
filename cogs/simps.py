@@ -10,6 +10,7 @@ import threading
 # File Imports
 import config
 import main
+import data
 
 # Discord
 import discord
@@ -33,13 +34,25 @@ class Simps(commands.Cog):
         # Message Analysis
         self.messageConn = main.messageAnalysis
         self.messageCursor = main.messageAnalysis.cursor()
+
+        # Other Time Data
+        self.miscConnection = main.miscConnection
+        self.miscCursor = main.miscConnection.cursor()
         
         # Init Connected User List
         self.connectedUsers = {}
         self.timeTracker = {}
+        self.streamTracker = {}
+        self.afkTracker = {}
 
         # Lock
         self.timeLock = threading.Lock()
+
+        # Check Tables
+        self.checkAfkTable()
+        self.checkStreamTable()
+        self.checkReactionTable()
+        self.checkProfanitiesTable()
 
     def initConnectedUsers(self):
         updateTime = time.time()
@@ -87,6 +100,34 @@ class Simps(commands.Cog):
         self.messageCursor.execute(f''' SELECT count(name) FROM sqlite_master WHERE type='table' AND name = '{tableName}' ''')
         if self.messageCursor.fetchone()[0] != 1:
             self.messageCursor.execute(f''' CREATE TABLE '{tableName}' (k INT, messages INT, swears INT, PRIMARY KEY (k))''')
+            return False
+        return True
+
+    def checkStreamTable(self):
+        self.miscCursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE type='table' AND name = 'streamTable' ''')
+        if self.miscCursor.fetchone()[0] != 1:
+            self.miscCursor.execute(f'''CREATE TABLE 'streamTable' (userid TEXT, count DECIMAL(38,4), timestamp datetime)''')
+            return False
+        return True
+
+    def checkAfkTable(self):
+        self.miscCursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE type='table' AND name = 'afkTable' ''')
+        if self.miscCursor.fetchone()[0] != 1:
+            self.miscCursor.execute(f'''CREATE TABLE 'afkTable' (userid TEXT, count DECIMAL(38,4), timestamp datetime)''')
+            return False
+        return True
+
+    def checkReactionTable(self):
+        self.miscCursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE type='table' AND name = 'reactionTable' ''')
+        if self.miscCursor.fetchone()[0] != 1:
+            self.miscCursor.execute(f'''CREATE TABLE 'reactionTable' (userid TEXT, count DECIMAL(38,4), timestamp datetime)''')
+            return False
+        return True
+
+    def checkProfanitiesTable(self):
+        self.miscCursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE type='table' AND name = 'profanitiesTable' ''')
+        if self.miscCursor.fetchone()[0] != 1:
+            self.miscCursor.execute(f'''CREATE TABLE 'profanitiesTable' (userid TEXT, count DECIMAL(38,4), timestamp datetime)''')
             return False
         return True
 
@@ -158,6 +199,8 @@ class Simps(commands.Cog):
         self.checkMessageTable(currentId)
         self.messageCursor.execute(f'INSERT INTO \'{str(currentId)}\' (k, messages, swears) VALUES ({0}, {1}, {swearCount[0]}) ON CONFLICT (k) DO UPDATE SET messages = messages + 1, swears = swears + {swearCount[0]}')
         self.messageConn.commit()
+        self.miscCursor.execute(f'INSERT INTO \'profanitiesTable\' (id, count, timestamp) VALUES (\'{message.author.id}\', {1}, datetime(\'now\'))')
+        self.miscConnection.commit()
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
@@ -170,26 +213,58 @@ class Simps(commands.Cog):
         self.checkTable(simped)
         self.cursor.execute(f'INSERT INTO \'{str(simped)}\' (id, count, reactions) VALUES ({str(simp)}, {0}, {1}) ON CONFLICT (id) DO UPDATE SET reactions = reactions + 1')
         self.connection.commit()
+
+        self.miscCursor.execute(f'INSERT INTO \'reactionTable\' (id, reactions, timestamp) VALUES (\'{simped}\', {1}, datetime(\'now\'))')
+        self.miscConnection.commit()
+
     
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
+        if before.self_stream == False and before.self_stream == True:
+            self.streamTracker[member.id] = time.time()
+            print(f'User {member.name} began streaming.')
+            return
+        elif before.self_stream == True and before.self_stream == False:
+            streamTime = time.time() - self.streamTracker[member.id]
+            del self.streamTracker[member.id]
+
+            self.miscCursor.execute(f'INSERT INTO \'streamTable\' (id, count, timestamp) VALUES (\'{member.id}\', {streamTime}, datetime(\'now\'))')
+            self.miscConnection.commit()
+
+            print(f'User {member.name} stopped streaming. Stream time: {round(streamTime//3600)} hrs, {round((streamTime-3600*(streamTime//3600))//60)} mins')
+            return
+
+        if before.afk == False and before.afk == True:
+            self.afkTracker[member.id] = time.time()
+            print(f'User {member.name} went afk.')
+            return
+        elif before.afk == True and before.afk == False:
+            afkTime = time.time() - self.afkTracker[member.id]
+            del self.afkTracker[member.id]
+
+            self.miscCursor.execute(f'INSERT INTO \'afkTable\' (id, count, timestamp) VALUES (\'{member.id}\', {afkTime}, datetime(\'now\'))')
+            self.miscConnection.commit()
+
+            print(f'User {member.name} returned from AFK. Afk time: {round(afkTime//3600)} hrs, {round((afkTime-3600*(afkTime//3600))//60)} mins')
+            return
+
         if after.channel == None:
             if before.afk != True:
-                print(f'User {self.connectedUsers} disconnected.')
+                print(f'User {member.name} disconnected.')
                 self.handleDisconnect(member.id)
         elif before.channel == None and after.channel != None:
             if after.afk != True:
-                print(f'User {self.connectedUsers} connected.')
+                print(f'User {member.name} connected.')
                 self.handleConnect(member.id)
         else:
             if before.afk == True and after.afk == False:
-                print(f'User {self.connectedUsers} returned from afk.')
+                print(f'User {member.name} returned from afk.')
                 self.handleConnect(member.id)
             elif before.afk == False and after.afk == True:
-                print(f'User {self.connectedUsers} went afk.')
+                print(f'User {member.name} went afk.')
                 self.handleDisconnect(member.id)
             else:
-                print(f'User {self.connectedUsers} made a non-connection related voice status update.')
+                print(f'User {member.name} made a non-connection related voice status update.')
         return
 
     @app_commands.command(name="besties", description='Check a user\'s besties')
@@ -311,6 +386,26 @@ class Simps(commands.Cog):
             embed.set_footer(text=f'Tracking since September 2, 2022')
 
         await interaction.response.send_message(embed=embed)
+
+    async def category_autocomplete(self, interaction: discord.Interaction, current: str,) -> List[app_commands.Choice[str]]:
+        choices = data.categories
+        return [
+            app_commands.Choice(name=choice, value=choice)
+            for choice in choices if current.lower() in choice.lower()
+        ]
+
+    async def period_autocomplete(self, interaction: discord.Interaction, current: str,) -> List[app_commands.Choice[str]]:
+        localcopy = data.periods
+        choices = localcopy[::-1]
+        return [
+            app_commands.Choice(name=choice, value=choice)
+            for choice in choices if current.lower() in choice.lower()
+        ]
+
+    @app_commands.command(name="top", description='Server Stats Leaderboard')
+    @app_commands.autocomplete(category=category_autocomplete, period=period_autocomplete)
+    async def top(self, interaction: discord.Interaction, category: str = "Online Time", period: str = "All Time") -> None:
+        return
 
     @app_commands.command(name="stats", description='Server Stats')
     async def stats(self, interaction: discord.Interaction, user: discord.User = None) -> None:

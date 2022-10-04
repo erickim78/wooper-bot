@@ -21,6 +21,9 @@ shinyBox = ["Ring of Restraint", "Weapon Jump S Ring", "Weapon Jump I Ring", "We
 leaderboardRings = ["Ring of Restraint", "Weapon Jump Rings (All)", "Weapon Jump S Ring", "Weapon Jump I Ring", "Weapon Jump L Ring", "Weapon Jump D Ring", "Risk Taker Ring", "Totalling Ring", "Critical Damage Ring",
         "Crisis HM Ring", "Tower Boost Ring", "Reflective Ring"]
 
+categories = ["Online Time", "Streaming Time", "AFK Time", "Reactions"]
+periods = ["All Time", "Today", "Last 3 Days", "Last 7 Days", "Last 30 Days"]
+
 rewardLinks = {}
 rewardLinks["Ring of Restraint"] = "https://static.wikia.nocookie.net/maplestory/images/4/4d/Eqp_Ring_of_Restraint.png/revision/latest?cb=20160210033306"
 rewardLinks["Weapon Jump S Ring"] = "https://static.wikia.nocookie.net/maplestory/images/2/27/Eqp_Weapon_Jump_Ring.png/revision/latest?cb=20190925072314"
