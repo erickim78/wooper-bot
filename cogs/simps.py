@@ -200,7 +200,7 @@ class Simps(commands.Cog):
         self.checkMessageTable(currentId)
         self.messageCursor.execute(f'INSERT INTO \'{str(currentId)}\' (k, messages, swears) VALUES ({0}, {1}, {swearCount[0]}) ON CONFLICT (k) DO UPDATE SET messages = messages + 1, swears = swears + {swearCount[0]}')
         self.messageConn.commit()
-        self.miscCursor.execute(f'INSERT INTO \'profanitiesTable\' (id, count, timestamp) VALUES (\'{message.author.id}\', {1}, datetime(\'now\'))')
+        self.miscCursor.execute(f'INSERT INTO \'profanitiesTable\' (userid, count, timestamp) VALUES (\'{message.author.id}\', {1}, datetime(\'now\'))')
         self.miscConnection.commit()
 
     @commands.Cog.listener()
@@ -212,7 +212,7 @@ class Simps(commands.Cog):
         print(f'User {self.bot.get_user(simp).name} reacted with {payload.emoji.name} to user {self.bot.get_user(simped).name}.')
 
         self.checkTable(simped)
-        self.cursor.execute(f'INSERT INTO \'{str(simped)}\' (id, count, reactions) VALUES ({str(simp)}, {0}, {1}) ON CONFLICT (id) DO UPDATE SET reactions = reactions + 1')
+        self.cursor.execute(f'INSERT INTO \'{str(simped)}\' (userid, count, reactions) VALUES ({str(simp)}, {0}, {1}) ON CONFLICT (id) DO UPDATE SET reactions = reactions + 1')
         self.connection.commit()
 
         self.miscCursor.execute(f'INSERT INTO \'reactionTable\' (id, reactions, timestamp) VALUES (\'{simped}\', {1}, datetime(\'now\'))')
@@ -229,7 +229,7 @@ class Simps(commands.Cog):
             streamTime = time.time() - self.streamTracker[member.id]
             del self.streamTracker[member.id]
 
-            self.miscCursor.execute(f'INSERT INTO \'streamTable\' (id, count, timestamp) VALUES (\'{member.id}\', {streamTime}, datetime(\'now\'))')
+            self.miscCursor.execute(f'INSERT INTO \'streamTable\' (userid, count, timestamp) VALUES (\'{member.id}\', {streamTime}, datetime(\'now\'))')
             self.miscConnection.commit()
 
             print(f'User {member.name} stopped streaming. Stream time: {round(streamTime//3600)} hrs, {round((streamTime-3600*(streamTime//3600))//60)} mins')
@@ -243,7 +243,7 @@ class Simps(commands.Cog):
             afkTime = time.time() - self.afkTracker[member.id]
             del self.afkTracker[member.id]
 
-            self.miscCursor.execute(f'INSERT INTO \'afkTable\' (id, count, timestamp) VALUES (\'{member.id}\', {afkTime}, datetime(\'now\'))')
+            self.miscCursor.execute(f'INSERT INTO \'afkTable\' (userid, count, timestamp) VALUES (\'{member.id}\', {afkTime}, datetime(\'now\'))')
             self.miscConnection.commit()
 
             print(f'User {member.name} returned from AFK. Afk time: {round(afkTime//3600)} hrs, {round((afkTime-3600*(afkTime//3600))//60)} mins')
