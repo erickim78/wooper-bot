@@ -458,7 +458,7 @@ class Simps(commands.Cog):
                 embed.set_thumbnail(url="https://i.imgur.com/dxPvMN8.gif")
             else:
                 embed.set_thumbnail(url=guildIcon.url)
-            embed.add_field(name=f'Top {category}', value=f'{period}', inline=False)
+            embed.add_field(name=f'Top {category}', value=f'Time Period: {period}', inline=False)
             if category == "Streaming Time" or category == "AFK Time":
                 result = f'\u200b'
                 for i in range(min(5, len(queryList))):
@@ -467,7 +467,7 @@ class Simps(commands.Cog):
                     if i > 0:
                         result += f'{i+1}) {currentUser.mention} \n{round(currentTime//3600)} hrs, {round((currentTime-3600*(currentTime//3600))//60)} mins\n\n'
                     else:
-                        result += f'**{i+1}) {currentUser.mention} \n{round(currentTime//3600)} hrs, {round((currentTime-3600*(currentTime//3600))//60)} mins \n\n\n'
+                        result += f'**{i+1}) {currentUser.mention}** \n{round(currentTime//3600)} hrs, {round((currentTime-3600*(currentTime//3600))//60)} mins \n\n\n'
                         embed.set_image(url=currentUser.avatar.url)
 
                 embed.add_field(name='\u200b', value=result, inline=True)
@@ -481,7 +481,7 @@ class Simps(commands.Cog):
                     if i > 0:
                         result += f'{i+1}) {currentUser.mention} \n{category}: {total}\n\n'
                     else:
-                        result += f'**{i+1}) {currentUser.mention} \n{category}: {total} \n\n\n'
+                        result += f'**{i+1}) {currentUser.mention}** \n{category}: {total} \n\n\n'
                         embed.set_image(url=currentUser.avatar.url)
                 embed.add_field(name='\u200b', value=result, inline=True)
                 embed.set_footer(text=f'Tracking since October 4, 2022')
