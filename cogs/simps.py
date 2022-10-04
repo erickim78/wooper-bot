@@ -460,7 +460,7 @@ class Simps(commands.Cog):
                 embed.set_thumbnail(url=guildIcon.url)
             embed.add_field(name=f'Top {category}', value=f'{period}', inline=False)
             if category == "Streaming Time" or category == "AFK Time":
-                result = f''
+                result = f'\u200b'
                 for i in range(min(5, len(queryList))):
                     currentUser = self.bot.get_user(int(queryList[i][0]))
                     currentTime = queryList[i][1]
@@ -474,7 +474,7 @@ class Simps(commands.Cog):
                 embed.set_footer(text=f'Tracking since October 4, 2022')
             else:
                 # Build Embed
-                result = f''
+                result = f'\u200b'
                 for i in range(min(5, len(queryList))):
                     currentUser = self.bot.get_user(int(queryList[i][0]))
                     total = queryList[i][1]
