@@ -221,7 +221,7 @@ class Simps(commands.Cog):
         self.cursor.execute(f'INSERT INTO \'{str(simped)}\' (id, count, reactions) VALUES ({str(simp)}, {0}, {1}) ON CONFLICT (id) DO UPDATE SET reactions = reactions + 1')
         self.connection.commit()
 
-        self.miscCursor.execute(f'INSERT INTO \'reactionTable\' (id, reactions, timestamp) VALUES (\'{simped}\', {1}, datetime(\'now\'))')
+        self.miscCursor.execute(f'INSERT INTO \'reactionTable\' (userid, count, timestamp) VALUES (\'{simped}\', {1}, datetime(\'now\'))')
         self.miscConnection.commit()
 
     
