@@ -247,7 +247,6 @@ class Simps(commands.Cog):
         if before.self_stream == False and after.self_stream == True:
             self.streamTracker[member.id] = time.time()
             print(f'User {member.name} began streaming.')
-            return
         elif before.self_stream == True and after.self_stream == False:
             streamTime = time.time() - self.streamTracker[member.id]
             del self.streamTracker[member.id]
@@ -256,12 +255,10 @@ class Simps(commands.Cog):
             self.miscConnection.commit()
 
             print(f'User {member.name} stopped streaming. Stream time: {round(streamTime//3600)} hrs, {round((streamTime-3600*(streamTime//3600))//60)} mins')
-            return
 
         if before.afk == False and after.afk == True:
             self.afkTracker[member.id] = time.time()
             print(f'User {member.name} went afk.')
-            return
         elif before.afk == True and after.afk == False:
             afkTime = time.time() - self.afkTracker[member.id]
             del self.afkTracker[member.id]
@@ -270,7 +267,6 @@ class Simps(commands.Cog):
             self.miscConnection.commit()
 
             print(f'User {member.name} returned from AFK. Afk time: {round(afkTime//3600)} hrs, {round((afkTime-3600*(afkTime//3600))//60)} mins')
-            return
 
         if after.channel == None:
             if before.afk != True:
