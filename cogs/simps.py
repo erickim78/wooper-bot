@@ -244,10 +244,10 @@ class Simps(commands.Cog):
     
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
-        if before.self_stream == False and after.self_stream == True:
+        if (before.self_stream == False or before.channel == None) and after.self_stream == True:
             self.streamTracker[member.id] = time.time()
             print(f'User {member.name} began streaming.')
-        elif before.self_stream == True and after.self_stream == False:
+        elif before.self_stream == True and (after.self_stream == False or after.channel == None):
             streamTime = time.time() - self.streamTracker[member.id]
             del self.streamTracker[member.id]
 
