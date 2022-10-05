@@ -21,8 +21,8 @@ shinyBox = ["Ring of Restraint", "Weapon Jump S Ring", "Weapon Jump I Ring", "We
 leaderboardRings = ["Ring of Restraint", "Weapon Jump Rings (All)", "Weapon Jump S Ring", "Weapon Jump I Ring", "Weapon Jump L Ring", "Weapon Jump D Ring", "Risk Taker Ring", "Totalling Ring", "Critical Damage Ring",
         "Crisis HM Ring", "Tower Boost Ring", "Reflective Ring"]
 
-categories = ["Online Time", "Streaming Time", "AFK Time", "Reactions Farmed", "Profanities Used"]
-categoriesDict = {"Streaming Time":"streamTable", "AFK Time":"afkTable","Reactions Farmed":"reactionTable", "Profanities Used":"profanitiesTable"}
+categories = ["Online Time", "Streaming Time", "AFK Time", "Reactions Farmed", "Profanities Used","Messages Sent"]
+categoriesDict = {"Streaming Time":"streamTable", "AFK Time":"afkTable","Reactions Farmed":"reactionTable", "Profanities Used":"profanitiesTable", "Messages Sent":"messagesTable"}
 periods = ["All Time", "Today", "Last 3 Days", "Last 7 Days", "Last 30 Days"]
 periodsDict = {"Last 3 Days":"2", "Last 7 Days":"6", "Last 30 Days":"29"}
 

@@ -54,6 +54,7 @@ class Simps(commands.Cog):
         self.checkStreamTable()
         self.checkReactionTable()
         self.checkProfanitiesTable()
+        self.checkMessagesTable()
 
     def initConnectedUsers(self):
         updateTime = time.time()
@@ -143,6 +144,13 @@ class Simps(commands.Cog):
             return False
         return True
 
+    def checkMessagesTable(self):
+        self.miscCursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE type='table' AND name = 'messagesTable' ''')
+        if self.miscCursor.fetchone()[0] != 1:
+            self.miscCursor.execute(f'''CREATE TABLE 'messagesTable' (userid TEXT, count DECIMAL(38,4), timestamp datetime)''')
+            return False
+        return True
+
     def addTime(self, userId, timeToAdd):
         self.checkTimeTable(userId)
         self.timeSequenceCursor.execute(f'INSERT INTO \'{str(userId)}\' (d, count) VALUES (date(\'now\'), {timeToAdd}) ON CONFLICT (d) DO UPDATE SET count = count + {timeToAdd}')
@@ -211,10 +219,11 @@ class Simps(commands.Cog):
         self.checkMessageTable(currentId)
         self.messageCursor.execute(f'INSERT INTO \'{str(currentId)}\' (k, messages, swears) VALUES ({0}, {1}, {swearCount[0]}) ON CONFLICT (k) DO UPDATE SET messages = messages + 1, swears = swears + {swearCount[0]}')
         self.messageConn.commit()
-        
+
+        self.miscCursor.execute(f'INSERT INTO \'messagesTable\' (userid, count, timestamp) VALUES (\'{message.author.id}\', {1}, datetime(\'now\'))')
         if (sum(swearCount) > 0):
             self.miscCursor.execute(f'INSERT INTO \'profanitiesTable\' (userid, count, timestamp) VALUES (\'{message.author.id}\', {sum(swearCount)}, datetime(\'now\'))')
-            self.miscConnection.commit()
+        self.miscConnection.commit()
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
