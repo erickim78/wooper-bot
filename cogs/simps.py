@@ -446,7 +446,7 @@ class Simps(commands.Cog):
                 else:
                     print("ERROR IN TOP COMMANDS WITH PARAMETERS: ", category, period)
                     return
-            print(queryList)
+            queryList = queryList.sort(key = lambda x: x[1], reverse=True)
             result = f'\u200b'
             for i in range(min(5, len(queryList))):
                 currentUser = self.bot.get_user(int(queryList[i][0]))
@@ -504,10 +504,11 @@ class Simps(commands.Cog):
                         embed.set_image(url=currentUser.avatar.url)
                 embed.add_field(name='\u200b', value=result, inline=True)
                 embed.set_footer(text=f'Tracking since October 4, 2022')
-            
-            await interaction.response.send_message(embed=embed)
         else:
             print("ERROR IN TOP COMMANDS WITH PARAMETERS: ", category, period)
+            return
+
+        await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name="stats", description='Server Stats')
     async def stats(self, interaction: discord.Interaction, user: discord.User = None) -> None:
