@@ -224,12 +224,13 @@ class Simps(commands.Cog):
         simped = message.author.id
         print(f'User {self.bot.get_user(simp).name} reacted with {payload.emoji.name} to user {self.bot.get_user(simped).name}.')
 
-        self.checkTable(simped)
-        self.cursor.execute(f'INSERT INTO \'{str(simped)}\' (id, count, reactions) VALUES ({str(simp)}, {0}, {1}) ON CONFLICT (id) DO UPDATE SET reactions = reactions + 1')
-        self.connection.commit()
+        if (simp != simped):
+            self.checkTable(simped)
+            self.cursor.execute(f'INSERT INTO \'{str(simped)}\' (id, count, reactions) VALUES ({str(simp)}, {0}, {1}) ON CONFLICT (id) DO UPDATE SET reactions = reactions + 1')
+            self.connection.commit()
 
-        self.miscCursor.execute(f'INSERT INTO \'reactionTable\' (userid, count, timestamp) VALUES (\'{simped}\', {1}, datetime(\'now\'))')
-        self.miscConnection.commit()
+            self.miscCursor.execute(f'INSERT INTO \'reactionTable\' (userid, count, timestamp) VALUES (\'{simped}\', {1}, datetime(\'now\'))')
+            self.miscConnection.commit()
 
     
     @commands.Cog.listener()
