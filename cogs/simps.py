@@ -418,26 +418,47 @@ class Simps(commands.Cog):
     @app_commands.command(name="top", description='Server Stats Leaderboard')
     @app_commands.autocomplete(category=category_autocomplete, period=period_autocomplete)
     async def top(self, interaction: discord.Interaction, category: str = "Online Time", period: str = "All Time") -> None:
+        embed = discord.Embed(color=0xf1d3ed)
+        guildIcon = interaction.guild.icon
+        if guildIcon is None:
+            embed.set_thumbnail(url="https://i.imgur.com/dxPvMN8.gif")
+        else:
+            embed.set_thumbnail(url=guildIcon.url)
+        embed.add_field(name=f'Top {category}', value=f'{period}', inline=False)
         if category == "Online Time":
-            for table in self.timeSequenceCursor.execute(f'''SELECT name FROM sqlite_master WHERE type='table' ORDER BY name'''):
-                print(table)
+            tableList = self.timeSequenceCursor.execute(f'''SELECT name FROM sqlite_master WHERE type='table' ORDER BY name''').fetchall()
+            queryList = []
+            for table in tableList:
                 if period == "All Time":
-                    self.timeSequenceCursor.execute(f'SELECT d, SUM(count) as Total, d FROM \'{table[0]}\'')
-                    queryList = self.timeSequenceCursor.fetchall()
-                    print(queryList)   
+                    self.timeSequenceCursor.execute(f'SELECT d, SUM(count) as Total FROM \'{table[0]}\'')
+                    result = self.timeSequenceCursor.fetchall()
+                    queryList.append((table, result))
                 elif period == "Today":
-                    self.timeSequenceCursor.execute(f'SELECT d, SUM(count) as Total, d FROM \'{table[0]}\' WHERE d = date(\'now\')')
-                    queryList = self.timeSequenceCursor.fetchall()
+                    self.timeSequenceCursor.execute(f'SELECT d, SUM(count) as Total FROM \'{table[0]}\' WHERE d = date(\'now\')')
+                    result = self.timeSequenceCursor.fetchall()
+                    queryList.append((table, result))
                     print(queryList)   
                 elif period in data.periodsDict:
-                    self.timeSequenceCursor.execute(f'SELECT d, SUM(count) as Total, d FROM \'{table[0]}\' WHERE d BETWEEN date(\'now\', \'-{data.periodsDict[period]} day\') and date(\'now\')')
-                    queryList = self.timeSequenceCursor.fetchall()
-                    print(queryList)           
+                    self.timeSequenceCursor.execute(f'SELECT d, SUM(count) as Total FROM \'{table[0]}\' WHERE d BETWEEN date(\'now\', \'-{data.periodsDict[period]} day\') and date(\'now\')')
+                    result = self.timeSequenceCursor.fetchall()
+                    queryList.append((table, result))
+                    print(queryList)
                 else:
                     print("ERROR IN TOP COMMANDS WITH PARAMETERS: ", category, period)
-            else:
-                # User has no time on table yet
-                return     
+                    return
+            print(queryList)
+            result = f'\u200b'
+            for i in range(min(5, len(queryList))):
+                currentUser = self.bot.get_user(int(queryList[i][0]))
+                currentTime = queryList[i][1]
+                if i > 0:
+                    result += f'{i+1}) {currentUser.mention} \n{round(currentTime//3600)} hrs, {round((currentTime-3600*(currentTime//3600))//60)} mins\n\n'
+                else:
+                    result += f'**{i+1}) {currentUser.mention}** \n{round(currentTime//3600)} hrs, {round((currentTime-3600*(currentTime//3600))//60)} mins \n\n\n'
+                    embed.set_image(url=currentUser.avatar.url)
+
+            embed.add_field(name='\u200b', value=result, inline=True)
+            embed.set_footer(text=f'Tracking since October 4, 2022')
         elif category in data.categoriesDict: 
             if period == "All Time":
                 self.miscCursor.execute(f'SELECT userid, SUM(count) as Total, timestamp FROM \'{data.categoriesDict[category]}\' GROUP BY userid ORDER BY Total DESC')
@@ -456,13 +477,7 @@ class Simps(commands.Cog):
                 await interaction.response.send_message(embed=embed)
                 return
 
-            embed = discord.Embed(color=0xf1d3ed)
-            guildIcon = interaction.guild.icon
-            if guildIcon is None:
-                embed.set_thumbnail(url="https://i.imgur.com/dxPvMN8.gif")
-            else:
-                embed.set_thumbnail(url=guildIcon.url)
-            embed.add_field(name=f'Top {category}', value=f'{period}', inline=False)
+            
             if category == "Streaming Time" or category == "AFK Time":
                 result = f'\u200b'
                 for i in range(min(5, len(queryList))):
