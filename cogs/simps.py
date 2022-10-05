@@ -432,16 +432,16 @@ class Simps(commands.Cog):
                 if period == "All Time":
                     self.timeSequenceCursor.execute(f'SELECT d, SUM(count) as Total FROM \'{table[0]}\'')
                     result = self.timeSequenceCursor.fetchall()
-                    queryList.append((table, result[1]))
+                    queryList.append((table, result[0][1]))
                 elif period == "Today":
                     self.timeSequenceCursor.execute(f'SELECT d, SUM(count) as Total FROM \'{table[0]}\' WHERE d = date(\'now\')')
                     result = self.timeSequenceCursor.fetchall()
-                    queryList.append((table, result[1]))
+                    queryList.append((table, result[0][1]))
                     print(queryList)   
                 elif period in data.periodsDict:
                     self.timeSequenceCursor.execute(f'SELECT d, SUM(count) as Total FROM \'{table[0]}\' WHERE d BETWEEN date(\'now\', \'-{data.periodsDict[period]} day\') and date(\'now\')')
                     result = self.timeSequenceCursor.fetchall()
-                    queryList.append((table, result[1]))
+                    queryList.append((table, result[0][1]))
                     print(queryList)
                 else:
                     print("ERROR IN TOP COMMANDS WITH PARAMETERS: ", category, period)
