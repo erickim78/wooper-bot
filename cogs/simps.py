@@ -245,11 +245,9 @@ class Simps(commands.Cog):
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
         if (before.self_stream == False or before.channel == None) and after.self_stream == True:
-            print(self.afkTracker)
             self.streamTracker[member.id] = time.time()
             print(f'User {member.name} began streaming.')
         elif before.self_stream == True and (after.self_stream == False or after.channel == None):
-            print(self.streamTracker)
             streamTime = time.time() - self.streamTracker[member.id]
             del self.streamTracker[member.id]
 
@@ -485,13 +483,13 @@ class Simps(commands.Cog):
                 print("ERROR IN TOP COMMANDS WITH PARAMETERS: ", category, period)
                 await interaction.response.send_message(embed=embed)
                 return
-
             
             if category == "Streaming Time" or category == "AFK Time":
                 result = f'\u200b'
                 for i in range(min(5, len(queryList))):
                     currentUser = self.bot.get_user(int(queryList[i][0]))
                     currentTime = queryList[i][1]
+                    print(currentTime)
                     if i > 0:
                         result += f'{i+1}) {currentUser.mention} ({currentUser.name})\n{round(currentTime//3600)} hrs, {round((currentTime-3600*(currentTime//3600))//60)} mins\n\n'
                     else:
