@@ -256,17 +256,17 @@ class Simps(commands.Cog):
 
             print(f'User {member.name} stopped streaming. Stream time: {round(streamTime//3600)} hrs, {round((streamTime-3600*(streamTime//3600))//60)} mins')
 
-        if before.afk == False and after.afk == True:
+        if (before.afk == False or before.channel == None) and after.afk == True:
             self.afkTracker[member.id] = time.time()
             print(f'User {member.name} went afk.')
-        elif before.afk == True and after.afk == False and (member.id in self.afkTracker):
+        elif before.afk == True and after.afk == False:
             afkTime = time.time() - self.afkTracker[member.id]
             del self.afkTracker[member.id]
 
             self.miscCursor.execute(f'INSERT INTO \'afkTable\' (userid, count, timestamp) VALUES (\'{member.id}\', {afkTime}, datetime(\'now\'))')
             self.miscConnection.commit()
 
-            print(f'User {member.name} returned from AFK. Afk time: {round(afkTime//3600)} hrs, {round((afkTime-3600*(afkTime//3600))//60)} mins')
+            print(f'User {member.name} no longer AFK. Afk time: {round(afkTime//3600)} hrs, {round((afkTime-3600*(afkTime//3600))//60)} mins')
 
         if after.channel == None:
             if before.afk != True:
