@@ -259,7 +259,7 @@ class Simps(commands.Cog):
         if (before.afk == False or before.channel == None) and after.afk == True:
             self.afkTracker[member.id] = time.time()
             print(f'User {member.name} went afk.')
-        elif before.afk == True and after.afk == False:
+        elif before.afk == True and (after.afk == False or after.channel == None):
             afkTime = time.time() - self.afkTracker[member.id]
             del self.afkTracker[member.id]
 
