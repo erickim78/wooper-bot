@@ -177,6 +177,15 @@ class Simps(commands.Cog):
                 self.addTime(userId, timeConnected)
                 del self.timeTracker[userId]
 
+    def updateTimesWithoutDisconnect(self):
+        for userId in self.timeTracker:
+            if self.timeTracker[userId] is not None:
+                currentTime = time.time()
+                with self.timeLock:
+                    timeConnected = currentTime - self.timeTracker[userId]
+                    self.addTime(userId, timeConnected)
+                    self.timeTracker[userId] = currentTime
+
     def updateTimeWithoutDisconnect(self, userId):
         if self.timeTracker[userId] is not None:
             currentTime = time.time()
@@ -292,6 +301,7 @@ class Simps(commands.Cog):
         if user is None:
             user = interaction.user
         self.updateTimes()
+        self.updateTimesWithoutDisconnect()
         self.cursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE type='table' AND name = '{user.id}' ''')
 
         # Build Embed Common Fields
@@ -346,6 +356,7 @@ class Simps(commands.Cog):
         if user is None:
             user = interaction.user
         self.updateTimes()
+        self.updateTimesWithoutDisconnect()
 
         # Build Embed Common Fields
         embed = discord.Embed(color=0xf1d3ed)
@@ -423,7 +434,7 @@ class Simps(commands.Cog):
 
     @app_commands.command(name="top", description='Server Stats Leaderboard')
     @app_commands.autocomplete(category=category_autocomplete, period=period_autocomplete)
-    async def top(self, interaction: discord.Interaction, category: str = "Online Time", period: str = "All Time") -> None:
+    async def top(self, interaction: discord.Interaction, category: str = "Online Time", period: str = "Today") -> None:
         embed = discord.Embed(color=0xf1d3ed)
         guildIcon = interaction.guild.icon
         if guildIcon is None:
@@ -432,6 +443,7 @@ class Simps(commands.Cog):
             embed.set_thumbnail(url=guildIcon.url)
         embed.add_field(name=f'Top {category}', value=f'{period}', inline=False)
         if category == "Online Time":
+            self.updateTimesWithoutDisconnect()
             tableList = self.timeSequenceCursor.execute(f'''SELECT name FROM sqlite_master WHERE type='table' ORDER BY name''').fetchall()
             queryList = []
             for table in tableList:
@@ -520,6 +532,8 @@ class Simps(commands.Cog):
     async def stats(self, interaction: discord.Interaction, user: discord.User = None) -> None:
         if user is None:
             user = interaction.user
+
+        self.updateTimesWithoutDisconnect()
 
         # Build Embed Common Fields
         embed = discord.Embed(color=0xf1d3ed)
