@@ -489,7 +489,6 @@ class Simps(commands.Cog):
                 for i in range(min(5, len(queryList))):
                     currentUser = self.bot.get_user(int(queryList[i][0]))
                     currentTime = queryList[i][1]
-                    print(currentTime)
                     if i > 0:
                         result += f'{i+1}) {currentUser.mention} ({currentUser.name})\n{round(currentTime//3600)} hrs, {round((currentTime-3600*(currentTime//3600))//60)} mins\n\n'
                     else:
