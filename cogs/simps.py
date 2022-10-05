@@ -441,14 +441,12 @@ class Simps(commands.Cog):
                     if result[0][1] is None:
                         continue
                     queryList.append((table[0], result[0][1]))
-                    print(queryList)   
                 elif period in data.periodsDict:
                     self.timeSequenceCursor.execute(f'SELECT d, SUM(count) as Total FROM \'{table[0]}\' WHERE d BETWEEN date(\'now\', \'-{data.periodsDict[period]} day\') and date(\'now\')')
                     result = self.timeSequenceCursor.fetchall()
                     if result[0][1] is None:
                         continue
                     queryList.append((table[0], result[0][1]))
-                    print(queryList)
                 else:
                     print("ERROR IN TOP COMMANDS WITH PARAMETERS: ", category, period)
                     return
@@ -458,9 +456,9 @@ class Simps(commands.Cog):
                 currentUser = self.bot.get_user(int(queryList[i][0]))
                 currentTime = queryList[i][1]
                 if i > 0:
-                    result += f'{i+1}) {currentUser.mention} \n{round(currentTime//3600)} hrs, {round((currentTime-3600*(currentTime//3600))//60)} mins\n\n'
+                    result += f'{i+1}) {currentUser.mention} ({currentUser.name}) \n{round(currentTime//3600)} hrs, {round((currentTime-3600*(currentTime//3600))//60)} mins\n\n'
                 else:
-                    result += f'**{i+1}) {currentUser.mention} \n{round(currentTime//3600)} hrs, {round((currentTime-3600*(currentTime//3600))//60)} mins** \n\n\n'
+                    result += f'**{i+1}) {currentUser.mention} ({currentUser.name}) \n{round(currentTime//3600)} hrs, {round((currentTime-3600*(currentTime//3600))//60)} mins** \n\n\n'
                     embed.set_image(url=currentUser.avatar.url)
 
             embed.add_field(name='\u200b', value=result, inline=True)
@@ -469,15 +467,12 @@ class Simps(commands.Cog):
             if period == "All Time":
                 self.miscCursor.execute(f'SELECT userid, SUM(count) as Total, timestamp FROM \'{data.categoriesDict[category]}\' GROUP BY userid ORDER BY Total DESC')
                 queryList = self.miscCursor.fetchall()
-                print(queryList)   
             elif period == "Today":
                 self.miscCursor.execute(f'SELECT userid, SUM(count) as Total, timestamp FROM \'{data.categoriesDict[category]}\' WHERE timestamp >= date(\'now\') GROUP BY userid ORDER BY Total DESC')
                 queryList = self.miscCursor.fetchall()
-                print(queryList)   
             elif period in data.periodsDict:
                 self.miscCursor.execute(f'SELECT userid, SUM(count) as Total, timestamp FROM \'{data.categoriesDict[category]}\' WHERE timestamp BETWEEN date(\'now\', \'-{data.periodsDict[period]} day\') and date(\'now\') GROUP BY userid ORDER BY Total DESC')
                 queryList = self.miscCursor.fetchall()
-                print(queryList)           
             else:
                 print("ERROR IN TOP COMMANDS WITH PARAMETERS: ", category, period)
                 await interaction.response.send_message(embed=embed)
@@ -490,9 +485,9 @@ class Simps(commands.Cog):
                     currentUser = self.bot.get_user(int(queryList[i][0]))
                     currentTime = queryList[i][1]
                     if i > 0:
-                        result += f'{i+1}) {currentUser.mention} \n{round(currentTime//3600)} hrs, {round((currentTime-3600*(currentTime//3600))//60)} mins\n\n'
+                        result += f'{i+1}) {currentUser.mention} ({currentUser.name})\n{round(currentTime//3600)} hrs, {round((currentTime-3600*(currentTime//3600))//60)} mins\n\n'
                     else:
-                        result += f'**{i+1}) {currentUser.mention} \n{round(currentTime//3600)} hrs, {round((currentTime-3600*(currentTime//3600))//60)} mins**\n\n\n'
+                        result += f'**{i+1}) {currentUser.mention} ({currentUser.name})\n{round(currentTime//3600)} hrs, {round((currentTime-3600*(currentTime//3600))//60)} mins**\n\n\n'
                         embed.set_image(url=currentUser.avatar.url)
 
                 embed.add_field(name='\u200b', value=result, inline=True)
@@ -504,9 +499,9 @@ class Simps(commands.Cog):
                     currentUser = self.bot.get_user(int(queryList[i][0]))
                     total = queryList[i][1]
                     if i > 0:
-                        result += f'{i+1}) {currentUser.mention} \n{category}: {total}\n\n'
+                        result += f'{i+1}) {currentUser.mention} ({currentUser.name}) \n{category}: {total}\n\n'
                     else:
-                        result += f'**{i+1}) {currentUser.mention}** \n{category}: {total} \n\n\n'
+                        result += f'**{i+1}) {currentUser.mention} ({currentUser.name})** \n{category}: {total} \n\n\n'
                         embed.set_image(url=currentUser.avatar.url)
                 embed.add_field(name='\u200b', value=result, inline=True)
                 embed.set_footer(text=f'Tracking since October 4, 2022')
