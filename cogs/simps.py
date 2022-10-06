@@ -55,6 +55,8 @@ class Simps(commands.Cog):
         self.checkReactionTable()
         self.checkProfanitiesTable()
         self.checkMessagesTable()
+        self.checkMentionsTable()
+        
 
     def initConnectedUsers(self):
         updateTime = time.time()
@@ -151,6 +153,13 @@ class Simps(commands.Cog):
             return False
         return True
 
+    def checkMentionsTable(self):
+        self.miscCursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE type='table' AND name = 'mentionsTable' ''')
+        if self.miscCursor.fetchone()[0] != 1:
+            self.miscCursor.execute(f'''CREATE TABLE 'mentionsTable' (userid TEXT, count DECIMAL(38,4), timestamp datetime)''')
+            return False
+        return True
+
     def addTime(self, userId, timeToAdd):
         self.checkTimeTable(userId)
         self.timeSequenceCursor.execute(f'INSERT INTO \'{str(userId)}\' (d, count) VALUES (date(\'now\'), {timeToAdd}) ON CONFLICT (d) DO UPDATE SET count = count + {timeToAdd}')
@@ -228,6 +237,11 @@ class Simps(commands.Cog):
         self.checkMessageTable(currentId)
         self.messageCursor.execute(f'INSERT INTO \'{str(currentId)}\' (k, messages, swears) VALUES ({0}, {1}, {swearCount[0]}) ON CONFLICT (k) DO UPDATE SET messages = messages + 1, swears = swears + {swearCount[0]}')
         self.messageConn.commit()
+
+        mentionList = message.mentions
+        if mentionList is not None and len(mentionList) > 0:
+            for member in mentionList:
+                self.miscCursor.execute(f'INSERT INTO \'mentionsTable\' (userid, count, timestamp) VALUES (\'{member.id}\', {1}, datetime(\'now\'))')
 
         self.miscCursor.execute(f'INSERT INTO \'messagesTable\' (userid, count, timestamp) VALUES (\'{message.author.id}\', {1}, datetime(\'now\'))')
         if (sum(swearCount) > 0):
@@ -434,7 +448,7 @@ class Simps(commands.Cog):
 
     @app_commands.command(name="top", description='Server Stats Leaderboard')
     @app_commands.autocomplete(category=category_autocomplete, period=period_autocomplete)
-    async def top(self, interaction: discord.Interaction, category: str = "Online Time", period: str = "Today") -> None:
+    async def top(self, interaction: discord.Interaction, category: str = "All Time", period: str = "Today") -> None:
         embed = discord.Embed(color=0xf1d3ed)
         guildIcon = interaction.guild.icon
         if guildIcon is None:
