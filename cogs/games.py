@@ -28,7 +28,7 @@ class Games(commands.Cog):
         self.runsRemaining = {}
         if os.path.isfile('runs.obj') and os.access('runs.obj', os.R_OK):
             with open('runs.obj', 'rb') as file_object:
-                self.boxes = pickle.load(file_object)
+                self.runsRemaining = pickle.load(file_object)
                 print('Loaded # of Runs from File: ')
         print(self.runsRemaining)
 
