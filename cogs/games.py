@@ -51,37 +51,78 @@ class Games(commands.Cog):
             super().__init__(timeout=timeout)
             self.parent = parent
 
-        @discord.ui.button(label="1", style=discord.ButtonStyle.primary)
-        async def buttonOne(self, interaction: discord.Interaction, button:discord.ui.Button):
-            currentUser = interaction.user
-
-            self.parent.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE userid = \'{currentUser.id}\' AND itemname = \'Broken Box Piece x5\' AND itemattribute != \'0\'')
+        def checkBoxPieces(self, userId) -> int:
+            self.parent.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE userid = \'{userId}\' AND itemname = \'Broken Box Piece x5\' AND itemattribute != \'0\'')
             resultTable = self.parent.miscCursor.fetchall()
             boxPieces = 0
             for row in resultTable:
                 boxPieces += int(row[2])
+            return boxPieces
 
-            imgURL = "https://static.wikia.nocookie.net/maplestory/images/b/b1/Use_Hidden_Ring_Box.png/revision/latest?cb=20210914225553"
-            cost = 10
-            if boxPieces < cost:
-                embed=discord.Embed(title="Whooper's Ring Box", description=f'{currentUser.mention} you have {boxPieces} pieces.', color=0xf1d3ed)
-                embed.set_thumbnail(url=imgURL)
-                embed.add_field(name="Not enough box pieces.", value='\u200b', inline=False)
-                embed.add_field(name="Pieces needed:", value=cost-boxPieces, inline=False)
+        def checkWhoompTickets(self, userId) -> int:
+            self.parent.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE userid = \'{userId}\' AND itemname = \'Whoomp Ticket x1\' AND itemattribute != \'0\'')
+            resultTable = self.parent.miscCursor.fetchall()
+            whoompTickets = 0
+            for row in resultTable:
+                whoompTickets += int(row[2])
+            return whoompTickets
+
+        def tryDeductingBoxPieces(self, userId, cost) -> bool:
+            self.parent.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE userid = \'{userId}\' AND itemname = \'Broken Box Piece x5\' AND itemattribute != \'0\'')
+            resultTable = self.parent.miscCursor.fetchall()
+            boxPieces = 0
+            for row in resultTable:
+                boxPieces += int(row[2])
+            myCost = cost
+
+            if boxPieces < myCost:
+                return False
             else:
                 updateCursor = self.parent.miscConnection.cursor()
                 for row in resultTable:
                     currentPieces = int(row[2])
-                    cost = cost-currentPieces
-                    if cost > 0:
+                    myCost = myCost-currentPieces
+                    if myCost > 0:
                         # update row with 0
-                        updateCursor.execute(f'UPDATE \'ringTable\' SET itemattribute = \'0\' WHERE userid = \'{currentUser.id}\' AND itemname = \'Broken Box Piece x5\' AND timestamp = \'{row[3]}\'')
+                        updateCursor.execute(f'UPDATE \'ringTable\' SET itemattribute = \'0\' WHERE userid = \'{userId}\' AND itemname = \'Broken Box Piece x5\' AND timestamp = \'{row[3]}\'')
                     else:
                         # update row with abs value of remaining cost and exit
-                        updateCursor.execute(f'UPDATE \'ringTable\' SET itemattribute = \'{abs(cost)}\' WHERE userid = \'{currentUser.id}\' AND itemname = \'Broken Box Piece x5\' AND timestamp = \'{row[3]}\'')
+                        updateCursor.execute(f'UPDATE \'ringTable\' SET itemattribute = \'{abs(myCost)}\' WHERE userid = \'{userId}\' AND itemname = \'Broken Box Piece x5\' AND timestamp = \'{row[3]}\'')
                         break
                 self.parent.miscConnection.commit()
+                return True
 
+        def tryDeductingWhoompTickets(self, userId, cost) -> bool:
+            self.parent.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE userid = \'{userId}\' AND itemname = \'Whoomp Ticket x1\' AND itemattribute != \'0\'')
+            resultTable = self.parent.miscCursor.fetchall()
+            whoompTickets = 0
+            for row in resultTable:
+                whoompTickets += int(row[2])
+            myCost = cost
+
+            if whoompTickets < myCost:
+                return False
+            else:
+                updateCursor = self.parent.miscConnection.cursor()
+                for row in resultTable:
+                    currentPieces = int(row[2])
+                    myCost = myCost-currentPieces
+                    if myCost > 0:
+                        # update row with 0
+                        updateCursor.execute(f'UPDATE \'ringTable\' SET itemattribute = \'0\' WHERE userid = \'{userId}\' AND itemname = \'Whoomp Ticket x1\' AND timestamp = \'{row[3]}\'')
+                    else:
+                        # update row with abs value of remaining cost and exit
+                        updateCursor.execute(f'UPDATE \'ringTable\' SET itemattribute = \'{abs(myCost)}\' WHERE userid = \'{userId}\' AND itemname = \'Whoomp Ticket x1\' AND timestamp = \'{row[3]}\'')
+                        break
+                self.parent.miscConnection.commit()
+                return True
+        
+        @discord.ui.button(label="1", style=discord.ButtonStyle.primary)
+        async def buttonOne(self, interaction: discord.Interaction, button:discord.ui.Button):
+            currentUser = interaction.user
+            imgURL = "https://static.wikia.nocookie.net/maplestory/images/b/b1/Use_Hidden_Ring_Box.png/revision/latest?cb=20210914225553"
+            boxPieces = self.checkBoxPieces(currentUser.id)
+            if self.tryDeductingBoxPieces(currentUser.id, 10):
                 reward = numpy.random.choice(data.hiddenBox, p=data.hiddenRingOdds)
                 rewardURL = data.rewardLinks[reward]
                 level = numpy.random.choice(data.ringLevels, p=data.ringLevelOdds)
@@ -93,40 +134,20 @@ class Games(commands.Cog):
                 embed.add_field(name=reward, value=level, inline=False)
                 embed.set_image(url=rewardURL)
                 embed.set_footer(text=f'Remaining box pieces: {boxPieces-10}')
+            else:
+                embed=discord.Embed(title="Whooper's Ring Box", description=f'{currentUser.mention} you have {boxPieces} pieces.', color=0xf1d3ed)
+                embed.set_thumbnail(url=imgURL)
+                embed.add_field(name="Not enough box pieces.", value='\u200b', inline=False)
+                embed.add_field(name="Pieces needed:", value=10-boxPieces, inline=False)
+
             await interaction.response.send_message(embed=embed)
 
         @discord.ui.button(label="2", style=discord.ButtonStyle.primary)
         async def buttonTwo(self, interaction: discord.Interaction, button:discord.ui.Button):
             currentUser = interaction.user
-            
-            self.parent.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE userid = \'{currentUser.id}\' AND itemname = \'Broken Box Piece x5\' AND itemattribute != \'0\'')
-            resultTable = self.parent.miscCursor.fetchall()
-            boxPieces = 0
-            for row in resultTable:
-                boxPieces += int(row[2])
-
-            cost = 100
-            
             imgURL = "https://static.wikia.nocookie.net/maplestory/images/b/ba/Use_Shiny_Ring_Box.png/revision/latest?cb=20210914225555"
-            if boxPieces < cost:
-                embed=discord.Embed(title="Whooper's Shiny Ring Box", description=f'{currentUser.mention} you have {boxPieces} pieces.', color=0xf1d3ed)
-                embed.set_thumbnail(url=imgURL)
-                embed.add_field(name="Not enough box pieces.", value='\u200b', inline=False)
-                embed.add_field(name="Pieces needed:", value=cost-boxPieces, inline=False)
-            else:
-                updateCursor = self.parent.miscConnection.cursor()
-                for row in resultTable:
-                    currentPieces = int(row[2])
-                    cost = cost-currentPieces
-                    if cost > 0:
-                        # update row with 0
-                        updateCursor.execute(f'UPDATE \'ringTable\' SET itemattribute = \'0\' WHERE userid = \'{currentUser.id}\' AND itemname = \'Broken Box Piece x5\' AND timestamp = \'{row[3]}\'')
-                    else:
-                        # update row with abs value of remaining cost and exit
-                        updateCursor.execute(f'UPDATE \'ringTable\' SET itemattribute = \'{abs(cost)}\' WHERE userid = \'{currentUser.id}\' AND itemname = \'Broken Box Piece x5\' AND timestamp = \'{row[3]}\'')
-                        break
-                self.parent.miscConnection.commit()
-
+            boxPieces = self.checkBoxPieces(currentUser.id)
+            if self.tryDeductingBoxPieces(currentUser.id, 100):
                 reward = numpy.random.choice(data.shinyBox, p=data.shinyRingOdds)
                 rewardURL = data.rewardLinks[reward]
                 level = numpy.random.choice(data.shinyBoxLevels, p=data.shinyBoxlevelOdds)
@@ -138,28 +159,79 @@ class Games(commands.Cog):
                 embed.add_field(name=reward, value=level, inline=False)
                 embed.set_image(url=rewardURL)
                 embed.set_footer(text=f'Remaining box pieces: {boxPieces-100}')
+            else:
+                embed=discord.Embed(title="Whooper's Shiny Ring Box", description=f'{currentUser.mention} you have {boxPieces} pieces.', color=0xf1d3ed)
+                embed.set_thumbnail(url=imgURL)
+                embed.add_field(name="Not enough box pieces.", value='\u200b', inline=False)
+                embed.add_field(name="Pieces needed:", value=100-boxPieces, inline=False)
             await interaction.response.send_message(embed=embed)
 
-        @discord.ui.button(label="3", style=discord.ButtonStyle.secondary, disabled=True)
+        @discord.ui.button(label="RPS", style=discord.ButtonStyle.secondary, disabled=True)
         async def buttonThree(self, interaction: discord.Interaction, button:discord.ui.Button):
-            embed=discord.Embed(color=0xf1d3ed)
-            imgURL = "https://static.wikia.nocookie.net/maplestory/images/3/36/Use_Broken_Box_Piece.png/revision/latest?cb=20210910011106"
-            embed.set_thumbnail(url=imgURL)
-            embed.add_field(name="Tower of Oz", value=f'Prize Redemption for {interaction.user.mention}', inline=False)
-            embed.add_field(name="Whoomper's Ring Box", value= '\u200b', inline=False)
-            embed.add_field(name="Ring Name Placeholder", value= 'Ring Level Placeholder', inline=False)
-            embed.set_footer(text=f'Remaining box pieces: {0}')
+            currentUser = interaction.user
+            boxPieces = self.checkBoxPieces(currentUser.id)
+            whoompTickets = self.checkWhoompTickets(currentUser.id)
+            if boxPieces < 3 and whoompTickets < 1:
+                embed=discord.Embed(title="Whoomper RPS", description=f'{currentUser.mention} you have: {boxPieces} box pieces, {whoompTickets} tickets.', color=0xf1d3ed)
+                embed.set_thumbnail(url=imgURL)
+                embed.add_field(name="Not enough box pieces and tickets.", value='\u200b', inline=False)
+                embed.add_field(name="Pieces needed:", value=3-boxPieces, inline=True)
+                embed.add_field(name="Tickets needed:", value=1-whoompTickets, inline=True)
+            elif boxPieces < 3:
+                embed=discord.Embed(title="Whoomper RPS", description=f'{currentUser.mention} you have {boxPieces} pieces, {whoompTickets} tickets.', color=0xf1d3ed)
+                embed.set_thumbnail(url=imgURL)
+                embed.add_field(name="Not enough box pieces.", value='\u200b', inline=False)
+                embed.add_field(name="Pieces needed:", value=3-boxPieces, inline=False)
+            elif whoompTickets < 1:
+                embed=discord.Embed(title="Whoomper RPS", description=f'{currentUser.mention} you have {boxPieces} pieces, {whoompTickets} tickets.', color=0xf1d3ed)
+                embed.set_thumbnail(url=imgURL)
+                embed.add_field(name="Not enough tickets.", value='\u200b', inline=False)
+                embed.add_field(name="Tickets needed:", value=1-whoompTickets, inline=False)
+            elif self.tryDeductingBoxPieces(currentUser.id, 3) and self.tryDeductingWhoompTickets(currentUser.id, 1):
+                embed=discord.Embed(color=0xf1d3ed)
+                imgURL = "https://static.wikia.nocookie.net/maplestory/images/3/36/Use_Broken_Box_Piece.png/revision/latest?cb=20210910011106"
+                embed.set_thumbnail(url=imgURL)
+                embed.add_field(name="Tower of Oz", value=f'Prize Redemption for {interaction.user.mention}', inline=False)
+                embed.add_field(name="Whoomper's Ring Box", value= '\u200b', inline=False)
+                embed.add_field(name="Ring Name Placeholder", value= 'Ring Level Placeholder', inline=False)
+                embed.set_footer(text=f'Remaining box pieces: {boxPieces-3}, Remaining tickets: {whoompTickets-1}')
+            else:
+                print("ERROR IN RPS SELECTION")
+                return
             await interaction.response.send_message(embed=embed)
 
-        @discord.ui.button(label="4", style=discord.ButtonStyle.secondary, disabled=True)
+        @discord.ui.button(label="Guessing Game", style=discord.ButtonStyle.secondary, disabled=True)
         async def buttonFour(self, interaction: discord.Interaction, button:discord.ui.Button):
-            embed=discord.Embed(color=0xf1d3ed)
-            imgURL = "https://static.wikia.nocookie.net/maplestory/images/3/36/Use_Broken_Box_Piece.png/revision/latest?cb=20210910011106"
-            embed.set_thumbnail(url=imgURL)
-            embed.add_field(name="Tower of Oz", value=f'Prize Redemption for {interaction.user.mention}', inline=False)
-            embed.add_field(name="Whoomper's Ring Box", value= '\u200b', inline=False)
-            embed.add_field(name="Ring Name Placeholder", value= 'Ring Level Placeholder', inline=False)
-            embed.set_footer(text=f'Remaining box pieces: {0}')
+            currentUser = interaction.user
+            boxPieces = self.checkBoxPieces(currentUser.id)
+            whoompTickets = self.checkWhoompTickets(currentUser.id)
+            if boxPieces < 10 and whoompTickets < 1:
+                embed=discord.Embed(title="Whoomper RPS", description=f'{currentUser.mention} you have: {boxPieces} box pieces, {whoompTickets} tickets.', color=0xf1d3ed)
+                embed.set_thumbnail(url=imgURL)
+                embed.add_field(name="Not enough box pieces and tickets.", value='\u200b', inline=False)
+                embed.add_field(name="Pieces needed:", value=3-boxPieces, inline=True)
+                embed.add_field(name="Tickets needed:", value=1-whoompTickets, inline=True)
+            elif boxPieces < 10:
+                embed=discord.Embed(title="Whoomper RPS", description=f'{currentUser.mention} you have {boxPieces} pieces, {whoompTickets} tickets.', color=0xf1d3ed)
+                embed.set_thumbnail(url=imgURL)
+                embed.add_field(name="Not enough box pieces.", value='\u200b', inline=False)
+                embed.add_field(name="Pieces needed:", value=3-boxPieces, inline=False)
+            elif whoompTickets < 1:
+                embed=discord.Embed(title="Whoomper RPS", description=f'{currentUser.mention} you have {boxPieces} pieces, {whoompTickets} tickets.', color=0xf1d3ed)
+                embed.set_thumbnail(url=imgURL)
+                embed.add_field(name="Not enough tickets.", value='\u200b', inline=False)
+                embed.add_field(name="Tickets needed:", value=1-whoompTickets, inline=False)
+            elif self.tryDeductingBoxPieces(currentUser.id, 10) and self.tryDeductingWhoompTickets(currentUser.id, 1):
+                embed=discord.Embed(color=0xf1d3ed)
+                imgURL = "https://static.wikia.nocookie.net/maplestory/images/3/36/Use_Broken_Box_Piece.png/revision/latest?cb=20210910011106"
+                embed.set_thumbnail(url=imgURL)
+                embed.add_field(name="Tower of Oz", value=f'Prize Redemption for {interaction.user.mention}', inline=False)
+                embed.add_field(name="Whoomper's Ring Box", value= '\u200b', inline=False)
+                embed.add_field(name="Ring Name Placeholder", value= 'Ring Level Placeholder', inline=False)
+                embed.set_footer(text=f'Remaining box pieces: {boxPieces-10}, Remaining Tickets: {whoompTickets-1}')
+            else:
+                print("ERROR IN NUMBER GUESSING SELECTION")
+                return
             await interaction.response.send_message(embed=embed)
 
         @discord.ui.button(label="5", style=discord.ButtonStyle.secondary, disabled=True)
@@ -396,8 +468,8 @@ class Games(commands.Cog):
                     attribute = '5'
                 elif reward == 'Oz Point Pouch x5':
                     attribute = '5'
-                elif reward == '2x EXP Coupon (15 Minute) x3':
-                    attribute = '3'
+                elif reward == 'Whoomp Ticket x1':
+                    attribute = '1'
                 else:
                     print("In OpenBox Error, should not reach this branch")
             else:
@@ -446,9 +518,9 @@ class Games(commands.Cog):
 
         embed.add_field(name=f'**1.** Whoomper\'s Ring Box', value='10x Box Pieces', inline=False)
         embed.add_field(name=f'**2.** Whoomper\'s Shiny Ring Box', value='100x Box Pieces', inline=False)
-        embed.add_field(name=f'**3.** Hand Pics', value = 'Placeholder', inline=False)
-        embed.add_field(name=f'**4.** Feet Pics', value = 'Placeholder', inline=False)
-        embed.add_field(name=f'**5.** ???', value = 'Placeholder', inline=False)
+        embed.add_field(name=f'**3.** Rock Paper Scissors', value = '3x Box Pieces, 1x Whoomp Ticket', inline=False)
+        embed.add_field(name=f'**4.** Number Guessing Game', value = '10x Box Pieces, 1x Whoomp Ticket', inline=False)
+        embed.add_field(name=f'**5.** Feet Pics', value = 'Placeholder', inline=False)
 
         await interaction.response.send_message(embed=embed, view=self.ShopButtons(self))
 
@@ -494,6 +566,31 @@ class Games(commands.Cog):
             embed.set_thumbnail(url=imgURL)
         else:
             embed=discord.Embed(title="Box Piece Dispenser", description=f'{interaction.user} is not authorized to give pieces.', color=0xf1d3ed)
+            embed.set_thumbnail(url=imgURL)
+
+        await interaction.response.send_message(embed=embed)
+
+    @app_commands.command(name='givetickets', description='TESTING ONLY')
+    async def givetickets(self, interaction: discord.Interaction, user: discord.User = None, num: int = 5):
+        if user is None:
+            user = interaction.user
+
+        imgURL = "https://static.wikia.nocookie.net/maplestory/images/f/f3/Use_2x_EXP_Coupon.png/revision/latest?cb=20220712230445"
+        if interaction.user.id == 125114599249936384:
+            self.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{user.id}\',\'Whoomp Ticket x1\',\'{num}\', datetime(\'now\'))')
+            self.miscConnection.commit()
+
+            self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE userid = \'{user.id}\' AND itemname = \'Whoomp Ticket x1\'')
+            resultTable = self.miscCursor.fetchall()
+            whoompTickets = 0
+            for row in resultTable:
+                whoompTickets += int(row[2])
+
+            
+            embed=discord.Embed(title="Whoomp Ticket Dispenser", description=f'{user.mention} you now have {whoompTickets} tickets.', color=0xf1d3ed)
+            embed.set_thumbnail(url=imgURL)
+        else:
+            embed=discord.Embed(title="Whoomp Ticket Dispenser", description=f'{interaction.user} is not authorized to give tickets.', color=0xf1d3ed)
             embed.set_thumbnail(url=imgURL)
 
         await interaction.response.send_message(embed=embed)
