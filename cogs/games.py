@@ -99,8 +99,8 @@ class Games(commands.Cog):
         async def buttonOne(self, interaction: discord.Interaction, button:discord.ui.Button):
             currentUser = interaction.user
             imgURL = "https://static.wikia.nocookie.net/maplestory/images/b/b1/Use_Hidden_Ring_Box.png/revision/latest?cb=20210914225553"
-            boxPieces = self.checkBoxPieces(currentUser.id)
-            if self.tryDeductingBoxPieces(currentUser.id, 10):
+            boxPieces = self.parent.checkBoxPieces(currentUser.id)
+            if self.parent.tryDeductingBoxPieces(currentUser.id, 10):
                 reward = numpy.random.choice(data.hiddenBox, p=data.hiddenRingOdds)
                 rewardURL = data.rewardLinks[reward]
                 level = numpy.random.choice(data.ringLevels, p=data.ringLevelOdds)
@@ -124,8 +124,8 @@ class Games(commands.Cog):
         async def buttonTwo(self, interaction: discord.Interaction, button:discord.ui.Button):
             currentUser = interaction.user
             imgURL = "https://static.wikia.nocookie.net/maplestory/images/b/ba/Use_Shiny_Ring_Box.png/revision/latest?cb=20210914225555"
-            boxPieces = self.checkBoxPieces(currentUser.id)
-            if self.tryDeductingBoxPieces(currentUser.id, 100):
+            boxPieces = self.parent.checkBoxPieces(currentUser.id)
+            if self.parent.tryDeductingBoxPieces(currentUser.id, 100):
                 reward = numpy.random.choice(data.shinyBox, p=data.shinyRingOdds)
                 rewardURL = data.rewardLinks[reward]
                 level = numpy.random.choice(data.shinyBoxLevels, p=data.shinyBoxlevelOdds)
@@ -144,11 +144,11 @@ class Games(commands.Cog):
                 embed.add_field(name="Pieces needed:", value=100-boxPieces, inline=False)
             await interaction.response.send_message(embed=embed)
 
-        @discord.ui.button(label="RPS", style=discord.ButtonStyle.secondary,)
+        @discord.ui.button(label="RPS", style=discord.ButtonStyle.primary)
         async def buttonThree(self, interaction: discord.Interaction, button:discord.ui.Button):
             currentUser = interaction.user
-            boxPieces = self.checkBoxPieces(currentUser.id)
-            whoompTickets = self.checkWhoompTickets(currentUser.id)
+            boxPieces = self.parent.checkBoxPieces(currentUser.id)
+            whoompTickets = self.parent.checkWhoompTickets(currentUser.id)
             if boxPieces < 1 or whoompTickets < 1:
                 embed=discord.Embed(title="Whoomper RPS", description=f'{currentUser.mention} you have: {boxPieces} box pieces, {whoompTickets} tickets.', color=0xf1d3ed)
                 embed.set_thumbnail(url=imgURL)
@@ -163,15 +163,15 @@ class Games(commands.Cog):
         @discord.ui.button(label="Guessing Game", style=discord.ButtonStyle.secondary, disabled=True)
         async def buttonFour(self, interaction: discord.Interaction, button:discord.ui.Button):
             currentUser = interaction.user
-            boxPieces = self.checkBoxPieces(currentUser.id)
-            whoompTickets = self.checkWhoompTickets(currentUser.id)
+            boxPieces = self.parent.checkBoxPieces(currentUser.id)
+            whoompTickets = self.parent.checkWhoompTickets(currentUser.id)
             if boxPieces < 1 or whoompTickets < 1:
                 embed=discord.Embed(title="Whoomper RPS", description=f'{currentUser.mention} you have: {boxPieces} box pieces, {whoompTickets} tickets.', color=0xf1d3ed)
                 embed.set_thumbnail(url=imgURL)
                 embed.add_field(name="Not enough box pieces and tickets.", value='\u200b', inline=False)
                 embed.add_field(name="Pieces needed:", value=3-boxPieces, inline=True)
                 embed.add_field(name="Tickets needed:", value=1-whoompTickets, inline=True)
-            elif self.tryDeductingWhoompTickets(currentUser.id, 1):
+            elif self.parent.tryDeductingWhoompTickets(currentUser.id, 1):
                 embed=discord.Embed(color=0xf1d3ed)
                 imgURL = "https://static.wikia.nocookie.net/maplestory/images/3/36/Use_Broken_Box_Piece.png/revision/latest?cb=20210910011106"
                 embed.set_thumbnail(url=imgURL)
