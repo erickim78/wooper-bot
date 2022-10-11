@@ -147,6 +147,7 @@ class Games(commands.Cog):
         @discord.ui.button(label="RPS", style=discord.ButtonStyle.primary)
         async def buttonThree(self, interaction: discord.Interaction, button:discord.ui.Button):
             currentUser = interaction.user
+            imgURL = "https://static.wikia.nocookie.net/maplestory/images/b/ba/Use_Shiny_Ring_Box.png/revision/latest?cb=20210914225555"
             boxPieces = self.parent.checkBoxPieces(currentUser.id)
             whoompTickets = self.parent.checkWhoompTickets(currentUser.id)
             if boxPieces < 1 or whoompTickets < 1:
