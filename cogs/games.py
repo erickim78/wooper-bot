@@ -53,15 +53,14 @@ class Games(commands.Cog):
             self.parent = parent
         
         wager = discord.ui.TextInput(label='Your Wager')
-        attack = discord.ui.Select(label='Your Attack', options=data.attacks)
+        attack = discord.ui.Select(placeholder='Your Attack', options=data.attacks)
 
         async def on_submit(self, interaction: discord.Interaction) -> None:
             currentUser = interaction.user
             imgURL = "https://static.wikia.nocookie.net/maplestory/images/b/b1/Use_Hidden_Ring_Box.png/revision/latest?cb=20210914225553"
             embed=discord.Embed(title="Quagsino", description=f'{currentUser.mention}.', color=0xf1d3ed)
             embed.set_thumbnail(url=imgURL)
-            boxPieces = self.parent.checkBoxPieces(currentUser.id)
-            
+
             embed=discord.Embed(title="The Quagsino: RPS", description=f'{currentUser.mention} wagered {self.wager} box pieces.', color=0xf1d3ed)
             embed.set_thumbnail(url=imgURL)
             if self.wager.isdigit() is False:
