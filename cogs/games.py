@@ -151,14 +151,14 @@ class Games(commands.Cog):
             boxPieces = self.parent.checkBoxPieces(currentUser.id)
             whoompTickets = self.parent.checkWhoompTickets(currentUser.id)
             if boxPieces < 1 or whoompTickets < 1:
-                embed=discord.Embed(title="Whoomper RPS", description=f'{currentUser.mention} you have: {boxPieces} box pieces, {whoompTickets} tickets.', color=0xf1d3ed)
+                embed=discord.Embed(title="The Quagsino", description=f'{currentUser.mention} you have {boxPieces} box pieces, {whoompTickets} tickets.', color=0xf1d3ed)
                 embed.set_thumbnail(url=imgURL)
                 embed.add_field(name="Not enough box pieces or tickets.", value='\u200b', inline=False)
                 embed.add_field(name="Pieces needed:", value=1-boxPieces, inline=True)
                 embed.add_field(name="Tickets needed:", value=1-whoompTickets, inline=True)
                 await interaction.response.send_message(embed=embed)
             else:
-                await interaction.response.send_modal(self.parent.RPSGame(self))
+                await interaction.response.send_modal(self.parent.RPSGame(self.parent))
                 return
 
         @discord.ui.button(label="Guessing Game", style=discord.ButtonStyle.secondary, disabled=True)
