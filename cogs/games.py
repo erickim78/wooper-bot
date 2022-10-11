@@ -54,9 +54,9 @@ class Games(commands.Cog):
             self.parent = parent
 
         class RPSGame(discord.ui.Modal, title='The Quagsino: RPS'):
-            def __init__(self, parent):
-                super().__init__()
-                self.parent = parent
+            # def __init__(self, parent):
+            #     super().__init__()
+            #     self.parent = parent
             
             wager = discord.ui.TextInput(label='Your Wager')
             attack = discord.ui.Select(placeholder='Your Attack', options=data.attacks)
