@@ -154,20 +154,12 @@ class Games(commands.Cog):
                 embed=discord.Embed(title="Whoomper RPS", description=f'{currentUser.mention} you have: {boxPieces} box pieces, {whoompTickets} tickets.', color=0xf1d3ed)
                 embed.set_thumbnail(url=imgURL)
                 embed.add_field(name="Not enough box pieces or tickets.", value='\u200b', inline=False)
-                embed.add_field(name="Pieces needed:", value=3-boxPieces, inline=True)
+                embed.add_field(name="Pieces needed:", value=1-boxPieces, inline=True)
                 embed.add_field(name="Tickets needed:", value=1-whoompTickets, inline=True)
-            elif self.tryDeductingWhoompTickets(currentUser.id, 1):
-                embed=discord.Embed(color=0xf1d3ed)
-                imgURL = "https://static.wikia.nocookie.net/maplestory/images/3/36/Use_Broken_Box_Piece.png/revision/latest?cb=20210910011106"
-                embed.set_thumbnail(url=imgURL)
-                embed.add_field(name="Tower of Oz", value=f'Prize Redemption for {interaction.user.mention}', inline=False)
-                embed.add_field(name="Whoomper's Ring Box", value= '\u200b', inline=False)
-                embed.add_field(name="Ring Name Placeholder", value= 'Ring Level Placeholder', inline=False)
-                embed.set_footer(text=f'Remaining box pieces: {boxPieces-3}, Remaining tickets: {whoompTickets-1}')
+                await interaction.response.send_message(embed=embed)
             else:
-                print("ERROR IN RPS SELECTION")
+                await interaction.response.send_modal(self.parent.RPSGame(self))
                 return
-            await interaction.response.send_message(embed=embed)
 
         @discord.ui.button(label="Guessing Game", style=discord.ButtonStyle.secondary, disabled=True)
         async def buttonFour(self, interaction: discord.Interaction, button:discord.ui.Button):
