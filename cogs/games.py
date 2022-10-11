@@ -21,6 +21,13 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 
+class Questionnaire(discord.ui.Modal, title='Questionnaire Response'):
+    name = discord.ui.TextInput(label='Name')
+    answer = discord.ui.TextInput(label='Answer', style=discord.TextStyle.paragraph)
+
+    async def on_submit(self, interaction: discord.Interaction):
+        await interaction.response.send_message(f'Thanks for your response, {self.name}!', ephemeral=True)
+
 class Games(commands.Cog):
     def __init__(self, bot):
         print(f'games.cog init')
@@ -54,9 +61,9 @@ class Games(commands.Cog):
             self.parent = parent
 
         class RPSGame(discord.ui.Modal, title='The Quagsino: RPS'):
-            # def __init__(self, parent):
-            #     super().__init__()
-            #     self.parent = parent
+            def __init__(self, parent):
+                super().__init__()
+                self.parent = parent
             
             wager = discord.ui.TextInput(label='Your Wager')
             attack = discord.ui.Select(placeholder='Your Attack', options=data.attacks)
@@ -160,7 +167,7 @@ class Games(commands.Cog):
                 embed.add_field(name="Tickets needed:", value=1-whoompTickets, inline=True)
                 await interaction.response.send_message(embed=embed)
             else:
-                await interaction.response.send_modal(self.RPSGame())
+                await interaction.response.send_modal(Questionnaire())
                 return
 
         @discord.ui.button(label="Guessing Game", style=discord.ButtonStyle.secondary, disabled=True)
