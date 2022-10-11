@@ -82,3 +82,6 @@ ringLevelOdds = [0.41,0.28,0.20,0.11]
 
 shinyBoxLevels = ['Level 3', 'Level 4']
 shinyBoxlevelOdds = [0.75, 0.25]
+
+attacks = ["Flamethrower", "Razor Leaf","Bubblebeam"]
+weakness = {"Flamethrower":"Bubblebeam", "Razor Leaf":"Flamethrower", "Bubblebeam":"Razor Leaf"}
