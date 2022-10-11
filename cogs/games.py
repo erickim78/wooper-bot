@@ -144,7 +144,7 @@ class Games(commands.Cog):
                 embed.add_field(name="Pieces needed:", value=100-boxPieces, inline=False)
             await interaction.response.send_message(embed=embed)
 
-        @discord.ui.button(label="RPS", style=discord.ButtonStyle.secondary, disabled=True)
+        @discord.ui.button(label="RPS", style=discord.ButtonStyle.secondary,)
         async def buttonThree(self, interaction: discord.Interaction, button:discord.ui.Button):
             currentUser = interaction.user
             boxPieces = self.checkBoxPieces(currentUser.id)
