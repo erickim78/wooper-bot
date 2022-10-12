@@ -61,11 +61,16 @@ class Games(commands.Cog):
                 self.wager = -1
                 self.attack = ""
                 self.parent = parent
+                self.maxWager = self.parent.checkBoxPieces(originalUser.id)
 
-            @discord.ui.TextInput(label='Wager', placeholder='0')
-            async def callback(self, value, interaction: discord.Interaction):
-                if value.isdigit() is True:
-                    self.wager = int(value)
+            @discord.ui.button(label='0', placeholder='Wager', style=discord.ButtonStyle.blurple)
+            async def callback(self, interaction: discord.Interaction, button: discord.ui.Button):
+                number = int(button.label) if button.label else 0
+                if number + 1 >= self.maxWager:
+                    button.style = discord.ButtonStyle.grey
+                    button.disabled = True
+                button.label = str(number + 1)
+                await interaction.response.edit_message(view=self)
 
             @discord.ui.select(placeholder='Your Attack', options=data.attacks)
             async def callback(self, select, interaction: discord.Interaction):
