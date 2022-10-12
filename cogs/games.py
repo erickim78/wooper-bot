@@ -1,5 +1,6 @@
 # Dependencies
 from curses.ascii import isdigit
+from email import message
 import random
 from threading import Timer
 from attr import attr
@@ -54,20 +55,29 @@ class Games(commands.Cog):
             super().__init__(timeout=timeout)
             self.parent = parent
 
-        class RPSGame(discord.ui.Modal, title='The Quagsino: RPS'):
-            def __init__(self, parent):
+        class RPSView(discord.ui.View):
+            def __init__(self, parent, originalUser):
                 super().__init__()
+                self.wager = -1
+                self.attack = ""
                 self.parent = parent
-            
-            wager = discord.ui.TextInput(label='Your Wager')
-            attack = discord.ui.Select(placeholder='Your Attack', options=data.attacks)
 
-            async def on_submit(self, interaction: discord.Interaction) -> None:
+            @discord.ui.TextInput(label='Wager', placeholder='0')
+            async def callback(self, value, interaction: discord.Interaction):
+                if value.isdigit() is True:
+                    self.wager = int(value)
+
+            @discord.ui.select(placeholder='Your Attack', options=data.attacks)
+            async def callback(self, select, interaction: discord.Interaction):
+                self.wager = select.values[0]
+
+            @discord.ui.button(label='FIGHT', style=discord.ButtonStyle.red)
+            async def confirm(self, interaction: discord.Interaction, button:discord.ui.Button):
+                self.stop()
+
                 currentUser = interaction.user
+                
                 imgURL = "https://static.wikia.nocookie.net/maplestory/images/b/b1/Use_Hidden_Ring_Box.png/revision/latest?cb=20210914225553"
-                embed=discord.Embed(title="Quagsino", description=f'{currentUser.mention}.', color=0xf1d3ed)
-                embed.set_thumbnail(url=imgURL)
-
                 embed=discord.Embed(title="The Quagsino: RPS", description=f'{currentUser.mention} wagered {self.wager} box pieces.', color=0xf1d3ed)
                 embed.set_thumbnail(url=imgURL)
                 if self.wager.isdigit() is False:
@@ -97,6 +107,9 @@ class Games(commands.Cog):
                         embed.add_field(name="Not enough box pieces.", value=f'\u200b', inline=False)
                 interaction.response.send_message(embed=embed)
 
+            @discord.ui.button(label='Cancel', style=discord.ButtonStyle.grey)
+            async def confirm(self, interaction: discord.Interaction, button:discord.ui.Button):
+                self.stop()
 
         @discord.ui.button(label="1", style=discord.ButtonStyle.primary)
         async def buttonOne(self, interaction: discord.Interaction, button:discord.ui.Button):
@@ -161,7 +174,7 @@ class Games(commands.Cog):
                 embed.add_field(name="Tickets needed:", value=1-whoompTickets, inline=True)
                 await interaction.response.send_message(embed=embed)
             else:
-                await interaction.response.send_modal(self.RPSGame(self.parent))
+                await interaction.response.send_message(message="test", view=self.RPSView(self.parent, currentUser))
                 return
 
         @discord.ui.button(label="Guessing Game", style=discord.ButtonStyle.secondary, disabled=True)
