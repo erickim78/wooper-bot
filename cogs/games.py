@@ -179,7 +179,7 @@ class Games(commands.Cog):
                 embed.add_field(name="Tickets needed:", value=1-whoompTickets, inline=True)
                 await interaction.response.send_message(embed=embed)
             else:
-                await interaction.response.send_message(message="test", view=self.RPSView(self.parent, currentUser))
+                await interaction.response.send_message("test", view=self.RPSView(self.parent, currentUser))
                 return
 
         @discord.ui.button(label="Guessing Game", style=discord.ButtonStyle.secondary, disabled=True)
