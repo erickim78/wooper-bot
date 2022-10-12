@@ -63,7 +63,7 @@ class Games(commands.Cog):
                 self.parent = parent
                 self.maxWager = self.parent.checkBoxPieces(originalUser.id)
 
-            @discord.ui.button(label='0', placeholder='Wager', style=discord.ButtonStyle.blurple)
+            @discord.ui.button(label='0', style=discord.ButtonStyle.blurple)
             async def callback(self, interaction: discord.Interaction, button: discord.ui.Button):
                 number = int(button.label) if button.label else 0
                 if number + 1 >= self.maxWager:
