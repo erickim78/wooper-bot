@@ -72,9 +72,9 @@ class Games(commands.Cog):
                 button.label = str(number + 1)
                 await interaction.response.edit_message(view=self)
 
-            @discord.ui.select(placeholder='Your Attack', options=data.attacks)
-            async def callback(self, select, interaction: discord.Interaction):
-                self.wager = select.values[0]
+            # @discord.ui.select(placeholder='Your Attack', options=data.attacks)
+            # async def callback(self, select, interaction: discord.Interaction):
+            #     self.wager = select.values[0]
 
             @discord.ui.button(label='FIGHT', style=discord.ButtonStyle.red)
             async def confirm(self, interaction: discord.Interaction, button:discord.ui.Button):
