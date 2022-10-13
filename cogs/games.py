@@ -39,14 +39,14 @@ class RPSView(discord.ui.View):
         self.embed.add_field(name=f'Wager (max {self.parent.checkBoxPieces(self.originalUser.id)}):', value=f'{self.wager} box pieces', inline=True)
         self.embed.add_field(name="Selected Attack:", value=f'{self.attack}', inline=True)
 
-    @discord.ui.text_input(label='Wager', placeholder='# of Box Pieces to bet')
-    async def Wager(self, textinput: discord.ui.TextInput, interaction: discord.Interaction, text):
-        if interaction.user != self.originalUser:
-            return
+    # @discord.ui.text_input(label='Wager', placeholder='# of Box Pieces to bet')
+    # async def Wager(self, textinput: discord.ui.TextInput, interaction: discord.Interaction, text):
+    #     if interaction.user != self.originalUser:
+    #         return
 
-        self.wager = textinput.value
-        self.updateEmbed()
-        await interaction.response.edit_message(embed=self.myEmbed)
+    #     self.wager = textinput.value
+    #     self.updateEmbed()
+    #     await interaction.response.edit_message(embed=self.myEmbed)
 
     @discord.ui.select(placeholder='Your Attack', options = [
             discord.SelectOption(label='Flamethrower', emoji='🟥'),
