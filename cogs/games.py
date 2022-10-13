@@ -82,11 +82,11 @@ class RPSView(discord.ui.View):
             embed.add_field(name=f'{currentUser.name}\'s Attack:', value=self.attack, inline=False)
             embed.add_field(name="Quagsire used:", value=quagAttack, inline=False)
             if quagAttack == self.attack:
-                self.parent.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{currentUser.id}\',\'Broken Box Piece x5\',\'{currentWager}\', datetime(\'now\'))')
+                self.parent.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{currentUser.id}\',\'Broken Box Piece x5\',\'{self.wager}\', datetime(\'now\'))')
                 embed.add_field(name="But Nothing Happened", value=f'Returned {self.wager} box pieces.', inline=False)
             elif data.weakness[quagAttack] == self.attack:
                 # User wins
-                self.parent.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{currentUser.id}\',\'Broken Box Piece x5\',\'{currentWager*3}\', datetime(\'now\'))')
+                self.parent.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{currentUser.id}\',\'Broken Box Piece x5\',\'{self.wager*3}\', datetime(\'now\'))')
                 embed.add_field(name="YOU WIN", value=f'Gained {self.wager*3} box pieces.', inline=False)
             else:
                 embed.add_field(name="YOU LOSE", value=f'Lost {self.wager} box pieces.', inline=False)
@@ -212,7 +212,7 @@ class ShopButtons(discord.ui.View):
         else:
             embed=discord.Embed(title="The Quagsino: RPS DUEL", description=f'{currentUser.mention} will fight Quagsire.', color=0xf1d3ed)
             embed.set_thumbnail(url=imgURL)
-            embed.add_field(name=f'Wager (max {boxPieces}):', value=f'0 box pieces', inline=True)
+            embed.add_field(name=f'Wager (max {boxPieces}):', value=f'1 box pieces', inline=True)
             embed.add_field(name="Selected Attack:", value=f'-', inline=True)
             await interaction.response.send_message(embed=embed, view=RPSView(self.parent, currentUser))
             return
