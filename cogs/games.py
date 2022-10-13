@@ -30,6 +30,7 @@ class RPSView(discord.ui.View):
         self.attack = "-"
         self.parent = parent
         self.originalUser = originalUser
+        self.maxWager = parent.checkBoxPieces(originalUser.id)
         self.url = "https://static.wikia.nocookie.net/maplestory/images/b/b1/Use_Hidden_Ring_Box.png/revision/latest?cb=20210914225553"
         self.embed=discord.Embed(title="The Quagsino", description=f'{self.originalUser.mention} will fight Quagsire.', color=0xf1d3ed)
     
@@ -61,7 +62,7 @@ class RPSView(discord.ui.View):
         self.updateEmbed()
         await interaction.response.edit_message(embed=self.embed)
 
-    @discord.ui.button(label='FIGHT', style=discord.ButtonStyle.primary)
+    @discord.ui.button(label='FIGHT', style=discord.ButtonStyle.success)
     async def buttonOne(self, interaction: discord.Interaction, button:discord.ui.Button):
         if interaction.user != self.originalUser:
             return
@@ -115,6 +116,9 @@ class RPSView(discord.ui.View):
             return
 
         self.wager += 1
+        if self.wager > self.maxWager:
+            self.wager = self.maxWager
+
         self.updateEmbed()
         await interaction.response.edit_message(embed=self.embed)
     
@@ -124,6 +128,19 @@ class RPSView(discord.ui.View):
             return
 
         self.wager += 5
+        if self.wager > self.maxWager:
+            self.wager = self.maxWager
+        self.updateEmbed()
+        await interaction.response.edit_message(embed=self.embed)
+
+    @discord.ui.button(label='-1', style=discord.ButtonStyle.secondary)
+    async def buttonFour(self, interaction: discord.Interaction, button:discord.ui.Button):
+        if interaction.user != self.originalUser:
+            return
+
+        self.wager -= 1
+        if self.wager < 1:
+            self.wager = 1
         self.updateEmbed()
         await interaction.response.edit_message(embed=self.embed)
 
