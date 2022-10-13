@@ -24,21 +24,20 @@ from discord.ext import commands
 from discord import app_commands
 
 class RPSView(discord.ui.View):
-    def __init__(self, parent, originalUser):
-        super().__init__()
+    def __init__(self, parent, originalUser, myEmbed: discord.Embed, *, timeout=90):
+        super().__init__(timeout=timeout)
         self.wager = -1
         self.attack = ""
         self.parent = parent
-        self.maxWager = self.parent.checkBoxPieces(originalUser.id)
+        self.originalUser = originalUser
+        self.myEmbed = myEmbed
 
-    @discord.ui.button(label='0', style=discord.ButtonStyle.blurple)
-    async def callback(self, interaction: discord.Interaction, button: discord.ui.Button):
-        number = int(button.label) if button.label else 0
-        if number + 1 >= self.maxWager:
-            button.style = discord.ButtonStyle.grey
-            button.disabled = True
-        button.label = str(number + 1)
-        await interaction.response.edit_message(view=self)
+    @discord.ui.TextInput(label='Wager', placeholder='# of Box Pieces to bet')
+    async def callback(self, textinput: discord.ui.TextInput, interaction: discord.Interaction, text):
+        if interaction.user != self.originalUser:
+            return
+        self.wager = textinput.value
+        await interaction.response.edit_message(embed=self.myEmbed)
 
     @discord.ui.select(placeholder='Your Attack', options = [
             discord.SelectOption(label='Flamethrower', emoji='🟥'),
@@ -46,7 +45,8 @@ class RPSView(discord.ui.View):
             discord.SelectOption(label='Bubblebeam', emoji='🟦'),
         ])
     async def callback(self, select, interaction: discord.Interaction):
-        self.wager = select.values[0]
+        self.attack = select.values[0]
+        await interaction.response.edit_message(embed=self.myEmbed)
 
     @discord.ui.button(label='FIGHT', style=discord.ButtonStyle.red)
     async def confirm(self, interaction: discord.Interaction, button:discord.ui.Button):
