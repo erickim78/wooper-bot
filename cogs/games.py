@@ -39,23 +39,24 @@ class RPSView(discord.ui.View):
         self.embed.add_field(name=f'Wager (max {self.parent.checkBoxPieces(self.originalUser.id)}):', value=f'{self.wager} box pieces', inline=True)
         self.embed.add_field(name="Selected Attack:", value=f'{self.attack}', inline=True)
 
-    # @discord.ui.text_input(label='Wager', placeholder='# of Box Pieces to bet')
-    # async def callback(self, textinput: discord.ui.TextInput, interaction: discord.Interaction, text):
-    #     if interaction.user != self.originalUser:
-    #         return
+    @discord.ui.text_input(label='Wager', placeholder='# of Box Pieces to bet')
+    async def Wager(self, textinput: discord.ui.TextInput, interaction: discord.Interaction, text):
+        if interaction.user != self.originalUser:
+            return
 
-    #     self.wager = textinput.value
-    #     self.updateEmbed()
-    #     await interaction.response.edit_message(embed=self.myEmbed)
+        self.wager = textinput.value
+        self.updateEmbed()
+        await interaction.response.edit_message(embed=self.myEmbed)
 
     @discord.ui.select(placeholder='Your Attack', options = [
             discord.SelectOption(label='Flamethrower', emoji='🟥'),
             discord.SelectOption(label='Razor Leaf', emoji='🟩'),
             discord.SelectOption(label='Bubblebeam', emoji='🟦'),
         ])
-    async def callback(self, select, interaction: discord.Interaction):
+    async def select(self, interaction: discord.Interaction, select):
         if interaction.user != self.originalUser:
             return
+
         self.attack = select.values[0]
         self.updateEmbed()
         await interaction.response.edit_message(embed=self.myEmbed)
@@ -97,7 +98,7 @@ class RPSView(discord.ui.View):
                 embed.add_field(name="Not enough box pieces.", value=f'\u200b', inline=False)
         await interaction.response.send_message(embed=embed)
 
-    @discord.ui.button(label='Cancel', style=discord.ButtonStyle.grey)
+    @discord.ui.button(label='Cancel', style=discord.ButtonStyle.danger)
     async def buttonTwo(self, interaction: discord.Interaction, button:discord.ui.Button):
         if interaction.user != self.originalUser:
             return
@@ -118,7 +119,7 @@ class RPSView(discord.ui.View):
         await interaction.response.edit_message(embed=self.embed)
     
     @discord.ui.button(label='+5', style=discord.ButtonStyle.secondary)
-    async def buttonThree(self, interaction: discord.Interaction, button:discord.ui.Button):
+    async def buttonFour(self, interaction: discord.Interaction, button:discord.ui.Button):
         if interaction.user != self.originalUser:
             return
 
@@ -197,7 +198,7 @@ class ShopButtons(discord.ui.View):
         else:
             embed=discord.Embed(title="The Quagsino: RPS DUEL", description=f'{currentUser.mention} will fight Quagsire.', color=0xf1d3ed)
             embed.set_thumbnail(url=imgURL)
-            embed.add_field(name="Wager:", value=f'0 box pieces', inline=True)
+            embed.add_field(name=f'Wager (max {boxPieces}):', value=f'0 box pieces', inline=True)
             embed.add_field(name="Selected Attack:", value=f'-', inline=True)
             await interaction.response.send_message(embed=embed, view=RPSView(self.parent, currentUser))
             return
