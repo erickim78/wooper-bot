@@ -26,7 +26,7 @@ from discord import app_commands
 class RPSView(discord.ui.View):
     def __init__(self, parent, originalUser, *, timeout=90):
         super().__init__(timeout=timeout)
-        self.wager = "0"
+        self.wager = 0
         self.attack = "-"
         self.parent = parent
         self.originalUser = originalUser
@@ -36,7 +36,7 @@ class RPSView(discord.ui.View):
     def updateEmbed(self):
         self.embed=discord.Embed(title="The Quagsino", description=f'{self.originalUser.mention} will fight Quagsire.', color=0xf1d3ed)
         self.embed.set_thumbnail(url=self.url)
-        self.embed.add_field(name="Your Wager:", value=f'{self.wager} box pieces', inline=True)
+        self.embed.add_field(name=f'Wager (max {self.parent.checkBoxPieces(self.originalUser.id)}):', value=f'{self.wager} box pieces', inline=True)
         self.embed.add_field(name="Selected Attack:", value=f'{self.attack}', inline=True)
 
     # @discord.ui.text_input(label='Wager', placeholder='# of Box Pieces to bet')
@@ -54,15 +54,19 @@ class RPSView(discord.ui.View):
             discord.SelectOption(label='Bubblebeam', emoji='🟦'),
         ])
     async def callback(self, select, interaction: discord.Interaction):
+        if interaction.user != self.originalUser:
+            return
         self.attack = select.values[0]
         self.updateEmbed()
         await interaction.response.edit_message(embed=self.myEmbed)
 
     @discord.ui.button(label='FIGHT', style=discord.ButtonStyle.primary)
     async def buttonOne(self, interaction: discord.Interaction, button:discord.ui.Button):
+        if interaction.user != self.originalUser:
+            return
+
         self.stop()
         currentUser = interaction.user
-        
         imgURL = "https://static.wikia.nocookie.net/maplestory/images/b/b1/Use_Hidden_Ring_Box.png/revision/latest?cb=20210914225553"
         embed=discord.Embed(title="The Quagsino: RPS", description=f'{currentUser.mention} wagered {self.wager} box pieces.', color=0xf1d3ed)
         embed.set_thumbnail(url=imgURL)
@@ -95,12 +99,33 @@ class RPSView(discord.ui.View):
 
     @discord.ui.button(label='Cancel', style=discord.ButtonStyle.grey)
     async def buttonTwo(self, interaction: discord.Interaction, button:discord.ui.Button):
-        self.stop()
+        if interaction.user != self.originalUser:
+            return
 
+        self.stop()
         self.embed=discord.Embed(title="The Quagsino", description=f'{self.originalUser.mention} will fight Quagsire.', color=0xf1d3ed)
         self.embed.set_thumbnail(url=self.url)
         self.embed.add_field(name="FIGHT CANCELLED", value=f'\u200b', inline=True)
         await interaction.response.edit_message(embed=self.embed)
+
+    @discord.ui.button(label='+1', style=discord.ButtonStyle.secondary)
+    async def buttonThree(self, interaction: discord.Interaction, button:discord.ui.Button):
+        if interaction.user != self.originalUser:
+            return
+
+        self.wager += 1
+        self.updateEmbed()
+        await interaction.response.edit_message(embed=self.embed)
+    
+    @discord.ui.button(label='+5', style=discord.ButtonStyle.secondary)
+    async def buttonThree(self, interaction: discord.Interaction, button:discord.ui.Button):
+        if interaction.user != self.originalUser:
+            return
+
+        self.wager += 5
+        self.updateEmbed()
+        await interaction.response.edit_message(embed=self.embed)
+
 
 class ShopButtons(discord.ui.View):
     def __init__(self, parent, *, timeout=90):
@@ -170,9 +195,9 @@ class ShopButtons(discord.ui.View):
             embed.add_field(name="Tickets needed:", value=1-whoompTickets, inline=True)
             await interaction.response.send_message(embed=embed)
         else:
-            embed=discord.Embed(title="The Quagsino", description=f'{currentUser.mention} will fight Quagsire.', color=0xf1d3ed)
+            embed=discord.Embed(title="The Quagsino: RPS DUEL", description=f'{currentUser.mention} will fight Quagsire.', color=0xf1d3ed)
             embed.set_thumbnail(url=imgURL)
-            embed.add_field(name="Your Wager:", value=f'0 box pieces', inline=True)
+            embed.add_field(name="Wager:", value=f'0 box pieces', inline=True)
             embed.add_field(name="Selected Attack:", value=f'-', inline=True)
             await interaction.response.send_message(embed=embed, view=RPSView(self.parent, currentUser))
             return
