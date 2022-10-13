@@ -22,6 +22,186 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 
+class AttackDropdown(discord.ui.Select):
+    def __init__(self):
+        options = [
+            discord.SelectOption(label='Flamethrower', emoji='🟥'),
+            discord.SelectOption(label='Razor Leaf', emoji='🟩'),
+            discord.SelectOption(label='Bubblebeam', emoji='🟦'),
+        ]
+        super().__init__(placeholder='Choose your attack', options=options)
+    async def callback(self, interaction: discord.Interaction):
+        return
+
+class RPSView(discord.ui.View):
+    def __init__(self, parent, originalUser):
+        super().__init__()
+        self.wager = -1
+        self.attack = ""
+        self.parent = parent
+        self.maxWager = self.parent.checkBoxPieces(originalUser.id)
+        self.add_item(AttackDropdown())
+
+    @discord.ui.button(label='0', style=discord.ButtonStyle.blurple)
+    async def callback(self, interaction: discord.Interaction, button: discord.ui.Button):
+        number = int(button.label) if button.label else 0
+        if number + 1 >= self.maxWager:
+            button.style = discord.ButtonStyle.grey
+            button.disabled = True
+        button.label = str(number + 1)
+        await interaction.response.edit_message(view=self)
+
+    # @discord.ui.select(placeholder='Your Attack', options=data.attacks)
+    # async def callback(self, select, interaction: discord.Interaction):
+    #     self.wager = select.values[0]
+
+    @discord.ui.button(label='FIGHT', style=discord.ButtonStyle.red)
+    async def confirm(self, interaction: discord.Interaction, button:discord.ui.Button):
+        self.stop()
+
+        currentUser = interaction.user
+        
+        imgURL = "https://static.wikia.nocookie.net/maplestory/images/b/b1/Use_Hidden_Ring_Box.png/revision/latest?cb=20210914225553"
+        embed=discord.Embed(title="The Quagsino: RPS", description=f'{currentUser.mention} wagered {self.wager} box pieces.', color=0xf1d3ed)
+        embed.set_thumbnail(url=imgURL)
+        if self.wager.isdigit() is False:
+            embed.add_field(name="Invalid Wager.", value=f'\u200b', inline=False)
+        else:
+            currentWager = int(self.wager)
+            if self.parent.tryDeductingBoxPieces(currentUser.id, currentWager) is True:
+                if self.parent.tryDeductingWhoompTickets(currentUser.id, 1) is False:
+                    print("REALLY BAD ERROR IN DEDUCTING TICKETS")
+                    return
+
+                quagAttack = random.choice(data.attacks)
+                embed.add_field(name=f'{currentUser.name}\'s Attack:', value=self.attack, inline=False)
+                embed.add_field(name="Quagsire used:", value=quagAttack, inline=False)
+                if quagAttack == self.attack:
+                    self.parent.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{currentUser.id}\',\'Broken Box Piece x5\',\'{currentWager}\', datetime(\'now\'))')
+                    embed.add_field(name="But Nothing Happened", value=f'Returned {currentWager} box pieces.', inline=False)
+                elif data.weakness[quagAttack] == self.attack:
+                    # User wins
+                    self.parent.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{currentUser.id}\',\'Broken Box Piece x5\',\'{currentWager*3}\', datetime(\'now\'))')
+                    embed.add_field(name="YOU WIN", value=f'Gained {currentWager*3} box pieces.', inline=False)
+                else:
+                    embed.add_field(name="YOU LOSE", value=f'Lost {currentWager} box pieces.', inline=False)
+                    # Quag wins
+                self.parent.miscConnection.commit()
+            else:
+                embed.add_field(name="Not enough box pieces.", value=f'\u200b', inline=False)
+        interaction.response.send_message(embed=embed)
+
+    @discord.ui.button(label='Cancel', style=discord.ButtonStyle.grey)
+    async def confirm(self, interaction: discord.Interaction, button:discord.ui.Button):
+        self.stop()
+
+
+class ShopButtons(discord.ui.View):
+    def __init__(self, parent, *, timeout=90):
+        super().__init__(timeout=timeout)
+        self.parent = parent
+
+    @discord.ui.button(label="1", style=discord.ButtonStyle.primary)
+    async def buttonOne(self, interaction: discord.Interaction, button:discord.ui.Button):
+        currentUser = interaction.user
+        imgURL = "https://static.wikia.nocookie.net/maplestory/images/b/b1/Use_Hidden_Ring_Box.png/revision/latest?cb=20210914225553"
+        boxPieces = self.parent.checkBoxPieces(currentUser.id)
+        if self.parent.tryDeductingBoxPieces(currentUser.id, 10):
+            reward = numpy.random.choice(data.hiddenBox, p=data.hiddenRingOdds)
+            rewardURL = data.rewardLinks[reward]
+            level = numpy.random.choice(data.ringLevels, p=data.ringLevelOdds)
+            self.parent.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{currentUser.id}\',\'{reward}\',\'{level}\', datetime(\'now\'))')
+            self.parent.miscConnection.commit()
+
+            embed=discord.Embed(title="Whooper's Ring Box", description=f'Redeemed by {currentUser.mention}.', color=0xf1d3ed)
+            embed.set_thumbnail(url=imgURL)
+            embed.add_field(name=reward, value=level, inline=False)
+            embed.set_image(url=rewardURL)
+            embed.set_footer(text=f'Remaining box pieces: {boxPieces-10}')
+        else:
+            embed=discord.Embed(title="Whooper's Ring Box", description=f'{currentUser.mention} you have {boxPieces} pieces.', color=0xf1d3ed)
+            embed.set_thumbnail(url=imgURL)
+            embed.add_field(name="Not enough box pieces.", value='\u200b', inline=False)
+            embed.add_field(name="Pieces needed:", value=10-boxPieces, inline=False)
+
+        await interaction.response.send_message(embed=embed)
+
+    @discord.ui.button(label="2", style=discord.ButtonStyle.primary)
+    async def buttonTwo(self, interaction: discord.Interaction, button:discord.ui.Button):
+        currentUser = interaction.user
+        imgURL = "https://static.wikia.nocookie.net/maplestory/images/b/ba/Use_Shiny_Ring_Box.png/revision/latest?cb=20210914225555"
+        boxPieces = self.parent.checkBoxPieces(currentUser.id)
+        if self.parent.tryDeductingBoxPieces(currentUser.id, 100):
+            reward = numpy.random.choice(data.shinyBox, p=data.shinyRingOdds)
+            rewardURL = data.rewardLinks[reward]
+            level = numpy.random.choice(data.shinyBoxLevels, p=data.shinyBoxlevelOdds)
+            self.parent.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{currentUser.id}\',\'{reward}\',\'{level}\', datetime(\'now\'))')
+            self.parent.miscConnection.commit()
+
+            embed=discord.Embed(title="Whooper's Shiny Ring Box", description=f'Redeemed by {currentUser.mention}.', color=0xf1d3ed)
+            embed.set_thumbnail(url=imgURL)
+            embed.add_field(name=reward, value=level, inline=False)
+            embed.set_image(url=rewardURL)
+            embed.set_footer(text=f'Remaining box pieces: {boxPieces-100}')
+        else:
+            embed=discord.Embed(title="Whooper's Shiny Ring Box", description=f'{currentUser.mention} you have {boxPieces} pieces.', color=0xf1d3ed)
+            embed.set_thumbnail(url=imgURL)
+            embed.add_field(name="Not enough box pieces.", value='\u200b', inline=False)
+            embed.add_field(name="Pieces needed:", value=100-boxPieces, inline=False)
+        await interaction.response.send_message(embed=embed)
+
+    @discord.ui.button(label="RPS", style=discord.ButtonStyle.primary, disabled=True)
+    async def buttonThree(self, interaction: discord.Interaction, button:discord.ui.Button):
+        currentUser = interaction.user
+        imgURL = "https://static.wikia.nocookie.net/maplestory/images/b/ba/Use_Shiny_Ring_Box.png/revision/latest?cb=20210914225555"
+        boxPieces = self.parent.checkBoxPieces(currentUser.id)
+        whoompTickets = self.parent.checkWhoompTickets(currentUser.id)
+        if boxPieces < 1 or whoompTickets < 1:
+            embed=discord.Embed(title="The Quagsino", description=f'{currentUser.mention} you have {boxPieces} box pieces, {whoompTickets} tickets.', color=0xf1d3ed)
+            embed.set_thumbnail(url=imgURL)
+            embed.add_field(name="Not enough box pieces or tickets.", value='\u200b', inline=False)
+            embed.add_field(name="Pieces needed:", value=1-boxPieces, inline=True)
+            embed.add_field(name="Tickets needed:", value=1-whoompTickets, inline=True)
+            await interaction.response.send_message(embed=embed)
+        else:
+            await interaction.response.send_message("test", view=self.RPSView(self.parent, currentUser))
+            return
+
+    @discord.ui.button(label="Guessing Game", style=discord.ButtonStyle.secondary, disabled=True)
+    async def buttonFour(self, interaction: discord.Interaction, button:discord.ui.Button):
+        currentUser = interaction.user
+        boxPieces = self.parent.checkBoxPieces(currentUser.id)
+        whoompTickets = self.parent.checkWhoompTickets(currentUser.id)
+        if boxPieces < 1 or whoompTickets < 1:
+            embed=discord.Embed(title="Whoomper RPS", description=f'{currentUser.mention} you have: {boxPieces} box pieces, {whoompTickets} tickets.', color=0xf1d3ed)
+            embed.set_thumbnail(url=imgURL)
+            embed.add_field(name="Not enough box pieces and tickets.", value='\u200b', inline=False)
+            embed.add_field(name="Pieces needed:", value=3-boxPieces, inline=True)
+            embed.add_field(name="Tickets needed:", value=1-whoompTickets, inline=True)
+        elif self.parent.tryDeductingWhoompTickets(currentUser.id, 1):
+            embed=discord.Embed(color=0xf1d3ed)
+            imgURL = "https://static.wikia.nocookie.net/maplestory/images/3/36/Use_Broken_Box_Piece.png/revision/latest?cb=20210910011106"
+            embed.set_thumbnail(url=imgURL)
+            embed.add_field(name="Tower of Oz", value=f'Prize Redemption for {interaction.user.mention}', inline=False)
+            embed.add_field(name="Whoomper's Ring Box", value= '\u200b', inline=False)
+            embed.add_field(name="Ring Name Placeholder", value= 'Ring Level Placeholder', inline=False)
+            embed.set_footer(text=f'Remaining box pieces: {boxPieces-10}, Remaining Tickets: {whoompTickets-1}')
+        else:
+            print("ERROR IN NUMBER GUESSING SELECTION")
+            return
+        await interaction.response.send_message(embed=embed)
+
+    @discord.ui.button(label="5", style=discord.ButtonStyle.secondary, disabled=True)
+    async def buttonFive(self, interaction: discord.Interaction, button:discord.ui.Button):
+        embed=discord.Embed(color=0xf1d3ed)
+        imgURL = "https://static.wikia.nocookie.net/maplestory/images/3/36/Use_Broken_Box_Piece.png/revision/latest?cb=20210910011106"
+        embed.set_thumbnail(url=imgURL)
+        embed.add_field(name="Tower of Oz", value=f'Prize Redemption for {interaction.user.mention}', inline=False)
+        embed.add_field(name="Whoomper's Ring Box", value= '\u200b', inline=False)
+        embed.add_field(name="Ring Name Placeholder", value= 'Ring Level Placeholder', inline=False)
+        embed.set_footer(text=f'Remaining box pieces: {0}')
+        await interaction.response.send_message(embed=embed)
+
 
 class Games(commands.Cog):
     def __init__(self, bot):
@@ -49,173 +229,6 @@ class Games(commands.Cog):
         self.miscConnection = main.miscConnection
         self.miscCursor = main.miscConnection.cursor()
         self.checkRingTable()
-
-    class ShopButtons(discord.ui.View):
-        def __init__(self, parent, *, timeout=90):
-            super().__init__(timeout=timeout)
-            self.parent = parent
-
-        class RPSView(discord.ui.View):
-            def __init__(self, parent, originalUser):
-                super().__init__()
-                self.wager = -1
-                self.attack = ""
-                self.parent = parent
-                self.maxWager = self.parent.checkBoxPieces(originalUser.id)
-
-            @discord.ui.button(label='0', style=discord.ButtonStyle.blurple)
-            async def callback(self, interaction: discord.Interaction, button: discord.ui.Button):
-                number = int(button.label) if button.label else 0
-                if number + 1 >= self.maxWager:
-                    button.style = discord.ButtonStyle.grey
-                    button.disabled = True
-                button.label = str(number + 1)
-                await interaction.response.edit_message(view=self)
-
-            # @discord.ui.select(placeholder='Your Attack', options=data.attacks)
-            # async def callback(self, select, interaction: discord.Interaction):
-            #     self.wager = select.values[0]
-
-            @discord.ui.button(label='FIGHT', style=discord.ButtonStyle.red)
-            async def confirm(self, interaction: discord.Interaction, button:discord.ui.Button):
-                self.stop()
-
-                currentUser = interaction.user
-                
-                imgURL = "https://static.wikia.nocookie.net/maplestory/images/b/b1/Use_Hidden_Ring_Box.png/revision/latest?cb=20210914225553"
-                embed=discord.Embed(title="The Quagsino: RPS", description=f'{currentUser.mention} wagered {self.wager} box pieces.', color=0xf1d3ed)
-                embed.set_thumbnail(url=imgURL)
-                if self.wager.isdigit() is False:
-                    embed.add_field(name="Invalid Wager.", value=f'\u200b', inline=False)
-                else:
-                    currentWager = int(self.wager)
-                    if self.parent.tryDeductingBoxPieces(currentUser.id, currentWager) is True:
-                        if self.parent.tryDeductingWhoompTickets(currentUser.id, 1) is False:
-                            print("REALLY BAD ERROR IN DEDUCTING TICKETS")
-                            return
-
-                        quagAttack = random.choice(data.attacks)
-                        embed.add_field(name=f'{currentUser.name}\'s Attack:', value=self.attack, inline=False)
-                        embed.add_field(name="Quagsire used:", value=quagAttack, inline=False)
-                        if quagAttack == self.attack:
-                            self.parent.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{currentUser.id}\',\'Broken Box Piece x5\',\'{currentWager}\', datetime(\'now\'))')
-                            embed.add_field(name="But Nothing Happened", value=f'Returned {currentWager} box pieces.', inline=False)
-                        elif data.weakness[quagAttack] == self.attack:
-                            # User wins
-                            self.parent.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{currentUser.id}\',\'Broken Box Piece x5\',\'{currentWager*3}\', datetime(\'now\'))')
-                            embed.add_field(name="YOU WIN", value=f'Gained {currentWager*3} box pieces.', inline=False)
-                        else:
-                            embed.add_field(name="YOU LOSE", value=f'Lost {currentWager} box pieces.', inline=False)
-                            # Quag wins
-                        self.parent.miscConnection.commit()
-                    else:
-                        embed.add_field(name="Not enough box pieces.", value=f'\u200b', inline=False)
-                interaction.response.send_message(embed=embed)
-
-            @discord.ui.button(label='Cancel', style=discord.ButtonStyle.grey)
-            async def confirm(self, interaction: discord.Interaction, button:discord.ui.Button):
-                self.stop()
-
-        @discord.ui.button(label="1", style=discord.ButtonStyle.primary)
-        async def buttonOne(self, interaction: discord.Interaction, button:discord.ui.Button):
-            currentUser = interaction.user
-            imgURL = "https://static.wikia.nocookie.net/maplestory/images/b/b1/Use_Hidden_Ring_Box.png/revision/latest?cb=20210914225553"
-            boxPieces = self.parent.checkBoxPieces(currentUser.id)
-            if self.parent.tryDeductingBoxPieces(currentUser.id, 10):
-                reward = numpy.random.choice(data.hiddenBox, p=data.hiddenRingOdds)
-                rewardURL = data.rewardLinks[reward]
-                level = numpy.random.choice(data.ringLevels, p=data.ringLevelOdds)
-                self.parent.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{currentUser.id}\',\'{reward}\',\'{level}\', datetime(\'now\'))')
-                self.parent.miscConnection.commit()
-
-                embed=discord.Embed(title="Whooper's Ring Box", description=f'Redeemed by {currentUser.mention}.', color=0xf1d3ed)
-                embed.set_thumbnail(url=imgURL)
-                embed.add_field(name=reward, value=level, inline=False)
-                embed.set_image(url=rewardURL)
-                embed.set_footer(text=f'Remaining box pieces: {boxPieces-10}')
-            else:
-                embed=discord.Embed(title="Whooper's Ring Box", description=f'{currentUser.mention} you have {boxPieces} pieces.', color=0xf1d3ed)
-                embed.set_thumbnail(url=imgURL)
-                embed.add_field(name="Not enough box pieces.", value='\u200b', inline=False)
-                embed.add_field(name="Pieces needed:", value=10-boxPieces, inline=False)
-
-            await interaction.response.send_message(embed=embed)
-
-        @discord.ui.button(label="2", style=discord.ButtonStyle.primary)
-        async def buttonTwo(self, interaction: discord.Interaction, button:discord.ui.Button):
-            currentUser = interaction.user
-            imgURL = "https://static.wikia.nocookie.net/maplestory/images/b/ba/Use_Shiny_Ring_Box.png/revision/latest?cb=20210914225555"
-            boxPieces = self.parent.checkBoxPieces(currentUser.id)
-            if self.parent.tryDeductingBoxPieces(currentUser.id, 100):
-                reward = numpy.random.choice(data.shinyBox, p=data.shinyRingOdds)
-                rewardURL = data.rewardLinks[reward]
-                level = numpy.random.choice(data.shinyBoxLevels, p=data.shinyBoxlevelOdds)
-                self.parent.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{currentUser.id}\',\'{reward}\',\'{level}\', datetime(\'now\'))')
-                self.parent.miscConnection.commit()
-
-                embed=discord.Embed(title="Whooper's Shiny Ring Box", description=f'Redeemed by {currentUser.mention}.', color=0xf1d3ed)
-                embed.set_thumbnail(url=imgURL)
-                embed.add_field(name=reward, value=level, inline=False)
-                embed.set_image(url=rewardURL)
-                embed.set_footer(text=f'Remaining box pieces: {boxPieces-100}')
-            else:
-                embed=discord.Embed(title="Whooper's Shiny Ring Box", description=f'{currentUser.mention} you have {boxPieces} pieces.', color=0xf1d3ed)
-                embed.set_thumbnail(url=imgURL)
-                embed.add_field(name="Not enough box pieces.", value='\u200b', inline=False)
-                embed.add_field(name="Pieces needed:", value=100-boxPieces, inline=False)
-            await interaction.response.send_message(embed=embed)
-
-        @discord.ui.button(label="RPS", style=discord.ButtonStyle.primary, disabled=True)
-        async def buttonThree(self, interaction: discord.Interaction, button:discord.ui.Button):
-            currentUser = interaction.user
-            imgURL = "https://static.wikia.nocookie.net/maplestory/images/b/ba/Use_Shiny_Ring_Box.png/revision/latest?cb=20210914225555"
-            boxPieces = self.parent.checkBoxPieces(currentUser.id)
-            whoompTickets = self.parent.checkWhoompTickets(currentUser.id)
-            if boxPieces < 1 or whoompTickets < 1:
-                embed=discord.Embed(title="The Quagsino", description=f'{currentUser.mention} you have {boxPieces} box pieces, {whoompTickets} tickets.', color=0xf1d3ed)
-                embed.set_thumbnail(url=imgURL)
-                embed.add_field(name="Not enough box pieces or tickets.", value='\u200b', inline=False)
-                embed.add_field(name="Pieces needed:", value=1-boxPieces, inline=True)
-                embed.add_field(name="Tickets needed:", value=1-whoompTickets, inline=True)
-                await interaction.response.send_message(embed=embed)
-            else:
-                await interaction.response.send_message("test", view=self.RPSView(self.parent, currentUser))
-                return
-
-        @discord.ui.button(label="Guessing Game", style=discord.ButtonStyle.secondary, disabled=True)
-        async def buttonFour(self, interaction: discord.Interaction, button:discord.ui.Button):
-            currentUser = interaction.user
-            boxPieces = self.parent.checkBoxPieces(currentUser.id)
-            whoompTickets = self.parent.checkWhoompTickets(currentUser.id)
-            if boxPieces < 1 or whoompTickets < 1:
-                embed=discord.Embed(title="Whoomper RPS", description=f'{currentUser.mention} you have: {boxPieces} box pieces, {whoompTickets} tickets.', color=0xf1d3ed)
-                embed.set_thumbnail(url=imgURL)
-                embed.add_field(name="Not enough box pieces and tickets.", value='\u200b', inline=False)
-                embed.add_field(name="Pieces needed:", value=3-boxPieces, inline=True)
-                embed.add_field(name="Tickets needed:", value=1-whoompTickets, inline=True)
-            elif self.parent.tryDeductingWhoompTickets(currentUser.id, 1):
-                embed=discord.Embed(color=0xf1d3ed)
-                imgURL = "https://static.wikia.nocookie.net/maplestory/images/3/36/Use_Broken_Box_Piece.png/revision/latest?cb=20210910011106"
-                embed.set_thumbnail(url=imgURL)
-                embed.add_field(name="Tower of Oz", value=f'Prize Redemption for {interaction.user.mention}', inline=False)
-                embed.add_field(name="Whoomper's Ring Box", value= '\u200b', inline=False)
-                embed.add_field(name="Ring Name Placeholder", value= 'Ring Level Placeholder', inline=False)
-                embed.set_footer(text=f'Remaining box pieces: {boxPieces-10}, Remaining Tickets: {whoompTickets-1}')
-            else:
-                print("ERROR IN NUMBER GUESSING SELECTION")
-                return
-            await interaction.response.send_message(embed=embed)
-
-        @discord.ui.button(label="5", style=discord.ButtonStyle.secondary, disabled=True)
-        async def buttonFive(self, interaction: discord.Interaction, button:discord.ui.Button):
-            embed=discord.Embed(color=0xf1d3ed)
-            imgURL = "https://static.wikia.nocookie.net/maplestory/images/3/36/Use_Broken_Box_Piece.png/revision/latest?cb=20210910011106"
-            embed.set_thumbnail(url=imgURL)
-            embed.add_field(name="Tower of Oz", value=f'Prize Redemption for {interaction.user.mention}', inline=False)
-            embed.add_field(name="Whoomper's Ring Box", value= '\u200b', inline=False)
-            embed.add_field(name="Ring Name Placeholder", value= 'Ring Level Placeholder', inline=False)
-            embed.set_footer(text=f'Remaining box pieces: {0}')
-            await interaction.response.send_message(embed=embed)
 
     # Oz Run Handler for branching
     def ozRun(self, memberId):
