@@ -39,7 +39,7 @@ class RPSView(discord.ui.View):
         self.embed.add_field(name="Your Wager:", value=f'{self.wager} box pieces', inline=True)
         self.embed.add_field(name="Selected Attack:", value=f'{self.attack}', inline=True)
 
-    @discord.ui.TextInput(label='Wager', placeholder='# of Box Pieces to bet')
+    @discord.ui.text_input(label='Wager', placeholder='# of Box Pieces to bet')
     async def callback(self, textinput: discord.ui.TextInput, interaction: discord.Interaction, text):
         if interaction.user != self.originalUser:
             return
