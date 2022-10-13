@@ -60,11 +60,11 @@ class RPSView(discord.ui.View):
 
         self.attack = select.values[0]
         if self.attack == "Flamethrower":
-            self.attack = "🟥"+self.attack
+            self.attack = "🟥 "+self.attack
         elif self.attack == "Razor Leaf":
-            self.attack = "🟩"+self.attack
+            self.attack = "🟩 "+self.attack
         elif self.attack =="Bubblebeam":
-            self.attack = "🟦"+self.attack
+            self.attack = "🟦 "+self.attack
         else:
             print("Error in parsing command")
         self.updateEmbed()
