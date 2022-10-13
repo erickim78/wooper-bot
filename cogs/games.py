@@ -58,8 +58,8 @@ class RPSView(discord.ui.View):
         self.updateEmbed()
         await interaction.response.edit_message(embed=self.myEmbed)
 
-    @discord.ui.button(label='FIGHT', style=discord.ButtonStyle.red)
-    async def confirm(self, interaction: discord.Interaction, button:discord.ui.Button):
+    @discord.ui.button(label='FIGHT', style=discord.ButtonStyle.primary)
+    async def buttonOne(self, interaction: discord.Interaction, button:discord.ui.Button):
         self.stop()
         currentUser = interaction.user
         
@@ -94,8 +94,13 @@ class RPSView(discord.ui.View):
         await interaction.response.send_message(embed=embed)
 
     @discord.ui.button(label='Cancel', style=discord.ButtonStyle.grey)
-    async def confirm(self, interaction: discord.Interaction, button:discord.ui.Button):
+    async def buttonTwo(self, interaction: discord.Interaction, button:discord.ui.Button):
         self.stop()
+
+        self.embed=discord.Embed(title="The Quagsino", description=f'{self.originalUser.mention} will fight Quagsire.', color=0xf1d3ed)
+        self.embed.set_thumbnail(url=self.url)
+        self.embed.add_field(name="FIGHT CANCELLED", value=f'\u200b', inline=True)
+        await interaction.response.edit_message(embed=self.embed)
 
 class ShopButtons(discord.ui.View):
     def __init__(self, parent, *, timeout=90):
