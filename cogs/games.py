@@ -572,7 +572,7 @@ class Games(commands.Cog):
         embed.add_field(name=f'**4.** Quagsire Mind Reading', value = '1x Whoomp Ticket', inline=False)
         embed.add_field(name=f'**5.** Feet Pics', value = 'Placeholder', inline=False)
 
-        await interaction.response.send_message(embed=embed, view=self.ShopButtons(self))
+        await interaction.response.send_message(embed=embed, view=ShopButtons(self))
 
     @app_commands.command(name='givebox', description='TESTING ONLY')
     async def givebox(self, interaction: discord.Interaction, user: discord.User = None, num: int = 1):
