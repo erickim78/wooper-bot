@@ -150,7 +150,7 @@ class ShopButtons(discord.ui.View):
             embed.add_field(name="Pieces needed:", value=100-boxPieces, inline=False)
         await interaction.response.send_message(embed=embed)
 
-    @discord.ui.button(label="RPS", style=discord.ButtonStyle.primary, disabled=True)
+    @discord.ui.button(label="RPS", style=discord.ButtonStyle.primary, disabled=False)
     async def buttonThree(self, interaction: discord.Interaction, button:discord.ui.Button):
         currentUser = interaction.user
         imgURL = "https://static.wikia.nocookie.net/maplestory/images/b/ba/Use_Shiny_Ring_Box.png/revision/latest?cb=20210914225555"
