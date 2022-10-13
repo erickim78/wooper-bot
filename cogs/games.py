@@ -26,16 +26,16 @@ from discord import app_commands
 class RPSView(discord.ui.View):
     def __init__(self, parent, originalUser, *, timeout=90):
         super().__init__(timeout=timeout)
-        self.wager = 0
+        self.wager = 1
         self.attack = "-"
         self.parent = parent
         self.originalUser = originalUser
         self.maxWager = parent.checkBoxPieces(originalUser.id)
-        self.url = "https://static.wikia.nocookie.net/maplestory/images/b/b1/Use_Hidden_Ring_Box.png/revision/latest?cb=20210914225553"
-        self.embed=discord.Embed(title="The Quagsino", description=f'{self.originalUser.mention} will fight Quagsire.', color=0xf1d3ed)
+        self.url = "https://assets.gamepur.com/wp-content/uploads/2021/12/06170848/pokemon-bdsp-quagsire.jpg"
+        self.embed=discord.Embed(title="The Quagsino: RPS Battle", description=f'{self.originalUser.mention} will fight Quagsire.', color=0xf1d3ed)
     
     def updateEmbed(self):
-        self.embed=discord.Embed(title="The Quagsino", description=f'{self.originalUser.mention} will fight Quagsire.', color=0xf1d3ed)
+        self.embed=discord.Embed(title="The Quagsino: RPS Battle", description=f'{self.originalUser.mention} will fight Quagsire.', color=0xf1d3ed)
         self.embed.set_thumbnail(url=self.url)
         self.embed.add_field(name=f'Wager (max {self.parent.checkBoxPieces(self.originalUser.id)}):', value=f'{self.wager} box pieces', inline=True)
         self.embed.add_field(name="Selected Attack:", value=f'{self.attack}', inline=True)
@@ -70,7 +70,7 @@ class RPSView(discord.ui.View):
         self.stop()
         currentUser = interaction.user
         imgURL = "https://static.wikia.nocookie.net/maplestory/images/b/b1/Use_Hidden_Ring_Box.png/revision/latest?cb=20210914225553"
-        embed=discord.Embed(title="The Quagsino: RPS", description=f'{currentUser.mention} wagered {self.wager} box pieces.', color=0xf1d3ed)
+        embed=discord.Embed(title="The Quagsino: RPS Battle", description=f'{currentUser.mention} wagered {self.wager} box pieces.', color=0xf1d3ed)
         embed.set_thumbnail(url=imgURL)
 
         if self.parent.tryDeductingBoxPieces(currentUser.id, self.wager) is True:
@@ -83,7 +83,7 @@ class RPSView(discord.ui.View):
             embed.add_field(name="Quagsire used:", value=quagAttack, inline=False)
             if quagAttack == self.attack:
                 self.parent.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{currentUser.id}\',\'Broken Box Piece x5\',\'{self.wager}\', datetime(\'now\'))')
-                embed.add_field(name="But Nothing Happened", value=f'Returned {self.wager} box pieces.', inline=False)
+                embed.add_field(name="...but Nothing Happened", value=f'Returned {self.wager} box pieces.', inline=False)
             elif data.weakness[quagAttack] == self.attack:
                 # User wins
                 self.parent.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{currentUser.id}\',\'Broken Box Piece x5\',\'{self.wager*3}\', datetime(\'now\'))')
@@ -102,7 +102,7 @@ class RPSView(discord.ui.View):
             return
 
         self.stop()
-        self.embed=discord.Embed(title="The Quagsino", description=f'{self.originalUser.mention} will fight Quagsire.', color=0xf1d3ed)
+        self.embed=discord.Embed(title="The Quagsino: RPS Battle", description=f'{self.originalUser.mention} will fight Quagsire.', color=0xf1d3ed)
         self.embed.set_thumbnail(url=self.url)
         self.embed.add_field(name="FIGHT CANCELLED", value=f'\u200b', inline=True)
         await interaction.response.edit_message(embed=self.embed)
@@ -118,9 +118,20 @@ class RPSView(discord.ui.View):
 
         self.updateEmbed()
         await interaction.response.edit_message(embed=self.embed)
+
+    @discord.ui.button(label='-1', style=discord.ButtonStyle.secondary)
+    async def buttonFour(self, interaction: discord.Interaction, button:discord.ui.Button):
+        if interaction.user != self.originalUser:
+            return
+
+        self.wager -= 1
+        if self.wager < 1:
+            self.wager = 1
+        self.updateEmbed()
+        await interaction.response.edit_message(embed=self.embed)
     
     @discord.ui.button(label='+5', style=discord.ButtonStyle.secondary)
-    async def buttonFour(self, interaction: discord.Interaction, button:discord.ui.Button):
+    async def buttonFive(self, interaction: discord.Interaction, button:discord.ui.Button):
         if interaction.user != self.originalUser:
             return
 
@@ -130,16 +141,7 @@ class RPSView(discord.ui.View):
         self.updateEmbed()
         await interaction.response.edit_message(embed=self.embed)
 
-    @discord.ui.button(label='-1', style=discord.ButtonStyle.secondary)
-    async def buttonFive(self, interaction: discord.Interaction, button:discord.ui.Button):
-        if interaction.user != self.originalUser:
-            return
-
-        self.wager -= 1
-        if self.wager < 1:
-            self.wager = 1
-        self.updateEmbed()
-        await interaction.response.edit_message(embed=self.embed)
+    
 
 
 class ShopButtons(discord.ui.View):
@@ -199,18 +201,18 @@ class ShopButtons(discord.ui.View):
     @discord.ui.button(label="RPS", style=discord.ButtonStyle.primary, disabled=False)
     async def buttonThree(self, interaction: discord.Interaction, button:discord.ui.Button):
         currentUser = interaction.user
-        imgURL = "https://static.wikia.nocookie.net/maplestory/images/b/ba/Use_Shiny_Ring_Box.png/revision/latest?cb=20210914225555"
+        imgURL = "https://assets.gamepur.com/wp-content/uploads/2021/12/06170848/pokemon-bdsp-quagsire.jpgg"
         boxPieces = self.parent.checkBoxPieces(currentUser.id)
         whoompTickets = self.parent.checkWhoompTickets(currentUser.id)
         if boxPieces < 1 or whoompTickets < 1:
-            embed=discord.Embed(title="The Quagsino", description=f'{currentUser.mention} you have {boxPieces} box pieces, {whoompTickets} tickets.', color=0xf1d3ed)
+            embed=discord.Embed(title="The Quagsino: RPS Battle", description=f'{currentUser.mention} you have {boxPieces} box pieces, {whoompTickets} tickets.', color=0xf1d3ed)
             embed.set_thumbnail(url=imgURL)
             embed.add_field(name="Not enough box pieces or tickets.", value='\u200b', inline=False)
             embed.add_field(name="Pieces needed:", value=1-boxPieces, inline=True)
             embed.add_field(name="Tickets needed:", value=1-whoompTickets, inline=True)
             await interaction.response.send_message(embed=embed)
         else:
-            embed=discord.Embed(title="The Quagsino: RPS DUEL", description=f'{currentUser.mention} will fight Quagsire.', color=0xf1d3ed)
+            embed=discord.Embed(title="The Quagsino: RPS Battle", description=f'{currentUser.mention} will fight Quagsire.', color=0xf1d3ed)
             embed.set_thumbnail(url=imgURL)
             embed.add_field(name=f'Wager (max {boxPieces}):', value=f'1 box pieces', inline=True)
             embed.add_field(name="Selected Attack:", value=f'-', inline=True)
@@ -538,6 +540,7 @@ class Games(commands.Cog):
             embed.add_field(name="Boxes", value=self.boxes[user.id], inline=True)
         
         embed.add_field(name="Box Pieces", value=boxPieces, inline=True)
+        embed.add_field(name='Whoomp Tickets', value=self.checkWhoompTickets(user.id), inline=True)
         embed.add_field(name="Boxes Opened", value=boxesOpened, inline=True)
 
         await interaction.response.send_message(embed=embed)
@@ -614,7 +617,7 @@ class Games(commands.Cog):
         embed=discord.Embed(title="Tower of Oz", description=f'Whoomper Shop', color=0xf1d3ed)
         embed.set_thumbnail(url=imgURL)
 
-        embed.add_field(name=f'Select your prize.', value='\u200b', inline=False)
+        embed.add_field(name=f'Select your prize {user.mention}.', value=f'{self.checkBoxPieces(user.id)} pieces, {self.checkWhoompTickets(user.id)} tickets', inline=False)
 
         embed.add_field(name=f'**1.** Whoomper\'s Ring Box', value='10x Box Pieces', inline=False)
         embed.add_field(name=f'**2.** Whoomper\'s Shiny Ring Box', value='100x Box Pieces', inline=False)
