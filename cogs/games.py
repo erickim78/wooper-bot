@@ -87,11 +87,11 @@ class RPSView(discord.ui.View):
                 return
 
             quagAttack = random.choice(data.attacks)
-            embed.add_field(name=f'{currentUser.name}\'s Attack:', value=self.attack, inline=True)
+            embed.add_field(name=f'{currentUser.name}\'s attack:', value=self.attack, inline=True)
             embed.add_field(name="Quagsire used:", value=quagAttack, inline=True)
             if quagAttack == self.attack:
                 self.parent.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{currentUser.id}\',\'Broken Box Piece x5\',\'{self.wager}\', datetime(\'now\'))')
-                embed.add_field(name="...but Nothing Happened", value=f'Returned {self.wager} box pieces.', inline=False)
+                embed.add_field(name="...but nothing happened", value=f'Returned {self.wager} box pieces.', inline=False)
                 embed.set_image(url="https://i.imgur.com/0K1MjHZ.png")
             elif data.weakness[quagAttack] == self.attack:
                 self.parent.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{currentUser.id}\',\'Broken Box Piece x5\',\'{self.wager*3}\', datetime(\'now\'))')
