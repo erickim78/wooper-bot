@@ -23,71 +23,6 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 
-class AttackDropdown(discord.ui.Select):
-    def __init__(self):
-        options = [
-            discord.SelectOption(label='Flamethrower', emoji='🟥'),
-            discord.SelectOption(label='Razor Leaf', emoji='🟩'),
-            discord.SelectOption(label='Bubblebeam', emoji='🟦'),
-        ]
-        super().__init__(placeholder='Choose your attack', options=options)
-    async def callback(self, interaction: discord.Interaction):
-        return
-
-class RPSModal(discord.ui.Modal, title='The Quagsino: RPS'):
-    def __init__(self, parent):
-        self.wager = 0
-        self.attack = ""
-        self.parent = parent
-        super().__init__()
-
-    wager = discord.ui.TextInput(
-        label='Wager',
-        placeholder='# of Box Pieces to bet'
-    )
-
-    attack = discord.ui.Select(
-        placeholder='Select Your Attack',
-        options = [
-            discord.SelectOption(label='Flamethrower', emoji='🟥'),
-            discord.SelectOption(label='Razor Leaf', emoji='🟩'),
-            discord.SelectOption(label='Bubblebeam', emoji='🟦'),
-        ]
-    )
-
-    async def on_submit(self, interaction: discord.Interaction):
-        currentUser = interaction.user
-        
-        imgURL = "https://static.wikia.nocookie.net/maplestory/images/b/b1/Use_Hidden_Ring_Box.png/revision/latest?cb=20210914225553"
-        embed=discord.Embed(title="The Quagsino: RPS", description=f'{currentUser.mention} wagered {self.wager} box pieces.', color=0xf1d3ed)
-        embed.set_thumbnail(url=imgURL)
-        if self.wager.isdigit() is False:
-            embed.add_field(name="Invalid Wager.", value=f'\u200b', inline=False)
-        else:
-            currentWager = int(self.wager)
-            if self.parent.tryDeductingBoxPieces(currentUser.id, currentWager) is True:
-                if self.parent.tryDeductingWhoompTickets(currentUser.id, 1) is False:
-                    print("REALLY BAD ERROR IN DEDUCTING TICKETS")
-                    return
-
-                quagAttack = random.choice(data.attacks)
-                embed.add_field(name=f'{currentUser.name}\'s Attack:', value=self.attack, inline=False)
-                embed.add_field(name="Quagsire used:", value=quagAttack, inline=False)
-                if quagAttack == self.attack:
-                    self.parent.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{currentUser.id}\',\'Broken Box Piece x5\',\'{currentWager}\', datetime(\'now\'))')
-                    embed.add_field(name="But Nothing Happened", value=f'Returned {currentWager} box pieces.', inline=False)
-                elif data.weakness[quagAttack] == self.attack:
-                    # User wins
-                    self.parent.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{currentUser.id}\',\'Broken Box Piece x5\',\'{currentWager*3}\', datetime(\'now\'))')
-                    embed.add_field(name="YOU WIN", value=f'Gained {currentWager*3} box pieces.', inline=False)
-                else:
-                    embed.add_field(name="YOU LOSE", value=f'Lost {currentWager} box pieces.', inline=False)
-                    # Quag wins
-                self.parent.miscConnection.commit()
-            else:
-                embed.add_field(name=f'You have been expelled from the Quagsino', value=f'ATTEMPTED FRAUD', inline=False)
-        await interaction.response.send_message(embed=embed)
-
 class RPSView(discord.ui.View):
     def __init__(self, parent, originalUser):
         super().__init__()
@@ -95,7 +30,6 @@ class RPSView(discord.ui.View):
         self.attack = ""
         self.parent = parent
         self.maxWager = self.parent.checkBoxPieces(originalUser.id)
-        self.add_item(AttackDropdown())
 
     @discord.ui.button(label='0', style=discord.ButtonStyle.blurple)
     async def callback(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -106,9 +40,13 @@ class RPSView(discord.ui.View):
         button.label = str(number + 1)
         await interaction.response.edit_message(view=self)
 
-    # @discord.ui.select(placeholder='Your Attack', options=data.attacks)
-    # async def callback(self, select, interaction: discord.Interaction):
-    #     self.wager = select.values[0]
+    @discord.ui.select(placeholder='Your Attack', options = [
+            discord.SelectOption(label='Flamethrower', emoji='🟥'),
+            discord.SelectOption(label='Razor Leaf', emoji='🟩'),
+            discord.SelectOption(label='Bubblebeam', emoji='🟦'),
+        ])
+    async def callback(self, select, interaction: discord.Interaction):
+        self.wager = select.values[0]
 
     @discord.ui.button(label='FIGHT', style=discord.ButtonStyle.red)
     async def confirm(self, interaction: discord.Interaction, button:discord.ui.Button):
@@ -144,12 +82,11 @@ class RPSView(discord.ui.View):
                 self.parent.miscConnection.commit()
             else:
                 embed.add_field(name="Not enough box pieces.", value=f'\u200b', inline=False)
-        interaction.response.send_message(embed=embed)
+        await interaction.response.send_message(embed=embed)
 
     @discord.ui.button(label='Cancel', style=discord.ButtonStyle.grey)
     async def confirm(self, interaction: discord.Interaction, button:discord.ui.Button):
         self.stop()
-
 
 class ShopButtons(discord.ui.View):
     def __init__(self, parent, *, timeout=90):
@@ -219,7 +156,7 @@ class ShopButtons(discord.ui.View):
             embed.add_field(name="Tickets needed:", value=1-whoompTickets, inline=True)
             await interaction.response.send_message(embed=embed)
         else:
-            await interaction.response.send_modal(RPSModal(self.parent))
+            await interaction.response.send_message(view=RPSView(self.parent, currentUser))
             return
 
     @discord.ui.button(label="Guessing Game", style=discord.ButtonStyle.secondary, disabled=True)
