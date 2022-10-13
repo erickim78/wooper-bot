@@ -72,31 +72,28 @@ class RPSView(discord.ui.View):
         imgURL = "https://static.wikia.nocookie.net/maplestory/images/b/b1/Use_Hidden_Ring_Box.png/revision/latest?cb=20210914225553"
         embed=discord.Embed(title="The Quagsino: RPS", description=f'{currentUser.mention} wagered {self.wager} box pieces.', color=0xf1d3ed)
         embed.set_thumbnail(url=imgURL)
-        if self.wager.isdigit() is False:
-            embed.add_field(name="Invalid Wager.", value=f'\u200b', inline=False)
-        else:
-            currentWager = int(self.wager)
-            if self.parent.tryDeductingBoxPieces(currentUser.id, currentWager) is True:
-                if self.parent.tryDeductingWhoompTickets(currentUser.id, 1) is False:
-                    print("REALLY BAD ERROR IN DEDUCTING TICKETS")
-                    return
 
-                quagAttack = random.choice(data.attacks)
-                embed.add_field(name=f'{currentUser.name}\'s Attack:', value=self.attack, inline=False)
-                embed.add_field(name="Quagsire used:", value=quagAttack, inline=False)
-                if quagAttack == self.attack:
-                    self.parent.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{currentUser.id}\',\'Broken Box Piece x5\',\'{currentWager}\', datetime(\'now\'))')
-                    embed.add_field(name="But Nothing Happened", value=f'Returned {currentWager} box pieces.', inline=False)
-                elif data.weakness[quagAttack] == self.attack:
-                    # User wins
-                    self.parent.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{currentUser.id}\',\'Broken Box Piece x5\',\'{currentWager*3}\', datetime(\'now\'))')
-                    embed.add_field(name="YOU WIN", value=f'Gained {currentWager*3} box pieces.', inline=False)
-                else:
-                    embed.add_field(name="YOU LOSE", value=f'Lost {currentWager} box pieces.', inline=False)
-                    # Quag wins
-                self.parent.miscConnection.commit()
+        if self.parent.tryDeductingBoxPieces(currentUser.id, self.wager) is True:
+            if self.parent.tryDeductingWhoompTickets(currentUser.id, 1) is False:
+                print("REALLY BAD ERROR IN DEDUCTING TICKETS")
+                return
+
+            quagAttack = random.choice(data.attacks)
+            embed.add_field(name=f'{currentUser.name}\'s Attack:', value=self.attack, inline=False)
+            embed.add_field(name="Quagsire used:", value=quagAttack, inline=False)
+            if quagAttack == self.attack:
+                self.parent.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{currentUser.id}\',\'Broken Box Piece x5\',\'{currentWager}\', datetime(\'now\'))')
+                embed.add_field(name="But Nothing Happened", value=f'Returned {self.wager} box pieces.', inline=False)
+            elif data.weakness[quagAttack] == self.attack:
+                # User wins
+                self.parent.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{currentUser.id}\',\'Broken Box Piece x5\',\'{currentWager*3}\', datetime(\'now\'))')
+                embed.add_field(name="YOU WIN", value=f'Gained {self.wager*3} box pieces.', inline=False)
             else:
-                embed.add_field(name="Not enough box pieces.", value=f'\u200b', inline=False)
+                embed.add_field(name="YOU LOSE", value=f'Lost {self.wager} box pieces.', inline=False)
+                # Quag wins
+            self.parent.miscConnection.commit()
+        else:
+            embed.add_field(name="Not enough box pieces.", value=f'\u200b', inline=False)
         await interaction.response.send_message(embed=embed)
 
     @discord.ui.button(label='Cancel', style=discord.ButtonStyle.danger)
@@ -134,7 +131,7 @@ class RPSView(discord.ui.View):
         await interaction.response.edit_message(embed=self.embed)
 
     @discord.ui.button(label='-1', style=discord.ButtonStyle.secondary)
-    async def buttonFour(self, interaction: discord.Interaction, button:discord.ui.Button):
+    async def buttonFive(self, interaction: discord.Interaction, button:discord.ui.Button):
         if interaction.user != self.originalUser:
             return
 
