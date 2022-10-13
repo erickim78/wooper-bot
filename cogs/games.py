@@ -59,7 +59,7 @@ class RPSView(discord.ui.View):
 
         self.attack = select.values[0]
         self.updateEmbed()
-        await interaction.response.edit_message(embed=self.myEmbed)
+        await interaction.response.edit_message(embed=self.embed)
 
     @discord.ui.button(label='FIGHT', style=discord.ButtonStyle.primary)
     async def buttonOne(self, interaction: discord.Interaction, button:discord.ui.Button):
