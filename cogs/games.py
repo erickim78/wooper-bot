@@ -24,19 +24,28 @@ from discord.ext import commands
 from discord import app_commands
 
 class RPSView(discord.ui.View):
-    def __init__(self, parent, originalUser, myEmbed: discord.Embed, *, timeout=90):
+    def __init__(self, parent, originalUser, *, timeout=90):
         super().__init__(timeout=timeout)
-        self.wager = -1
-        self.attack = ""
+        self.wager = "0"
+        self.attack = "-"
         self.parent = parent
         self.originalUser = originalUser
-        self.myEmbed = myEmbed
+        self.url = "https://static.wikia.nocookie.net/maplestory/images/b/b1/Use_Hidden_Ring_Box.png/revision/latest?cb=20210914225553"
+        self.embed=discord.Embed(title="The Quagsino", description=f'{self.originalUser.mention} will fight Quagsire.', color=0xf1d3ed)
+    
+    def updateEmbed(self):
+        self.embed=discord.Embed(title="The Quagsino", description=f'{self.originalUser.mention} will fight Quagsire.', color=0xf1d3ed)
+        self.embed.set_thumbnail(url=self.url)
+        self.embed.add_field(name="Your Wager:", value=f'{self.wager} box pieces', inline=True)
+        self.embed.add_field(name="Selected Attack:", value=f'{self.attack}', inline=True)
 
     @discord.ui.TextInput(label='Wager', placeholder='# of Box Pieces to bet')
     async def callback(self, textinput: discord.ui.TextInput, interaction: discord.Interaction, text):
         if interaction.user != self.originalUser:
             return
+
         self.wager = textinput.value
+        self.updateEmbed()
         await interaction.response.edit_message(embed=self.myEmbed)
 
     @discord.ui.select(placeholder='Your Attack', options = [
@@ -46,12 +55,12 @@ class RPSView(discord.ui.View):
         ])
     async def callback(self, select, interaction: discord.Interaction):
         self.attack = select.values[0]
+        self.updateEmbed()
         await interaction.response.edit_message(embed=self.myEmbed)
 
     @discord.ui.button(label='FIGHT', style=discord.ButtonStyle.red)
     async def confirm(self, interaction: discord.Interaction, button:discord.ui.Button):
         self.stop()
-
         currentUser = interaction.user
         
         imgURL = "https://static.wikia.nocookie.net/maplestory/images/b/b1/Use_Hidden_Ring_Box.png/revision/latest?cb=20210914225553"
@@ -156,7 +165,11 @@ class ShopButtons(discord.ui.View):
             embed.add_field(name="Tickets needed:", value=1-whoompTickets, inline=True)
             await interaction.response.send_message(embed=embed)
         else:
-            await interaction.response.send_message(view=RPSView(self.parent, currentUser))
+            embed=discord.Embed(title="The Quagsino", description=f'{currentUser.mention} will fight Quagsire.', color=0xf1d3ed)
+            embed.set_thumbnail(url=imgURL)
+            embed.add_field(name="Your Wager:", value=f'0 box pieces', inline=True)
+            embed.add_field(name="Selected Attack:", value=f'-', inline=True)
+            await interaction.response.send_message(embed=embed, view=RPSView(self.parent, currentUser))
             return
 
     @discord.ui.button(label="Guessing Game", style=discord.ButtonStyle.secondary, disabled=True)
