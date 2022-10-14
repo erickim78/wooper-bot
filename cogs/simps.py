@@ -534,17 +534,19 @@ class Simps(commands.Cog):
                 result = f'\u200b'
                 length = len(queryList)
                 i = length - 1
+                rank = 1
                 while(i >= 0 and i < length and i > len(queryList)-5):
                     currentUser = self.bot.get_user(int(queryList[i][0]))
                     total = queryList[i][1]
                     if int(total) >= 0:
                         break
 
-                    if i < length:
-                        result += f'{i+1}) {currentUser.mention} ({currentUser.name}) \n{total} pieces\n\n'
+                    if i < length - 1:
+                        result += f'{rank}) {currentUser.mention} ({currentUser.name}) \n{total} pieces\n\n'
                     else:
-                        result += f'**{i+1}) {currentUser.mention} ({currentUser.name})** \n{total} pieces\n\n\n'
+                        result += f'**{rank}) {currentUser.mention} ({currentUser.name})** \n{total} pieces\n\n\n'
                         embed.set_image(url=currentUser.avatar.url)
+                    rank +=1
                     i -= 1
 
                 embed.add_field(name='\u200b', value=result, inline=True)
