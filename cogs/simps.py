@@ -57,10 +57,6 @@ class Simps(commands.Cog):
         self.checkMessagesTable()
         self.checkMentionsTable()
         self.checkGamblingTable()
-        
-        # Temp
-        self.miscCursor.execute(f'INSERT INTO \'gamblingTable\' (userid, game, count, timestamp) VALUES (\'{242552784476438533}\',\'rps\', {-10}, datetime(\'now\'))')
-        self.miscCursor.execute(f'INSERT INTO \'gamblingTable\' (userid, game, count, timestamp) VALUES (\'{152978946743468032}\',\'rps\', {26}, datetime(\'now\'))')
 
     def initConnectedUsers(self):
         updateTime = time.time()
