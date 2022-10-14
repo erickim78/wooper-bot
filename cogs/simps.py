@@ -56,6 +56,7 @@ class Simps(commands.Cog):
         self.checkProfanitiesTable()
         self.checkMessagesTable()
         self.checkMentionsTable()
+        self.checkGamblingTable()
         
 
     def initConnectedUsers(self):
@@ -157,6 +158,13 @@ class Simps(commands.Cog):
         self.miscCursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE type='table' AND name = 'mentionsTable' ''')
         if self.miscCursor.fetchone()[0] != 1:
             self.miscCursor.execute(f'''CREATE TABLE 'mentionsTable' (userid TEXT, count DECIMAL(38,4), timestamp datetime)''')
+            return False
+        return True
+
+    def checkGamblingTable(self):
+        self.miscCursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE type='table' AND name = 'gamblingTable' ''')
+        if self.miscCursor.fetchone()[0] != 1:
+            self.miscCursor.execute(f'''CREATE TABLE 'gamblingTable' (userid TEXT, game TEXT, count DECIMAL(38,4), timestamp datetime)''')
             return False
         return True
 
@@ -519,6 +527,41 @@ class Simps(commands.Cog):
                         result += f'{i+1}) {currentUser.mention} ({currentUser.name})\n{round(currentTime//3600)} hrs, {round((currentTime-3600*(currentTime//3600))//60)} mins\n\n'
                     else:
                         result += f'**{i+1}) {currentUser.mention} ({currentUser.name})\n{round(currentTime//3600)} hrs, {round((currentTime-3600*(currentTime//3600))//60)} mins**\n\n\n'
+                        embed.set_image(url=currentUser.avatar.url)
+
+                embed.add_field(name='\u200b', value=result, inline=True)
+                embed.set_footer(text=f'Tracking since October 4, 2022')
+            elif category == "Gambling Losers":
+                result = f'\u200b'
+                length = len(queryList)
+                count = 0
+                while(count < length and count > len(queryList-5)):
+                    currentUser = self.bot.get_user(int(queryList[i][0]))
+                    currentLosses = queryList[i][1]
+                    if currentLosses >= 0:
+                        break
+
+                    if i < length:
+                        result += f'{i+1}) {currentUser.mention} ({currentUser.name}) \n{category}: {total}\n\n'
+                    else:
+                        result += f'**{i+1}) {currentUser.mention} ({currentUser.name})** \n{category}: {total} \n\n\n'
+                        embed.set_image(url=currentUser.avatar.url)
+                    i -= 1
+
+                embed.add_field(name='\u200b', value=result, inline=True)
+                embed.set_footer(text=f'Tracking since October 4, 2022')
+            elif category == "Gambling Winners":
+                result = f'\u200b'
+                for i in range(min(5, len(queryList))):
+                    currentUser = self.bot.get_user(int(queryList[i][0]))
+                    total = queryList[i][1]
+                    if total < 0:
+                        break
+
+                    if i > 0:
+                        result += f'{i+1}) {currentUser.mention} ({currentUser.name}) \n{category}: +{total}\n\n'
+                    else:
+                        result += f'**{i+1}) {currentUser.mention} ({currentUser.name})** \n{category}: +{total} \n\n\n'
                         embed.set_image(url=currentUser.avatar.url)
 
                 embed.add_field(name='\u200b', value=result, inline=True)

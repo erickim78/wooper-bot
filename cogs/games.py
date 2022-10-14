@@ -95,10 +95,12 @@ class RPSView(discord.ui.View):
                 embed.set_image(url="https://i.imgur.com/0K1MjHZ.png")
             elif data.weakness[quagAttack] == self.attack:
                 self.parent.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{currentUser.id}\',\'Broken Box Piece x5\',\'{self.wager*3}\', datetime(\'now\'))')
+                self.parent.miscCursor.execute(f'INSERT INTO \'gamblingTable\' (userid, game, count, timestamp) VALUES (\'{message.author.id}\',\'rps\', {self.wager*3}, datetime(\'now\'))')
                 embed.add_field(name="YOU WIN", value=f'Gained {self.wager*3} box pieces.', inline=False)
                 embed.set_image(url="https://i.imgur.com/LbM4jXk.jpeg")
             else:
                 embed.add_field(name="YOU LOSE", value=f'Lost {self.wager} box pieces.', inline=False)
+                self.parent.miscCursor.execute(f'INSERT INTO \'gamblingTable\' (userid, game, count, timestamp) VALUES (\'{message.author.id}\',\'rps\', {-self.wager}, datetime(\'now\'))')
                 embed.set_image(url="https://i.imgur.com/tMXcy9Z.jpeg")
             self.parent.miscConnection.commit()
         else:
