@@ -534,8 +534,8 @@ class Simps(commands.Cog):
             elif category == "Gambling Losers":
                 result = f'\u200b'
                 length = len(queryList)
-                count = 0
-                while(count < length and count > len(queryList)-5):
+                i = 0
+                while(i < length and i > len(queryList)-5):
                     currentUser = self.bot.get_user(int(queryList[i][0]))
                     currentLosses = queryList[i][1]
                     if currentLosses >= 0:
