@@ -558,9 +558,9 @@ class Simps(commands.Cog):
                         break
 
                     if i > 0:
-                        result += f'{i+1}) {currentUser.mention} ({currentUser.name}) \n-{total} pieces\n\n'
+                        result += f'{i+1}) {currentUser.mention} ({currentUser.name}) \n+{total} pieces\n\n'
                     else:
-                        result += f'**{i+1}) {currentUser.mention} ({currentUser.name})** \n-{total} pieces\n\n\n'
+                        result += f'**{i+1}) {currentUser.mention} ({currentUser.name})** \n+{total} pieces\n\n\n'
                         embed.set_image(url=currentUser.avatar.url)
 
                 embed.add_field(name='\u200b', value=result, inline=True)
