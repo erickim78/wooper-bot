@@ -537,8 +537,8 @@ class Simps(commands.Cog):
                 i = 0
                 while(i < length and i > len(queryList)-5):
                     currentUser = self.bot.get_user(int(queryList[i][0]))
-                    currentLosses = queryList[i][1]
-                    if currentLosses >= 0:
+                    total = queryList[i][1]
+                    if total >= 0:
                         break
 
                     if i < length:
