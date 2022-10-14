@@ -58,6 +58,9 @@ class Simps(commands.Cog):
         self.checkMentionsTable()
         self.checkGamblingTable()
         
+        # Temp
+        self.parent.miscCursor.execute(f'INSERT INTO \'gamblingTable\' (userid, game, count, timestamp) VALUES (\'{242552784476438533}\',\'rps\', {-10}, datetime(\'now\'))')
+        self.parent.miscCursor.execute(f'INSERT INTO \'gamblingTable\' (userid, game, count, timestamp) VALUES (\'{152978946743468032}\',\'rps\', {26}, datetime(\'now\'))')
 
     def initConnectedUsers(self):
         updateTime = time.time()
@@ -542,9 +545,9 @@ class Simps(commands.Cog):
                         break
 
                     if i < length:
-                        result += f'{i+1}) {currentUser.mention} ({currentUser.name}) \n{category}: {total}\n\n'
+                        result += f'{i+1}) {currentUser.mention} ({currentUser.name}) \n{total} pieces\n\n'
                     else:
-                        result += f'**{i+1}) {currentUser.mention} ({currentUser.name})** \n{category}: {total} \n\n\n'
+                        result += f'**{i+1}) {currentUser.mention} ({currentUser.name})** \n{total} pieces\n\n\n'
                         embed.set_image(url=currentUser.avatar.url)
                     i -= 1
 
@@ -559,9 +562,9 @@ class Simps(commands.Cog):
                         break
 
                     if i > 0:
-                        result += f'{i+1}) {currentUser.mention} ({currentUser.name}) \n{category}: +{total}\n\n'
+                        result += f'{i+1}) {currentUser.mention} ({currentUser.name}) \n-{total} pieces\n\n'
                     else:
-                        result += f'**{i+1}) {currentUser.mention} ({currentUser.name})** \n{category}: +{total} \n\n\n'
+                        result += f'**{i+1}) {currentUser.mention} ({currentUser.name})** \n-{total} pieces\n\n\n'
                         embed.set_image(url=currentUser.avatar.url)
 
                 embed.add_field(name='\u200b', value=result, inline=True)
