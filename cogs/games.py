@@ -32,22 +32,13 @@ class RPSView(discord.ui.View):
         self.originalUser = originalUser
         self.maxWager = parent.checkBoxPieces(originalUser.id)
         self.url = "https://i.imgur.com/qf6kzdn.jpg"
-        self.embed=discord.Embed(title="The Quagsino: RPS Battle", description=f'{self.originalUser.mention} will fight Quagsire.', color=0xf1d3ed)
+        self.embed=discord.Embed(title="RPS Battle", description=f'{self.originalUser.mention} will fight Quagsire.', color=0xf1d3ed)
     
     def updateEmbed(self):
-        self.embed=discord.Embed(title="The Quagsino: RPS Battle", description=f'{self.originalUser.mention} will fight Quagsire.', color=0xf1d3ed)
+        self.embed=discord.Embed(title="RPS Battle", description=f'{self.originalUser.mention} will fight Quagsire.', color=0xf1d3ed)
         self.embed.set_thumbnail(url=self.url)
-        self.embed.add_field(name=f'Wager (max {self.parent.checkBoxPieces(self.originalUser.id)}):', value=f'{self.wager} box pieces', inline=True)
+        self.embed.add_field(name=f'Wager (max {self.maxWager}):', value=f'{self.wager} box piece(s)', inline=True)
         self.embed.add_field(name="Selected Attack:", value=f'{self.attack}', inline=True)
-
-    # @discord.ui.text_input(label='Wager', placeholder='# of Box Pieces to bet')
-    # async def Wager(self, textinput: discord.ui.TextInput, interaction: discord.Interaction, text):
-    #     if interaction.user != self.originalUser:
-    #         return
-
-    #     self.wager = textinput.value
-    #     self.updateEmbed()
-    #     await interaction.response.edit_message(embed=self.myEmbed)
 
     @discord.ui.select(placeholder='Your Attack', options = [
             discord.SelectOption(label='Flamethrower', emoji='🟥'),
@@ -78,7 +69,7 @@ class RPSView(discord.ui.View):
         self.stop()
         currentUser = interaction.user
         imgURL = "https://i.imgur.com/qf6kzdn.jpg"
-        embed=discord.Embed(title="The Quagsino: RPS Battle", description=f'{currentUser.mention} wagered {self.wager} box pieces.', color=0xf1d3ed)
+        embed=discord.Embed(title="RPS Battle", description=f'{currentUser.mention} wagered {self.wager} box pieces.', color=0xf1d3ed)
         embed.set_thumbnail(url=imgURL)
 
         if self.parent.tryDeductingBoxPieces(currentUser.id, self.wager) is True:
@@ -95,7 +86,7 @@ class RPSView(discord.ui.View):
                 embed.set_image(url="https://i.imgur.com/0K1MjHZ.png")
             elif data.weakness[quagAttack] == self.attack:
                 self.parent.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{currentUser.id}\',\'Broken Box Piece x5\',\'{self.wager*3}\', datetime(\'now\'))')
-                self.parent.miscCursor.execute(f'INSERT INTO \'gamblingTable\' (userid, game, count, timestamp) VALUES (\'{currentUser.id}\',\'rps\', {self.wager*3}, datetime(\'now\'))')
+                self.parent.miscCursor.execute(f'INSERT INTO \'gamblingTable\' (userid, game, count, timestamp) VALUES (\'{currentUser.id}\',\'rps\', {self.wager*2}, datetime(\'now\'))')
                 embed.add_field(name="YOU WIN", value=f'Gained {self.wager*3} box pieces.', inline=False)
                 embed.set_image(url="https://i.imgur.com/LbM4jXk.jpeg")
             else:
@@ -113,7 +104,7 @@ class RPSView(discord.ui.View):
             return
 
         self.stop()
-        self.embed=discord.Embed(title="The Quagsino: RPS Battle", description=f'{self.originalUser.mention} will fight Quagsire.', color=0xf1d3ed)
+        self.embed=discord.Embed(title="RPS Battle", description=f'{self.originalUser.mention} will fight Quagsire.', color=0xf1d3ed)
         self.embed.set_thumbnail(url=self.url)
         self.embed.add_field(name="FIGHT CANCELLED", value=f'\u200b', inline=True)
         await interaction.response.edit_message(embed=self.embed)
@@ -152,7 +143,156 @@ class RPSView(discord.ui.View):
         self.updateEmbed()
         await interaction.response.edit_message(embed=self.embed)
 
+class BerryView(discord.ui.View):
+    def __init__(self, parent, originalUser, *, timeout=90):
+        super().__init__(timeout=timeout)
+        self.wager = 1
+        self.guess = 0
+        self.berry = "-"
+        self.parent = parent
+        self.originalUser = originalUser
+        self.maxWager = parent.checkBoxPieces(originalUser.id)
+        self.url = "https://i.imgur.com/qf6kzdn.jpg"
+        self.embed=discord.Embed(title="Berry Hungry Quagsire", description=f'{originalUser.mention}, how many Berries did Quagsire eat today?', color=0xf1d3ed)
+
     
+    def updateEmbed(self):
+        self.embed=discord.Embed(title="Berry Hungry Quagsire", description=f'{self.originalUser.mention}, how many Berries did Quagsire eat today?', color=0xf1d3ed)
+        self.embed.set_thumbnail(url=self.url)
+        self.embed.add_field(name=f'Wager (max {self.maxWager}):', value=f'1 box piece(s) (increase with the buttons)', inline=True)
+        self.embed.add_field("# of Berries:")
+        self.embed.add_field(name="(BONUS) Berry:", value=f'-', inline=True)
+
+    @discord.ui.select(placeholder='Your Berry Good Guess', options = [
+        discord.SelectOption(label='1 Berry'),
+        discord.SelectOption(label='2 Berries'),
+        discord.SelectOption(label='3 Berries'),
+        discord.SelectOption(label='4 Berries'),
+        discord.SelectOption(label='5 Berries'),
+        discord.SelectOption(label='6 Berries'),
+        discord.SelectOption(label='7 Berries'),
+        discord.SelectOption(label='8 Berries'),
+        discord.SelectOption(label='9 Berries'),
+        discord.SelectOption(label='10 Berries'),
+    ])
+    async def selectOne(self, interaction: discord.Interaction, select):
+        if interaction.user != self.originalUser:
+            return
+
+        self.attack = select.values[0]
+        if self.attack == "Flamethrower":
+            self.attack = "🟥 "+self.attack
+        elif self.attack == "Razor Leaf":
+            self.attack = "🟩 "+self.attack
+        elif self.attack =="Bubblebeam":
+            self.attack = "🟦 "+self.attack
+        else:
+            print("Error in parsing command")
+        self.updateEmbed()
+        await interaction.response.edit_message(embed=self.embed)
+
+    @discord.ui.select(placeholder='Your Attack', options = [
+            discord.SelectOption(label='Flamethrower', emoji='🟥'),
+            discord.SelectOption(label='Razor Leaf', emoji='🟩'),
+            discord.SelectOption(label='Bubblebeam', emoji='🟦'),
+        ])
+    async def selectTwo(self, interaction: discord.Interaction, select):
+        if interaction.user != self.originalUser:
+            return
+
+        self.attack = select.values[0]
+        if self.attack == "Flamethrower":
+            self.attack = "🟥 "+self.attack
+        elif self.attack == "Razor Leaf":
+            self.attack = "🟩 "+self.attack
+        elif self.attack =="Bubblebeam":
+            self.attack = "🟦 "+self.attack
+        else:
+            print("Error in parsing command")
+        self.updateEmbed()
+        await interaction.response.edit_message(embed=self.embed)
+
+    @discord.ui.button(label='FIGHT', style=discord.ButtonStyle.success)
+    async def buttonOne(self, interaction: discord.Interaction, button:discord.ui.Button):
+        if interaction.user != self.originalUser:
+            return
+
+        self.stop()
+        currentUser = interaction.user
+        imgURL = "https://i.imgur.com/qf6kzdn.jpg"
+        embed=discord.Embed(title="RPS Battle", description=f'{currentUser.mention} wagered {self.wager} box pieces.', color=0xf1d3ed)
+        embed.set_thumbnail(url=imgURL)
+
+        if self.parent.tryDeductingBoxPieces(currentUser.id, self.wager) is True:
+            if self.parent.tryDeductingWhoompTickets(currentUser.id, 1) is False:
+                print("REALLY BAD ERROR IN DEDUCTING TICKETS")
+                return
+
+            quagAttack = random.choice(data.attacks)
+            embed.add_field(name=f'{currentUser.name}\'s attack:', value=self.attack, inline=True)
+            embed.add_field(name="Quagsire used:", value=quagAttack, inline=True)
+            if quagAttack == self.attack:
+                self.parent.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{currentUser.id}\',\'Broken Box Piece x5\',\'{self.wager}\', datetime(\'now\'))')
+                embed.add_field(name="...but nothing happened", value=f'Returned {self.wager} box pieces.', inline=False)
+                embed.set_image(url="https://i.imgur.com/0K1MjHZ.png")
+            elif data.weakness[quagAttack] == self.attack:
+                self.parent.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{currentUser.id}\',\'Broken Box Piece x5\',\'{self.wager*3}\', datetime(\'now\'))')
+                self.parent.miscCursor.execute(f'INSERT INTO \'gamblingTable\' (userid, game, count, timestamp) VALUES (\'{currentUser.id}\',\'rps\', {self.wager*2}, datetime(\'now\'))')
+                embed.add_field(name="YOU WIN", value=f'Gained {self.wager*3} box pieces.', inline=False)
+                embed.set_image(url="https://i.imgur.com/LbM4jXk.jpeg")
+            else:
+                embed.add_field(name="YOU LOSE", value=f'Lost {self.wager} box pieces.', inline=False)
+                self.parent.miscCursor.execute(f'INSERT INTO \'gamblingTable\' (userid, game, count, timestamp) VALUES (\'{currentUser.id}\',\'rps\', {-self.wager}, datetime(\'now\'))')
+                embed.set_image(url="https://i.imgur.com/tMXcy9Z.jpeg")
+            self.parent.miscConnection.commit()
+        else:
+            embed.add_field(name="Not enough box pieces.", value=f'\u200b', inline=False)
+        await interaction.response.send_message(embed=embed)
+
+    @discord.ui.button(label='Cancel', style=discord.ButtonStyle.danger)
+    async def buttonTwo(self, interaction: discord.Interaction, button:discord.ui.Button):
+        if interaction.user != self.originalUser:
+            return
+
+        self.stop()
+        self.embed=discord.Embed(title="RPS Battle", description=f'{self.originalUser.mention} will fight Quagsire.', color=0xf1d3ed)
+        self.embed.set_thumbnail(url=self.url)
+        self.embed.add_field(name="FIGHT CANCELLED", value=f'\u200b', inline=True)
+        await interaction.response.edit_message(embed=self.embed)
+
+    @discord.ui.button(label='+1', style=discord.ButtonStyle.secondary)
+    async def buttonThree(self, interaction: discord.Interaction, button:discord.ui.Button):
+        if interaction.user != self.originalUser:
+            return
+
+        self.wager += 1
+        if self.wager > self.maxWager:
+            self.wager = self.maxWager
+
+        self.updateEmbed()
+        await interaction.response.edit_message(embed=self.embed)
+
+    @discord.ui.button(label='-1', style=discord.ButtonStyle.secondary)
+    async def buttonFour(self, interaction: discord.Interaction, button:discord.ui.Button):
+        if interaction.user != self.originalUser:
+            return
+
+        self.wager -= 1
+        if self.wager < 1:
+            self.wager = 1
+        self.updateEmbed()
+        await interaction.response.edit_message(embed=self.embed)
+    
+    @discord.ui.button(label='+5', style=discord.ButtonStyle.secondary)
+    async def buttonFive(self, interaction: discord.Interaction, button:discord.ui.Button):
+        if interaction.user != self.originalUser:
+            return
+
+        self.wager += 5
+        if self.wager > self.maxWager:
+            self.wager = self.maxWager
+        self.updateEmbed()
+        await interaction.response.edit_message(embed=self.embed)
 
 
 class ShopButtons(discord.ui.View):
@@ -209,50 +349,48 @@ class ShopButtons(discord.ui.View):
             embed.add_field(name="Pieces needed:", value=100-boxPieces, inline=False)
         await interaction.response.send_message(embed=embed)
 
-    @discord.ui.button(label="RPS", style=discord.ButtonStyle.primary, disabled=False)
+    @discord.ui.button(label="RPS Battle", style=discord.ButtonStyle.primary, disabled=False)
     async def buttonThree(self, interaction: discord.Interaction, button:discord.ui.Button):
         currentUser = interaction.user
         imgURL = "https://i.imgur.com/qf6kzdn.jpg"
         boxPieces = self.parent.checkBoxPieces(currentUser.id)
         whoompTickets = self.parent.checkWhoompTickets(currentUser.id)
         if boxPieces < 1 or whoompTickets < 1:
-            embed=discord.Embed(title="The Quagsino: RPS Battle", description=f'{currentUser.mention} you have {boxPieces} box pieces, {whoompTickets} tickets.', color=0xf1d3ed)
+            embed=discord.Embed(title="RPS Battle", description=f'{currentUser.mention} you have {boxPieces} box pieces, {whoompTickets} tickets.', color=0xf1d3ed)
             embed.set_thumbnail(url=imgURL)
             embed.add_field(name="Not enough box pieces or tickets.", value='\u200b', inline=False)
             embed.add_field(name="Pieces needed:", value=1-boxPieces, inline=True)
             embed.add_field(name="Tickets needed:", value=1-whoompTickets, inline=True)
             await interaction.response.send_message(embed=embed)
         else:
-            embed=discord.Embed(title="The Quagsino: RPS Battle", description=f'{currentUser.mention} will fight Quagsire.', color=0xf1d3ed)
+            embed=discord.Embed(title="RPS Battle", description=f'{currentUser.mention} will fight Quagsire.', color=0xf1d3ed)
             embed.set_thumbnail(url=imgURL)
-            embed.add_field(name=f'Wager (max {boxPieces}):', value=f'1 box pieces', inline=True)
+            embed.add_field(name=f'Wager (max {boxPieces}):', value=f'1 box piece(s) (increase with the buttons)', inline=True)
             embed.add_field(name="Selected Attack:", value=f'-', inline=True)
             await interaction.response.send_message(embed=embed, view=RPSView(self.parent, currentUser))
             return
 
-    @discord.ui.button(label="Guessing Game", style=discord.ButtonStyle.secondary, disabled=True)
+    @discord.ui.button(label="Berry Hungry Quagsire", style=discord.ButtonStyle.secondary, disabled=True)
     async def buttonFour(self, interaction: discord.Interaction, button:discord.ui.Button):
         currentUser = interaction.user
+        imgURL = "https://i.imgur.com/qf6kzdn.jpg"
         boxPieces = self.parent.checkBoxPieces(currentUser.id)
         whoompTickets = self.parent.checkWhoompTickets(currentUser.id)
         if boxPieces < 1 or whoompTickets < 1:
-            embed=discord.Embed(title="Whoomper RPS", description=f'{currentUser.mention} you have: {boxPieces} box pieces, {whoompTickets} tickets.', color=0xf1d3ed)
+            embed=discord.Embed(title="Berry Hungry Quagsire", description=f'{currentUser.mention} you have {boxPieces} box pieces, {whoompTickets} tickets.', color=0xf1d3ed)
             embed.set_thumbnail(url=imgURL)
-            embed.add_field(name="Not enough box pieces and tickets.", value='\u200b', inline=False)
-            embed.add_field(name="Pieces needed:", value=3-boxPieces, inline=True)
+            embed.add_field(name="Not enough box pieces or tickets.", value='\u200b', inline=False)
+            embed.add_field(name="Pieces needed:", value=1-boxPieces, inline=True)
             embed.add_field(name="Tickets needed:", value=1-whoompTickets, inline=True)
-        elif self.parent.tryDeductingWhoompTickets(currentUser.id, 1):
-            embed=discord.Embed(color=0xf1d3ed)
-            imgURL = "https://static.wikia.nocookie.net/maplestory/images/3/36/Use_Broken_Box_Piece.png/revision/latest?cb=20210910011106"
-            embed.set_thumbnail(url=imgURL)
-            embed.add_field(name="Tower of Oz", value=f'Prize Redemption for {interaction.user.mention}', inline=False)
-            embed.add_field(name="Whoomper's Ring Box", value= '\u200b', inline=False)
-            embed.add_field(name="Ring Name Placeholder", value= 'Ring Level Placeholder', inline=False)
-            embed.set_footer(text=f'Remaining box pieces: {boxPieces-10}, Remaining Tickets: {whoompTickets-1}')
+            await interaction.response.send_message(embed=embed)
         else:
-            print("ERROR IN NUMBER GUESSING SELECTION")
+            embed=discord.Embed(title="Berry Hungry Quagsire", description=f'{currentUser.mention}, how many Berries did Quagsire eat today?', color=0xf1d3ed)
+            embed.set_thumbnail(url=imgURL)
+            embed.add_field(name=f'Wager (max {boxPieces}):', value=f'1 box piece(s) (increase with the buttons)', inline=True)
+            embed.add_field("# of Berries:")
+            embed.add_field(name="(BONUS) Berry:", value=f'-', inline=True)
+            await interaction.response.send_message(embed=embed, view=RPSView(self.parent, currentUser))
             return
-        await interaction.response.send_message(embed=embed)
 
     @discord.ui.button(label="5", style=discord.ButtonStyle.secondary, disabled=True)
     async def buttonFive(self, interaction: discord.Interaction, button:discord.ui.Button):
@@ -364,7 +502,7 @@ class Games(commands.Cog):
         return boxPieces
 
     def checkWhoompTickets(self, userId) -> int:
-        self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE userid = \'{userId}\' AND itemname = \'Whoomp Ticket x1\' AND itemattribute != \'0\'')
+        self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE userid = \'{userId}\' AND (itemname = \'Whoomp Ticket\' or \'Whoomp Ticket x1\') AND itemattribute != \'0\'')
         resultTable = self.miscCursor.fetchall()
         whoompTickets = 0
         for row in resultTable:
@@ -397,7 +535,7 @@ class Games(commands.Cog):
             return True
 
     def tryDeductingWhoompTickets(self, userId, cost) -> bool:
-        self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE userid = \'{userId}\' AND itemname = \'Whoomp Ticket x1\' AND itemattribute != \'0\'')
+        self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE userid = \'{userId}\' AND (itemname = \'Whoomp Ticket\' or \'Whoomp Ticket x1\') AND itemattribute != \'0\'')
         resultTable = self.miscCursor.fetchall()
         whoompTickets = 0
         for row in resultTable:
@@ -413,10 +551,10 @@ class Games(commands.Cog):
                 myCost = myCost-currentPieces
                 if myCost > 0:
                     # update row with 0
-                    updateCursor.execute(f'UPDATE \'ringTable\' SET itemattribute = \'0\' WHERE userid = \'{userId}\' AND itemname = \'Whoomp Ticket x1\' AND timestamp = \'{row[3]}\'')
+                    updateCursor.execute(f'UPDATE \'ringTable\' SET itemattribute = \'0\' WHERE userid = \'{userId}\' AND (itemname = \'Whoomp Ticket\' or \'Whoomp Ticket x1\') AND timestamp = \'{row[3]}\'')
                 else:
                     # update row with abs value of remaining cost and exit
-                    updateCursor.execute(f'UPDATE \'ringTable\' SET itemattribute = \'{abs(myCost)}\' WHERE userid = \'{userId}\' AND itemname = \'Whoomp Ticket x1\' AND timestamp = \'{row[3]}\'')
+                    updateCursor.execute(f'UPDATE \'ringTable\' SET itemattribute = \'{abs(myCost)}\' WHERE userid = \'{userId}\' AND (itemname = \'Whoomp Ticket\' or \'Whoomp Ticket x1\') AND timestamp = \'{row[3]}\'')
                     break
             self.miscConnection.commit()
             return True
@@ -582,8 +720,8 @@ class Games(commands.Cog):
                     attribute = '5'
                 elif reward == 'Oz Point Pouch x5':
                     attribute = '5'
-                elif reward == 'Whoomp Ticket x1':
-                    attribute = '1'
+                elif reward == 'Whoomp Ticket':
+                    attribute = '2'
                 else:
                     print("In OpenBox Error, should not reach this branch")
             else:
@@ -686,10 +824,10 @@ class Games(commands.Cog):
 
         imgURL = "https://static.wikia.nocookie.net/maplestory/images/f/f3/Use_2x_EXP_Coupon.png/revision/latest?cb=20220712230445"
         if interaction.user.id == 125114599249936384:
-            self.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{user.id}\',\'Whoomp Ticket x1\',\'{num}\', datetime(\'now\'))')
+            self.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{user.id}\',\'Whoomp Ticket\',\'{num}\', datetime(\'now\'))')
             self.miscConnection.commit()
 
-            self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE userid = \'{user.id}\' AND itemname = \'Whoomp Ticket x1\'')
+            self.miscCursor.execute(f'SELECT * FROM \'ringTable\' WHERE userid = \'{user.id}\' AND itemname = \'Whoomp Ticket\'')
             resultTable = self.miscCursor.fetchall()
             whoompTickets = 0
             for row in resultTable:
