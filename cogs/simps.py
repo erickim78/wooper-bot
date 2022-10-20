@@ -455,7 +455,7 @@ class Simps(commands.Cog):
 
     @app_commands.command(name="top", description='Server Stats Leaderboard')
     @app_commands.autocomplete(category=category_autocomplete, period=period_autocomplete)
-    async def top(self, interaction: discord.Interaction, category: str = "All Time", period: str = "Today") -> None:
+    async def top(self, interaction: discord.Interaction, category: str = "Online Time", period: str = "All Time") -> None:
         embed = discord.Embed(color=0xf1d3ed)
         guildIcon = interaction.guild.icon
         if guildIcon is None:
