@@ -85,9 +85,9 @@ class RPSView(discord.ui.View):
                 embed.add_field(name="...but nothing happened", value=f'Returned {self.wager} box pieces.', inline=False)
                 embed.set_image(url="https://i.imgur.com/0K1MjHZ.png")
             elif data.weakness[quagAttack] == self.attack:
-                self.parent.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{currentUser.id}\',\'Broken Box Piece x5\',\'{self.wager*3}\', datetime(\'now\'))')
+                self.parent.miscCursor.execute(f'INSERT INTO \'ringTable\' (userid, itemname, itemattribute, timestamp) VALUES (\'{currentUser.id}\',\'Broken Box Piece x5\',\'{self.wager*2}\', datetime(\'now\'))')
                 self.parent.miscCursor.execute(f'INSERT INTO \'gamblingTable\' (userid, game, count, timestamp) VALUES (\'{currentUser.id}\',\'rps\', {self.wager*2}, datetime(\'now\'))')
-                embed.add_field(name="YOU WIN", value=f'Gained {self.wager*3} box pieces.', inline=False)
+                embed.add_field(name="YOU WIN", value=f'Gained {self.wager*2} box pieces.', inline=False)
                 embed.set_image(url="https://i.imgur.com/LbM4jXk.jpeg")
             else:
                 embed.add_field(name="YOU LOSE", value=f'Lost {self.wager} box pieces.', inline=False)
@@ -140,6 +140,26 @@ class RPSView(discord.ui.View):
         self.wager += 5
         if self.wager > self.maxWager:
             self.wager = self.maxWager
+        self.updateEmbed()
+        await interaction.response.edit_message(embed=self.embed)
+
+    @discord.ui.button(label='+10', style=discord.ButtonStyle.secondary)
+    async def buttonSix(self, interaction: discord.Interaction, button:discord.ui.Button):
+        if interaction.user != self.originalUser:
+            return
+
+        self.wager += 10
+        if self.wager > self.maxWager:
+            self.wager = self.maxWager
+        self.updateEmbed()
+        await interaction.response.edit_message(embed=self.embed)
+
+    @discord.ui.button(label='MAX', style=discord.ButtonStyle.secondary)
+    async def buttonSeven(self, interaction: discord.Interaction, button:discord.ui.Button):
+        if interaction.user != self.originalUser:
+            return
+
+        self.wager = self.maxWager
         self.updateEmbed()
         await interaction.response.edit_message(embed=self.embed)
 
@@ -722,6 +742,7 @@ class Games(commands.Cog):
                     attribute = '5'
                 elif reward == 'Whoomp Ticket':
                     attribute = '2'
+                    level = 'x2'
                 else:
                     print("In OpenBox Error, should not reach this branch")
             else:
