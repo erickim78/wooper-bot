@@ -12,6 +12,7 @@ import threading
 from typing import List
 import pickle
 import os
+import math
 
 # File Imports
 import config
@@ -154,8 +155,17 @@ class RPSView(discord.ui.View):
         self.updateEmbed()
         await interaction.response.edit_message(embed=self.embed)
 
-    @discord.ui.button(label='MAX', style=discord.ButtonStyle.secondary)
+    @discord.ui.button(label='Half', style=discord.ButtonStyle.secondary)
     async def buttonSeven(self, interaction: discord.Interaction, button:discord.ui.Button):
+        if interaction.user != self.originalUser:
+            return
+
+        self.wager = math.ceil(self.maxWager/2)
+        self.updateEmbed()
+        await interaction.response.edit_message(embed=self.embed)
+
+    @discord.ui.button(label='MAX', style=discord.ButtonStyle.secondary)
+    async def buttonEight(self, interaction: discord.Interaction, button:discord.ui.Button):
         if interaction.user != self.originalUser:
             return
 
