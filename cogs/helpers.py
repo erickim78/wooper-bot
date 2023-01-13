@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 import pytz
 from typing import List
 
-class Helpers(commands.cog):
+class Helpers(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
