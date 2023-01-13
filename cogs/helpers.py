@@ -4,6 +4,7 @@ from discord.ext import commands
 from discord import app_commands
 
 import data
+import config
 
 from datetime import datetime, timezone
 import pytz
@@ -41,3 +42,6 @@ class Helpers(commands.Cog):
         embed = discord.Embed(title="Clock", description=f'Timezone: **{timezone}**', color=0xf1d3ed)
         embed.add_field(name=currentTime.strftime("%I:%M %p"), value='\u200b', inline=False)
         await interaction.response.send_message(embed=embed)
+
+async def setup(bot):
+    await bot.add_cog(Helpers(bot), guilds=config.guildList)
